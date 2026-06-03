@@ -1,5 +1,6 @@
-// My API keys (scoped to the signed-in user's company via the BFF).
-import { adminFetch, bffConfigured, getAccountContext } from "@/lib/bff";
+// My API keys (scoped to the signed-in user's company), direct to DynamoDB.
+import { getAccountContext } from "@/lib/bff";
+import { createKey, listKeys } from "@/lib/dynamo";
 
 export const dynamic = "force-dynamic";
 
@@ -8,23 +9,21 @@ function fail(status: number, detail: string) {
 }
 
 export async function GET() {
-  if (!bffConfigured()) return fail(500, "Server missing API_BASE_URL or ADMIN_API_TOKEN");
   const ctx = await getAccountContext();
   if (!ctx) return fail(401, "Not signed in");
-  const res = await adminFetch(`companies/${encodeURIComponent(ctx.companyId)}/keys`);
-  return new Response(await res.arrayBuffer(), {
-    status: res.status,
-    headers: { "content-type": res.headers.get("content-type") || "application/json" },
-  });
+  try {
+    return Response.json(await listKeys(ctx.companyId));
+  } catch (err) {
+    return fail(500, err instanceof Error ? err.message : "Failed to list keys");
+  }
 }
 
 export async function POST() {
-  if (!bffConfigured()) return fail(500, "Server missing API_BASE_URL or ADMIN_API_TOKEN");
   const ctx = await getAccountContext();
   if (!ctx) return fail(401, "Not signed in");
-  const res = await adminFetch(`companies/${encodeURIComponent(ctx.companyId)}/keys`, { method: "POST" });
-  return new Response(await res.arrayBuffer(), {
-    status: res.status,
-    headers: { "content-type": res.headers.get("content-type") || "application/json" },
-  });
+  try {
+    return Response.json(await createKey(ctx.companyId), { status: 201 });
+  } catch (err) {
+    return fail(500, err instanceof Error ? err.message : "Failed to create key");
+  }
 }
