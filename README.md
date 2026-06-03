@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Resume Parser — Product Platform
 
-## Getting Started
+Customer-facing platform for the resume-parser API: landing page, **AWS Cognito**
+sign-up / sign-in, onboarding, and **API-key generation** + usage stats. No résumé
+parsing happens here (that's the UAT tool / the API itself).
 
-First, run the development server:
+## Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Auth:** AWS Cognito (custom sign-up/login pages via `amazon-cognito-identity-js`).
+  The Cognito **ID token** is verified server-side with `aws-jwt-verify` and stored in
+  an httpOnly cookie.
+- **BFF:** Next.js route handlers verify the Cognito session, resolve the user's
+  company by email (creating it on first sign-in = onboarding), and call the backend
+  **admin API** with a server-held admin token (`X-Admin-Token`). The browser never
+  sees AWS credentials or the admin token.
+- **Backend:** the resume-parser engine (`resume-parser-blue-iq-dev`) exposes
+  `/api/v1/admin/*` for company + key + usage management.
+
+```
+Browser ──Cognito SDK──> Cognito (auth)
+   │  id token
+   ▼
+Next BFF (/api/account/*, /api/auth/*) ──X-Admin-Token──> Backend /api/v1/admin/*
+   (verifies Cognito JWT, resolves company by email)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.local.example .env.local   # fill in Cognito IDs, API_BASE_URL, ADMIN_API_TOKEN
+npm install
+npm run dev                        # http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Environment
 
-## Learn More
+| Var | Purpose |
+|---|---|
+| `API_BASE_URL` | Backend API base URL |
+| `ADMIN_API_TOKEN` | Must match `ADMIN_API_TOKEN` on the backend |
+| `NEXT_PUBLIC_COGNITO_USER_POOL_ID` / `NEXT_PUBLIC_COGNITO_CLIENT_ID` | Cognito (browser) |
+| `COGNITO_USER_POOL_ID` / `COGNITO_CLIENT_ID` | Cognito (server token verification) |
 
-To learn more about Next.js, take a look at the following resources:
+**Cognito pool requirements:** email as the sign-in identifier, a public app client
+(no secret — the SDK uses SRP), and the `email`/`name` attributes. Set
+`ADMIN_API_TOKEN` on the backend so the admin API is enabled.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Pages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `/` — landing page
+- `/signup` — Cognito sign-up + email-code verification
+- `/login` — Cognito sign-in
+- `/dashboard` — generate/revoke API keys, view usage & token stats

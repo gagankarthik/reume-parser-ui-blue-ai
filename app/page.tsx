@@ -1,55 +1,83 @@
 import Link from "next/link";
 
-const CARDS = [
+const FEATURES = [
   {
-    href: "/parse",
-    title: "Parse a resume",
-    body: "Upload a PDF, DOCX, or image and see the structured JSON with confidence scores. Handles sync and async (OCR) jobs.",
+    title: "Structured JSON",
+    body: "Turn PDF, DOCX, and image résumés into clean, schema-validated JSON with per-field confidence scores.",
   },
   {
-    href: "/webhooks",
-    title: "Webhooks",
-    body: "Register, list, and delete webhooks. The HMAC secret is shown once on creation.",
+    title: "Built for integration",
+    body: "Simple REST API with API-key auth and HMAC-signed webhooks. Sync for digital files, async OCR for scans.",
   },
   {
-    href: "/health",
-    title: "Health",
-    body: "Check the API health endpoint and dependency status (DynamoDB, S3).",
-  },
-  {
-    href: "/settings",
-    title: "Settings",
-    body: "Configure the API base URL and your X-API-Key. Stored locally in your browser.",
+    title: "Privacy first",
+    body: "Résumé files are never stored — processed in memory and deleted immediately. Only content-free audit metadata is kept.",
   },
 ];
 
-export default function Home() {
+export default function Landing() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Resume Parser — Test Console</h1>
-        <p className="mt-2 max-w-2xl text-zinc-600 dark:text-zinc-400">
-          A lightweight client for exercising the resume-parser API. Set your API key in{" "}
-          <Link href="/settings" className="font-medium text-indigo-600 hover:underline">
-            Settings
-          </Link>{" "}
-          first, then head to Parse.
+      {/* Header */}
+      <header className="border-b border-zinc-200 dark:border-zinc-800">
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+          <div className="flex items-center gap-2 font-semibold tracking-tight">
+            <span className="grid h-7 w-7 place-items-center rounded-lg bg-indigo-600 text-sm text-white">R</span>
+            Resume Parser API
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/login"
+              className="rounded-lg px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500"
+            >
+              Get started
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="mx-auto max-w-5xl px-4 py-24 text-center">
+        <h1 className="mx-auto max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
+          Parse résumés into structured data with one API call
+        </h1>
+        <p className="mx-auto mt-5 max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
+          Sign up, onboard in seconds, and generate an API key to start converting résumés into
+          clean JSON for your candidate forms and ATS.
         </p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {CARDS.map((c) => (
+        <div className="mt-8 flex items-center justify-center gap-3">
           <Link
-            key={c.href}
-            href={c.href}
-            className="group rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50/40 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/20"
+            href="/signup"
+            className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-500"
           >
-            <h2 className="text-base font-semibold text-zinc-900 group-hover:text-indigo-700 dark:text-zinc-50 dark:group-hover:text-indigo-300">
-              {c.title}
-            </h2>
-            <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">{c.body}</p>
+            Create your account
           </Link>
-        ))}
-      </div>
+          <Link
+            href="/login"
+            className="rounded-lg border border-zinc-300 px-5 py-2.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+          >
+            Sign in
+          </Link>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="mx-auto max-w-5xl px-4 pb-24">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {FEATURES.map((f) => (
+            <div key={f.title} className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+              <h3 className="text-base font-semibold">{f.title}</h3>
+              <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">{f.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

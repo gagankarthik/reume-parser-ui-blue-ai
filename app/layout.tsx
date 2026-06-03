@@ -12,11 +12,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import { NavBar } from "@/components/NavBar";
-
 export const metadata: Metadata = {
-  title: "Resume Parser — Test Console",
-  description: "Test console for the resume-parser API",
+  title: "Resume Parser API",
+  description: "AI résumé parsing API — sign up, onboard, and generate API keys.",
 };
 
 export default function RootLayout({
@@ -30,8 +28,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-        <NavBar />
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
+        {children}
       </body>
     </html>
   );
