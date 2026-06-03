@@ -1,65 +1,55 @@
-import Image from "next/image";
+import Link from "next/link";
+
+const CARDS = [
+  {
+    href: "/parse",
+    title: "Parse a resume",
+    body: "Upload a PDF, DOCX, or image and see the structured JSON with confidence scores. Handles sync and async (OCR) jobs.",
+  },
+  {
+    href: "/webhooks",
+    title: "Webhooks",
+    body: "Register, list, and delete webhooks. The HMAC secret is shown once on creation.",
+  },
+  {
+    href: "/health",
+    title: "Health",
+    body: "Check the API health endpoint and dependency status (DynamoDB, S3).",
+  },
+  {
+    href: "/settings",
+    title: "Settings",
+    body: "Configure the API base URL and your X-API-Key. Stored locally in your browser.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight">Resume Parser — Test Console</h1>
+        <p className="mt-2 max-w-2xl text-zinc-600 dark:text-zinc-400">
+          A lightweight client for exercising the resume-parser API. Set your API key in{" "}
+          <Link href="/settings" className="font-medium text-indigo-600 hover:underline">
+            Settings
+          </Link>{" "}
+          first, then head to Parse.
+        </p>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {CARDS.map((c) => (
+          <Link
+            key={c.href}
+            href={c.href}
+            className="group rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50/40 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/20"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+            <h2 className="text-base font-semibold text-zinc-900 group-hover:text-indigo-700 dark:text-zinc-50 dark:group-hover:text-indigo-300">
+              {c.title}
+            </h2>
+            <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">{c.body}</p>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
