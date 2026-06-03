@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Button, Card, ErrorBanner, Input, Label } from "@/components/ui";
+import { Button, Card, ErrorBanner, Input, Label, Logo } from "@/components/ui";
 import { confirmSignUp, login, resendCode, signUp } from "@/lib/account";
 
 type Step = "details" | "confirm";
@@ -58,12 +58,13 @@ export default function SignupPage() {
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center px-4">
+      <Link href="/" className="mb-6 flex justify-center"><Logo className="h-8 w-auto" /></Link>
       <Card>
         {step === "details" ? (
           <>
-            <h1 className="mb-1 text-xl font-semibold tracking-tight">Create your account</h1>
-            <p className="mb-5 text-sm text-zinc-500 dark:text-zinc-400">
-              Get an API key and start parsing résumés.
+            <h1 className="mb-1 font-display text-2xl font-semibold tracking-tight text-ink">Create your account</h1>
+            <p className="mb-5 text-sm text-ink-soft">
+              Get an API key and start parsing resumes.
             </p>
             <form onSubmit={onDetails} className="space-y-4">
               <div>
@@ -92,8 +93,8 @@ export default function SignupPage() {
           </>
         ) : (
           <>
-            <h1 className="mb-1 text-xl font-semibold tracking-tight">Verify your email</h1>
-            {info && <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">{info}</p>}
+            <h1 className="mb-1 font-display text-2xl font-semibold tracking-tight text-ink">Verify your email</h1>
+            {info && <p className="mb-4 text-sm text-ink-soft">{info}</p>}
             <form onSubmit={onConfirm} className="space-y-4">
               <div>
                 <Label>Verification code</Label>
@@ -115,15 +116,15 @@ export default function SignupPage() {
                   setError(err instanceof Error ? err.message : "Could not resend code");
                 }
               }}
-              className="mt-4 text-sm text-indigo-600 hover:underline dark:text-indigo-400"
+              className="mt-4 text-sm text-accent-700 hover:underline"
             >
               Resend code
             </button>
           </>
         )}
-        <p className="mt-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-4 text-center text-sm text-ink-soft">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-indigo-600 hover:underline">
+          <Link href="/login" className="font-medium text-accent-700 hover:underline">
             Sign in
           </Link>
         </p>

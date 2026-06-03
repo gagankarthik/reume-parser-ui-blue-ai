@@ -1,30 +1,113 @@
 @import "tailwindcss";
 
+/* Enterprise theme: clean cool-white canvas, deep navy ink, a confident royal-
+   blue primary with a cyan data accent. Rebind the dark variant to a class we
+   never apply so OS dark-mode can't half-apply stray dark: utilities. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #18181b; /* zinc-900 */
+  --paper: #f4f7fb;        /* cool light canvas */
+  --surface: #ffffff;      /* raised cards/sheets */
+  --ink: #0a1733;          /* deep navy near-black */
+  --ink-soft: #51607a;     /* slate for secondary text */
+  --line: #e4eaf3;         /* hairline rules */
+  --line-strong: #cdd8e9;
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  /* Enterprise look: headings use the same clean grotesk as body. */
-  --font-display: var(--font-geist-sans);
-}
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #09090b; /* zinc-950 */
-    --foreground: #fafafa;
-  }
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+
+  /* Primary — royal enterprise blue. */
+  --color-accent-50: #eff5ff;
+  --color-accent-100: #dbe8fe;
+  --color-accent-200: #bdd4fe;
+  --color-accent-300: #90b6fd;
+  --color-accent-400: #5d91f9;
+  --color-accent-500: #3b76f6;
+  --color-accent-600: #2563eb;
+  --color-accent-700: #1d54d4;
+  --color-accent-800: #1a44a8;
+  --color-accent-900: #17307a;
+
+  /* Secondary — cyan "data" accent for sparing highlights & gradients. */
+  --color-brass-400: #22c3d6;
+  --color-brass-500: #0891b2;
+  --color-brass-600: #0e7490;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv01";
+}
+
+/* Display headings: modern grotesque with optical sizing where supported. */
+.font-display {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-optical-sizing: auto;
+}
+
+::selection {
+  background: var(--color-accent-200);
+  color: var(--color-accent-900);
+}
+
+/* Accent focus ring for inputs/controls. */
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Faint canvas texture for depth, not flat color ─────────────────────────── */
+.paper-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+.paper-grain > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Small-caps editorial label ─────────────────────────────────────────────── */
+.label-caps {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ── Blue→cyan gradient text for hero accents ───────────────────────────────── */
+.text-gradient {
+  background-image: linear-gradient(100deg, var(--color-accent-700), var(--color-accent-500) 48%, var(--color-brass-400));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Hairline ruled divider ─────────────────────────────────────────────────── */
+.rule {
+  border: 0;
+  border-top: 1px solid var(--line);
 }
 
 /* ── Subtle load-in reveals ─────────────────────────────────────────────────── */
@@ -42,14 +125,155 @@ body {
   animation: fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-/* ── Faint dot-grid texture ─────────────────────────────────────────────────── */
+/* ── Mega-menu dropdown reveal ──────────────────────────────────────────────── */
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-menu {
+  animation: menu-in 0.16s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* ── Faint grid / dot / ledger textures ─────────────────────────────────────── */
 .bg-dot-grid {
   background-image: radial-gradient(currentColor 1px, transparent 1px);
   background-size: 22px 22px;
 }
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 75%);
+}
+.bg-ledger {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 31px,
+    var(--line) 31px,
+    var(--line) 32px
+  );
+}
+
+/* ── "Wow" motion system: floats, aurora, marquee, shimmer, reveals ─────────── */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-13px); }
+}
+@keyframes float-y2 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(11px); }
+}
+@keyframes aurora-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(3%, -4%) scale(1.08); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.15; }
+}
+
+.animate-float { animation: float-y 6.5s ease-in-out infinite; }
+.animate-float-slow { animation: float-y2 7.5s ease-in-out infinite; }
+.animate-aurora { animation: aurora-drift 20s ease-in-out infinite; }
+.animate-spin-slow { animation: spin-slow 16s linear infinite; }
+.animate-blink { animation: blink 1.4s ease-in-out infinite; }
+
+/* Frosted glass card. */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 24px 60px -28px rgba(10, 23, 51, 0.45);
+}
+
+/* Loading/processing shimmer sweep. */
+.shimmer {
+  background-image: linear-gradient(100deg, transparent 20%, rgba(91, 145, 249, 0.55) 50%, transparent 80%);
+  background-size: 200% 100%;
+  animation: shimmer 1.7s linear infinite;
+}
+
+/* Confidence-bar grow on first paint. */
+.grow-x {
+  transform-origin: left;
+  animation: grow-x 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Infinite logo marquee. */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+}
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.group\/m:hover .marquee { animation-play-state: paused; }
+
+/* Scroll-reveal (toggled by the Reveal client component). */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: opacity, transform;
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Aurora mesh blob for hero scenes. */
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.7;
+  pointer-events: none;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-up {
-    animation: none;
+  .animate-fade-up,
+  .animate-menu,
+  .animate-float,
+  .animate-float-slow,
+  .animate-aurora,
+  .animate-spin-slow,
+  .animate-blink,
+  .shimmer,
+  .grow-x,
+  .marquee {
+    animation: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

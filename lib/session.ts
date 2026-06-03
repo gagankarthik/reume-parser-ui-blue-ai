@@ -12,8 +12,10 @@ export interface SessionClaims {
   name?: string;
 }
 
-const USER_POOL_ID = process.env.COGNITO_USER_POOL_ID || process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID || "";
-const CLIENT_ID = process.env.COGNITO_CLIENT_ID || process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID || "";
+// Pool ID and client ID are public identifiers (not secrets), so a single
+// NEXT_PUBLIC_* pair serves both the browser SDK and server-side verification.
+const USER_POOL_ID = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID || "";
+const CLIENT_ID = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID || "";
 
 // Created lazily; aws-jwt-verify caches the pool JWKS internally.
 let _verifier: ReturnType<typeof CognitoJwtVerifier.create> | null = null;

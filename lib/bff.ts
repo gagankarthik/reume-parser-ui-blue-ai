@@ -1,8 +1,7 @@
 // Server-side BFF: verify the Cognito session, then resolve (and onboard) the
-// user's company in DynamoDB. Data access is direct to the backend's tables —
-// no admin token / no live-Lambda dependency.
+// user's company via the backend admin API (single source of truth).
 
-import { resolveCompanyId } from "@/lib/dynamo";
+import { resolveCompanyId } from "@/lib/api";
 import { getSessionClaims, type SessionClaims } from "@/lib/session";
 
 /** Returns {claims, companyId} for the signed-in user, or null if not signed in. */

@@ -1,0 +1,26 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Next.js 16 requires Node 20+. Pin it so the build matches local dev.
+        - nvm install 20 && nvm use 20
+        - npm ci --cache .npm --prefer-offline
+    build:
+      commands:
+        # NEXT_PUBLIC_* vars are inlined at build time. Amplify sets console env
+        # vars in the shell, but writing them into .env.production guarantees
+        # `next build` picks them up for the client bundle.
+        - env | grep -e '^NEXT_PUBLIC_' >> .env.production || true
+        - npm run build
+  artifacts:
+    # Amplify auto-detects the Next.js SSR (WEB_COMPUTE) platform and serves
+    # the .next output via managed compute — do not change to static export.
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - .next/cache/**/*
+      - .npm/**/*
+      - node_modules/**/*

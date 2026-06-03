@@ -1,13 +1,13 @@
 // Current account profile: Cognito identity + company record + key count.
+import { errorStatus, getCompany, listKeys } from "@/lib/api";
 import { getAccountContext } from "@/lib/bff";
-import { getCompany, listKeys } from "@/lib/dynamo";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const ctx = await getAccountContext();
-  if (!ctx) return Response.json({ error: { detail: "Not signed in" } }, { status: 401 });
   try {
+    const ctx = await getAccountContext();
+    if (!ctx) return Response.json({ error: { detail: "Not signed in" } }, { status: 401 });
     const [company, keys] = await Promise.all([getCompany(ctx.companyId), listKeys(ctx.companyId)]);
     return Response.json({
       email: ctx.claims.email,
@@ -19,7 +19,7 @@ export async function GET() {
   } catch (err) {
     return Response.json(
       { error: { detail: err instanceof Error ? err.message : "Failed to load account" } },
-      { status: 500 },
+      { status: errorStatus(err) || 500 },
     );
   }
 }

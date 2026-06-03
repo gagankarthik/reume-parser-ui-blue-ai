@@ -1,8 +1,8 @@
-// My webhooks (scoped to the signed-in user's company), direct to DynamoDB.
+// My webhooks (scoped to the signed-in user's company), via the backend.
 import { NextRequest } from "next/server";
 
+import { createWebhook, errorStatus, listWebhooks } from "@/lib/api";
 import { getAccountContext } from "@/lib/bff";
-import { createWebhook, listWebhooks } from "@/lib/dynamo";
 import type { WebhookEvent } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -12,18 +12,16 @@ function fail(status: number, detail: string) {
 }
 
 export async function GET() {
-  const ctx = await getAccountContext();
-  if (!ctx) return fail(401, "Not signed in");
   try {
+    const ctx = await getAccountContext();
+    if (!ctx) return fail(401, "Not signed in");
     return Response.json(await listWebhooks(ctx.companyId));
   } catch (err) {
-    return fail(500, err instanceof Error ? err.message : "Failed to list webhooks");
+    return fail(errorStatus(err) || 500, err instanceof Error ? err.message : "Failed to list webhooks");
   }
 }
 
 export async function POST(req: NextRequest) {
-  const ctx = await getAccountContext();
-  if (!ctx) return fail(401, "Not signed in");
   let body: { url?: string; events?: WebhookEvent[] };
   try {
     body = await req.json();
@@ -32,8 +30,10 @@ export async function POST(req: NextRequest) {
   }
   if (!body.url) return fail(422, "url is required");
   try {
+    const ctx = await getAccountContext();
+    if (!ctx) return fail(401, "Not signed in");
     return Response.json(await createWebhook(ctx.companyId, body.url, body.events ?? []), { status: 201 });
   } catch (err) {
-    return fail(422, err instanceof Error ? err.message : "Failed to create webhook");
+    return fail(errorStatus(err) || 422, err instanceof Error ? err.message : "Failed to create webhook");
   }
 }

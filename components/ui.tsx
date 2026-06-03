@@ -1,5 +1,5 @@
-// Shared, presentational UI primitives. Pure Tailwind, no external deps.
-// Parallel feature pages import from here for a consistent look.
+// Shared, presentational UI primitives for the "editorial document" theme.
+// Warm paper, ink, evergreen accent. Pure Tailwind, no external deps.
 "use client";
 
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
@@ -8,18 +8,47 @@ export function cn(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
 
-export function Card({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+/** Brand monogram — a document being parsed into structured lines. */
+export function BrandMark({ className = "h-9 w-9" }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        "relative grid shrink-0 place-items-center overflow-hidden rounded-[10px]",
+        "bg-accent-700 text-[var(--surface)] shadow-sm ring-1 ring-black/10",
+        className,
+      )}
+    >
+      <svg viewBox="0 0 24 24" fill="none" className="h-[60%] w-[60%]">
+        <path d="M6 6.5h8M6 10h11M6 13.5h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M14.2 14.3l2.1 2.1 3.6-4" stroke="var(--color-brass-400)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+}
+
+/** Wordmark lockup: monogram + name in the editorial serif. */
+export function Wordmark({ className }: { className?: string }) {
+  return (
+    <span className={cn("flex items-center gap-2.5", className)}>
+      <BrandMark className="h-8 w-8" />
+      <span className="font-display text-[1.05rem] font-semibold tracking-tight text-ink">
+        Blue<span className="text-accent-700">·</span>IQ Parser
+      </span>
+    </span>
+  );
+}
+
+/** Real brand lockup (public/logo.svg) — use wherever the logo should appear. */
+export function Logo({ className = "h-7 w-auto" }: { className?: string }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/logo.svg" alt="Blue-IQ" className={className} />;
+}
+
+export function Card({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm",
-        "dark:border-zinc-800 dark:bg-zinc-900",
+        "rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(10,23,51,0.04),0_8px_24px_-16px_rgba(10,23,51,0.16)]",
         className,
       )}
     >
@@ -28,19 +57,11 @@ export function Card({
   );
 }
 
-export function SectionTitle({
-  children,
-  hint,
-}: {
-  children: ReactNode;
-  hint?: string;
-}) {
+export function SectionTitle({ children, hint }: { children: ReactNode; hint?: string }) {
   return (
     <div className="mb-4">
-      <h2 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-        {children}
-      </h2>
-      {hint && <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{hint}</p>}
+      <h2 className="font-display text-lg font-semibold tracking-tight text-ink">{children}</h2>
+      {hint && <p className="mt-1 text-sm text-ink-soft">{hint}</p>}
     </div>
   );
 }
@@ -59,21 +80,15 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const base =
-    "inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50";
+    "inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50";
   const variants: Record<string, string> = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-500",
-    secondary:
-      "border border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800",
-    danger: "bg-red-600 text-white hover:bg-red-500",
-    ghost:
-      "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800",
+    primary: "bg-accent-700 text-[var(--surface)] shadow-sm hover:bg-accent-800 hover:-translate-y-px active:translate-y-0",
+    secondary: "border border-line-strong bg-surface text-ink hover:border-accent-300 hover:bg-accent-50",
+    danger: "bg-red-700 text-white hover:bg-red-800",
+    ghost: "text-ink-soft hover:bg-black/[0.04] hover:text-ink",
   };
   return (
-    <button
-      className={cn(base, variants[variant], className)}
-      disabled={disabled || loading}
-      {...rest}
-    >
+    <button className={cn(base, variants[variant], className)} disabled={disabled || loading} {...rest}>
       {loading && <Spinner />}
       {children}
     </button>
@@ -84,9 +99,8 @@ export function Input({ className, ...rest }: InputHTMLAttributes<HTMLInputEleme
   return (
     <input
       className={cn(
-        "h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 outline-none",
-        "focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20",
-        "dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100",
+        "h-11 w-full rounded-xl border border-line-strong bg-surface px-3.5 text-sm text-ink outline-none transition-colors",
+        "placeholder:text-ink-soft/60 focus:border-accent-500 focus:ring-4 focus:ring-accent-500/10",
         className,
       )}
       {...rest}
@@ -95,11 +109,7 @@ export function Input({ className, ...rest }: InputHTMLAttributes<HTMLInputEleme
 }
 
 export function Label({ children }: { children: ReactNode }) {
-  return (
-    <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-      {children}
-    </label>
-  );
+  return <label className="mb-1.5 block text-sm font-medium text-ink">{children}</label>;
 }
 
 export function Spinner({ className }: { className?: string }) {
@@ -122,16 +132,16 @@ export function Badge({
   tone?: "neutral" | "success" | "warning" | "danger" | "info";
 }) {
   const tones: Record<string, string> = {
-    neutral: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
-    success: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
-    warning: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
-    danger: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
-    info: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300",
+    neutral: "bg-black/[0.05] text-ink-soft ring-line",
+    success: "bg-accent-50 text-accent-700 ring-accent-200",
+    warning: "bg-amber-100 text-amber-800 ring-amber-200",
+    danger: "bg-red-100 text-red-700 ring-red-200",
+    info: "bg-accent-50 text-accent-700 ring-accent-200",
   };
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-md px-2 py-0.5 font-mono text-[0.7rem] font-medium ring-1 ring-inset",
         tones[tone],
       )}
     >
@@ -142,8 +152,11 @@ export function Badge({
 
 export function ErrorBanner({ message }: { message: string }) {
   return (
-    <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
-      {message}
+    <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      <svg className="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none">
+        <path d="M12 8v5M12 16h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span>{message}</span>
     </div>
   );
 }

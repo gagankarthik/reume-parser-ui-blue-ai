@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 
-import { AreaChart, BarList, Donut, StatCard } from "@/components/charts";
-import { Button, ErrorBanner, Spinner } from "@/components/ui";
+import { StatCard } from "@/components/charts";
+import { ErrorBanner, Spinner } from "@/components/ui";
 import { getUsage, listKeys } from "@/lib/account";
 import { ApiError, type Usage } from "@/lib/types";
 
@@ -12,103 +13,107 @@ function errMsg(e: unknown): string {
   return e instanceof ApiError ? e.message : e instanceof Error ? e.message : "Unexpected error";
 }
 
+const LINKS = [
+  { href: "/dashboard/analytics", title: "Analytics", desc: "Usage, tokens & job outcomes", icon: <AnalyticsIcon /> },
+  { href: "/dashboard/keys", title: "API Keys", desc: "Generate and revoke keys", icon: <KeyIcon /> },
+  { href: "/dashboard/webhooks", title: "Webhooks", desc: "Signed delivery for async jobs", icon: <WebhookIcon /> },
+  { href: "/docs", title: "Docs", desc: "Authenticate and parse a resume", icon: <DocsIcon /> },
+];
+
 export default function OverviewPage() {
   const [usage, setUsage] = useState<Usage | null>(null);
   const [activeKeys, setActiveKeys] = useState<number | null>(null);
-  const [days, setDays] = useState(30);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const [u, keys] = await Promise.all([getUsage(days), listKeys()]);
-      setUsage(u);
-      setActiveKeys(keys.filter((k) => k.status === "active").length);
-    } catch (e) {
-      setError(errMsg(e));
-    } finally {
-      setLoading(false);
-    }
-  }, [days]);
-
   useEffect(() => {
-    load();
-  }, [load]);
+    (async () => {
+      try {
+        const [u, keys] = await Promise.all([getUsage(30), listKeys()]);
+        setUsage(u);
+        setActiveKeys(keys.filter((k) => k.status === "active").length);
+      } catch (e) {
+        setError(errMsg(e));
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const t = usage?.totals;
   const successRate = t && t.jobs ? Math.round((t.completed / t.jobs) * 100) : 0;
-  const other = t ? Math.max(0, t.jobs - t.completed - t.failed) : 0;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-8">
+      <div className="flex items-start gap-3">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent-50 text-accent-700 ring-1 ring-inset ring-accent-200">
+          <OverviewIcon />
+        </span>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">Usage and token analytics for your account.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1 rounded-lg border border-zinc-200 p-1 dark:border-zinc-800">
-            {[7, 30, 90].map((d) => (
-              <button
-                key={d}
-                onClick={() => setDays(d)}
-                className={
-                  "rounded-md px-3 py-1 text-sm font-medium transition-colors " +
-                  (d === days ? "bg-indigo-600 text-white" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800")
-                }
-              >
-                {d}d
-              </button>
-            ))}
-          </div>
-          <Button variant="ghost" onClick={load} type="button">Refresh</Button>
+          <p className="label-caps text-accent-700">Dashboard</p>
+          <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-ink">Overview</h1>
+          <p className="mt-1 text-sm text-ink-soft">Your account at a glance.</p>
         </div>
       </div>
 
       {error && <ErrorBanner message={error} />}
 
-      {loading && !usage ? (
-        <div className="flex items-center gap-2 py-16 text-sm text-zinc-500">
-          <Spinner /> Loading analytics…
-        </div>
-      ) : usage ? (
+      {loading ? (
+        <div className="flex items-center gap-2 py-10 text-sm text-ink-soft"><Spinner /> Loading…</div>
+      ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard label="Active keys" value={activeKeys ?? "—"} accent="indigo" />
-            <StatCard label={`Jobs · ${days}d`} value={t!.jobs.toLocaleString()} accent="zinc" />
-            <StatCard label="Tokens used" value={t!.tokens_used.toLocaleString()} accent="emerald" />
-            <StatCard label="Success rate" value={`${successRate}%`} sub={`${t!.completed} ok · ${t!.failed} failed`} accent={successRate >= 90 ? "emerald" : successRate >= 70 ? "amber" : "rose"} />
+            <StatCard label="Active keys" value={activeKeys ?? "—"} accent="accent" />
+            <StatCard label="Jobs · 30d" value={t ? t.jobs.toLocaleString() : "—"} accent="ink" />
+            <StatCard label="Tokens used" value={t ? t.tokens_used.toLocaleString() : "—"} accent="brass" />
+            <StatCard label="Success rate" value={t ? `${successRate}%` : "—"} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            <AreaChart label="Tokens per day" color="#6366f1" data={usage.by_day.map((d) => ({ date: d.date, value: d.tokens }))} />
-            <AreaChart label="Jobs per day" color="#10b981" data={usage.by_day.map((d) => ({ date: d.date, value: d.jobs }))} />
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Donut
-              title="Job outcomes"
-              segments={[
-                { label: "Completed", value: t!.completed, color: "#10b981" },
-                { label: "Failed", value: t!.failed, color: "#f43f5e" },
-                { label: "Other", value: other, color: "#a1a1aa" },
-              ]}
-            />
-            <BarList
-              title="By file type"
-              items={Object.entries(usage.by_file_type).map(([label, value]) => ({ label, value }))}
-            />
-          </div>
-
-          <div className="rounded-2xl border border-zinc-200 bg-white p-5 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-            Avg. processing time: <b className="text-zinc-900 dark:text-zinc-100">{t!.avg_duration_ms.toLocaleString()} ms</b> ·
-            OCR jobs: <b className="text-zinc-900 dark:text-zinc-100">{t!.ocr_jobs}</b> ·{" "}
-            <Link href="/dashboard/keys" className="font-medium text-indigo-600 hover:underline">Manage API keys →</Link>
+          <div>
+            <h2 className="mb-4 font-display text-lg font-semibold tracking-tight text-ink">Quick links</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {LINKS.map((l) => (
+                <QuickLink key={l.href} {...l} />
+              ))}
+            </div>
           </div>
         </>
-      ) : null}
+      )}
     </div>
   );
+}
+
+function QuickLink({ href, title, desc, icon }: { href: string; title: string; desc: string; icon: ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="group flex items-center gap-4 rounded-2xl border border-line bg-surface p-5 transition-all hover:-translate-y-0.5 hover:border-accent-200 hover:shadow-[0_20px_44px_-30px_rgba(10,23,51,0.35)]"
+    >
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent-50 text-accent-700 ring-1 ring-inset ring-accent-200 transition-colors group-hover:bg-accent-700 group-hover:text-white group-hover:ring-accent-700">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block font-display text-base font-semibold tracking-tight text-ink">{title}</span>
+        <span className="block truncate text-sm text-ink-soft">{desc}</span>
+      </span>
+      <svg className="h-4 w-4 shrink-0 text-ink-soft transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    </Link>
+  );
+}
+
+/* icons */
+function OverviewIcon() {
+  return <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M4 13h7V4H4v9zM13 20h7V4h-7v16zM4 20h7v-4H4v4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>;
+}
+function AnalyticsIcon() {
+  return <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16M8 19v-5M12 19V9M16 19v-7M20 19V6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+function KeyIcon() {
+  return <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M15 7a4 4 0 1 0-3.9 5L7 16v3h3v-2h2v-2h1.1A4 4 0 0 0 15 7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>;
+}
+function WebhookIcon() {
+  return <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M9 7a3 3 0 1 1 4 2.8L10 15M7 13a3 3 0 1 0 3 3h6M17 13a3 3 0 1 1-2.8 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+function DocsIcon() {
+  return <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M7 3h7l4 4v14H7zM14 3v4h4M9 12h6M9 16h6" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>;
 }
