@@ -36,6 +36,7 @@ function Nav() {
           <a href="#features" className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-100">Features</a>
           <a href="#how" className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-100">How it works</a>
           <a href="#api" className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-100">API</a>
+          <Link href="/docs" className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-100">Docs</Link>
         </nav>
         <div className="flex items-center gap-2">
           <Link
@@ -399,7 +400,7 @@ function Footer() {
         </div>
         <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-zinc-500">
           <a href="#features" className="hover:text-zinc-900 dark:hover:text-zinc-200">Features</a>
-          <a href="#api" className="hover:text-zinc-900 dark:hover:text-zinc-200">API</a>
+          <Link href="/docs" className="hover:text-zinc-900 dark:hover:text-zinc-200">Docs</Link>
           <Link href="/login" className="hover:text-zinc-900 dark:hover:text-zinc-200">Sign in</Link>
           <Link href="/signup" className="hover:text-zinc-900 dark:hover:text-zinc-200">Get started</Link>
         </nav>

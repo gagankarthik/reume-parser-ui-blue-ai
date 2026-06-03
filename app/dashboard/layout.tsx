@@ -17,6 +17,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
             Blue-IQ Parser
           </Link>
           <div className="flex items-center gap-3">
+            <Link href="/docs" className="hidden text-sm font-medium text-zinc-600 hover:text-zinc-900 sm:inline dark:text-zinc-400 dark:hover:text-zinc-100">
+              Docs
+            </Link>
             <span className="hidden text-sm text-zinc-500 sm:inline dark:text-zinc-400">{claims.email}</span>
             <LogoutButton />
           </div>
