@@ -1,4 +1,4 @@
-# Resume Parser — Product Platform
+# Blue-IQ Parser — Product Platform
 
 Customer-facing platform for the resume-parser API: landing page, **AWS Cognito**
 sign-up / sign-in, onboarding, and **API-key generation** + usage stats. No résumé

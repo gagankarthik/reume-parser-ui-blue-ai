@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 export const metadata = {
-  title: "Resume Parser API — structured data from any résumé",
+  title: "Blue-IQ Parser API — structured data from any résumé",
   description:
     "Turn PDF, DOCX, and scanned résumés into schema-validated JSON with one API call. Confidence scores, webhooks, privacy-first.",
 };
@@ -26,27 +26,27 @@ export default function Landing() {
 
 function Nav() {
   return (
-    <header className="sticky top-0 z-40 border-b border-stone-200/70 bg-[var(--background)]/80 backdrop-blur-md dark:border-stone-800/70">
+    <header className="sticky top-0 z-40 border-b border-zinc-200/70 bg-[var(--background)]/80 backdrop-blur-md dark:border-zinc-800/70">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2.5">
           <Logo />
-          <span className="font-display text-lg font-semibold tracking-tight">Resume Parser</span>
+          <span className="font-display text-lg font-semibold tracking-tight">Blue-IQ Parser</span>
         </Link>
-        <nav className="hidden items-center gap-8 text-sm text-stone-600 md:flex dark:text-stone-400">
-          <a href="#features" className="transition-colors hover:text-stone-950 dark:hover:text-stone-100">Features</a>
-          <a href="#how" className="transition-colors hover:text-stone-950 dark:hover:text-stone-100">How it works</a>
-          <a href="#api" className="transition-colors hover:text-stone-950 dark:hover:text-stone-100">API</a>
+        <nav className="hidden items-center gap-8 text-sm text-zinc-600 md:flex dark:text-zinc-400">
+          <a href="#features" className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-100">Features</a>
+          <a href="#how" className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-100">How it works</a>
+          <a href="#api" className="transition-colors hover:text-zinc-950 dark:hover:text-zinc-100">API</a>
         </nav>
         <div className="flex items-center gap-2">
           <Link
             href="/login"
-            className="rounded-full px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-200/60 dark:text-stone-300 dark:hover:bg-stone-800/60"
+            className="rounded-full px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-200/60 dark:text-zinc-300 dark:hover:bg-zinc-800/60"
           >
             Sign in
           </Link>
           <Link
             href="/signup"
-            className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-stone-50 shadow-sm transition-transform hover:-translate-y-0.5 dark:bg-stone-100 dark:text-stone-900"
+            className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 shadow-sm transition-transform hover:-translate-y-0.5 dark:bg-zinc-100 dark:text-zinc-900"
           >
             Get started
           </Link>
@@ -64,7 +64,7 @@ function Hero() {
       {/* atmosphere */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 text-stone-300/50 bg-dot-grid [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)] dark:text-stone-700/40"
+        className="pointer-events-none absolute inset-0 -z-10 text-zinc-300/50 bg-dot-grid [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)] dark:text-zinc-700/40"
       />
       <div
         aria-hidden
@@ -73,7 +73,7 @@ function Hero() {
 
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 pt-20 pb-24 lg:grid-cols-[1.05fr_0.95fr] lg:pt-28">
         <div>
-          <span className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-stone-300/70 bg-white/60 px-3 py-1 text-xs font-medium text-stone-600 dark:border-stone-700 dark:bg-stone-900/60 dark:text-stone-400">
+          <span className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-zinc-300/70 bg-white/60 px-3 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900/60 dark:text-zinc-400">
             <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
             Résumé parsing API
           </span>
@@ -91,7 +91,7 @@ function Hero() {
           </h1>
 
           <p
-            className="animate-fade-up mt-6 max-w-xl text-lg leading-relaxed text-stone-600 dark:text-stone-400"
+            className="animate-fade-up mt-6 max-w-xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400"
             style={{ animationDelay: "120ms" }}
           >
             One API call converts PDF, DOCX, and scanned résumés into schema-validated JSON —
@@ -111,21 +111,21 @@ function Hero() {
             </Link>
             <a
               href="#api"
-              className="inline-flex items-center gap-2 rounded-full border border-stone-300 px-6 py-3 text-sm font-medium text-stone-800 transition-colors hover:bg-stone-200/50 dark:border-stone-700 dark:text-stone-200 dark:hover:bg-stone-800/50"
+              className="inline-flex items-center gap-2 rounded-full border border-zinc-300 px-6 py-3 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-200/50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800/50"
             >
               See the API
             </a>
           </div>
 
           <p
-            className="animate-fade-up mt-6 text-sm text-stone-500 dark:text-stone-500"
+            className="animate-fade-up mt-6 text-sm text-zinc-500 dark:text-zinc-500"
             style={{ animationDelay: "240ms" }}
           >
             Privacy-first · résumé files never stored · built for healthcare staffing
           </p>
         </div>
 
-        <div className="animate-fade-up animate-float" style={{ animationDelay: "300ms" }}>
+        <div className="animate-fade-up" style={{ animationDelay: "300ms" }}>
           <TransformCard />
         </div>
       </div>
@@ -136,18 +136,18 @@ function Hero() {
 function TransformCard() {
   return (
     <div className="relative">
-      <div className="rounded-2xl border border-stone-200 bg-white shadow-2xl shadow-stone-900/10 dark:border-stone-800 dark:bg-stone-900">
-        <div className="flex items-center gap-2 border-b border-stone-200 px-4 py-3 dark:border-stone-800">
+      <div className="rounded-2xl border border-zinc-200 bg-white shadow-2xl shadow-zinc-900/10 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex items-center gap-2 border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
           <span className="h-3 w-3 rounded-full bg-red-400" />
           <span className="h-3 w-3 rounded-full bg-amber-400" />
           <span className="h-3 w-3 rounded-full bg-green-400" />
-          <span className="ml-2 font-mono text-xs text-stone-400">POST /api/v1/resume/parse</span>
+          <span className="ml-2 font-mono text-xs text-zinc-400">POST /api/v1/resume/parse</span>
         </div>
         <pre className="overflow-x-auto p-5 font-mono text-[13px] leading-relaxed">
           <code>
-            <span className="text-stone-400">{"{"}</span>
+            <span className="text-zinc-400">{"{"}</span>
             {"\n  "}
-            <K>{'"personal_info"'}</K>: <span className="text-stone-400">{"{"}</span>
+            <K>{'"personal_info"'}</K>: <span className="text-zinc-400">{"{"}</span>
             {"\n    "}
             <K>{'"full_name"'}</K>: <S>{'"Jane Okonkwo, RN"'}</S>,
             {"\n    "}
@@ -155,9 +155,9 @@ function TransformCard() {
             {"\n    "}
             <K>{'"location"'}</K>: <S>{'"Austin, TX"'}</S>
             {"\n  "}
-            <span className="text-stone-400">{"},"}</span>
+            <span className="text-zinc-400">{"},"}</span>
             {"\n  "}
-            <K>{'"experience"'}</K>: <span className="text-stone-400">[{"{"}</span>
+            <K>{'"experience"'}</K>: <span className="text-zinc-400">[{"{"}</span>
             {"\n    "}
             <K>{'"role"'}</K>: <S>{'"ICU Nurse"'}</S>,
             {"\n    "}
@@ -165,21 +165,21 @@ function TransformCard() {
             {"\n    "}
             <K>{'"start_date"'}</K>: <S>{'"2021-03"'}</S>
             {"\n  "}
-            <span className="text-stone-400">{"}],"}</span>
+            <span className="text-zinc-400">{"}],"}</span>
             {"\n  "}
-            <K>{'"skills"'}</K>: <span className="text-stone-400">[</span>
+            <K>{'"skills"'}</K>: <span className="text-zinc-400">[</span>
             <S>{'"ACLS"'}</S>, <S>{'"Triage"'}</S>
-            <span className="text-stone-400">],</span>
+            <span className="text-zinc-400">],</span>
             {"\n  "}
             <K>{'"confidence"'}</K>: <span className="text-emerald-500">0.94</span>
             {"\n"}
-            <span className="text-stone-400">{"}"}</span>
+            <span className="text-zinc-400">{"}"}</span>
           </code>
         </pre>
       </div>
       {/* little input chip */}
-      <div className="absolute -left-5 -top-5 hidden rotate-[-4deg] rounded-xl border border-stone-200 bg-white px-3 py-2 shadow-lg sm:block dark:border-stone-800 dark:bg-stone-900">
-        <div className="flex items-center gap-2 text-xs text-stone-500">
+      <div className="absolute -left-5 -top-5 hidden rotate-[-4deg] rounded-xl border border-zinc-200 bg-white px-3 py-2 shadow-lg sm:block dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex items-center gap-2 text-xs text-zinc-500">
           <FileIcon />
           jane_okonkwo_resume.pdf
         </div>
@@ -193,8 +193,8 @@ function TransformCard() {
 function Trust() {
   const items = ["PDF", "DOCX", "Scanned PDF", "PNG · JPG · TIFF", "Webhooks", "Structured JSON"];
   return (
-    <section className="border-y border-stone-200/70 bg-white/40 dark:border-stone-800/70 dark:bg-stone-900/20">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 py-6 text-sm font-medium text-stone-500 dark:text-stone-500">
+    <section className="border-y border-zinc-200/70 bg-white/40 dark:border-zinc-800/70 dark:bg-zinc-900/20">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 py-6 text-sm font-medium text-zinc-500 dark:text-zinc-500">
         {items.map((i) => (
           <span key={i}>{i}</span>
         ))}
@@ -241,21 +241,21 @@ function Features() {
   return (
     <section id="features" className="mx-auto max-w-6xl px-6 py-24">
       <SectionHeading
-        eyebrow="Why Resume Parser"
+        eyebrow="Why Blue-IQ Parser"
         title="Built to drop straight into your pipeline"
         sub="Everything you need to go from an uploaded file to a candidate record — accurately, and without storing sensitive data."
       />
-      <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-stone-200 bg-stone-200 sm:grid-cols-2 lg:grid-cols-3 dark:border-stone-800 dark:bg-stone-800">
+      <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-200 sm:grid-cols-2 lg:grid-cols-3 dark:border-zinc-800 dark:bg-zinc-800">
         {features.map((f) => (
           <div
             key={f.title}
-            className="group bg-[var(--background)] p-8 transition-colors hover:bg-white dark:hover:bg-stone-900"
+            className="group bg-[var(--background)] p-8 transition-colors hover:bg-white dark:hover:bg-zinc-900"
           >
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition-colors group-hover:bg-indigo-600 group-hover:text-white dark:bg-indigo-950/50 dark:text-indigo-400">
               {f.icon}
             </div>
             <h3 className="mt-5 font-display text-xl font-semibold tracking-tight">{f.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-stone-600 dark:text-stone-400">{f.body}</p>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{f.body}</p>
           </div>
         ))}
       </div>
@@ -284,7 +284,7 @@ function HowItWorks() {
     },
   ];
   return (
-    <section id="how" className="border-y border-stone-200/70 bg-white/40 dark:border-stone-800/70 dark:bg-stone-900/20">
+    <section id="how" className="border-y border-zinc-200/70 bg-white/40 dark:border-zinc-800/70 dark:bg-zinc-900/20">
       <div className="mx-auto max-w-6xl px-6 py-24">
         <SectionHeading eyebrow="How it works" title="Three steps to structured candidates" />
         <div className="mt-14 grid gap-8 md:grid-cols-3">
@@ -294,7 +294,7 @@ function HowItWorks() {
                 {s.n}
               </div>
               <h3 className="mt-4 text-lg font-semibold tracking-tight">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-stone-600 dark:text-stone-400">{s.body}</p>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{s.body}</p>
             </div>
           ))}
         </div>
@@ -313,38 +313,38 @@ function ApiSample() {
         title="A request and a response. That's the integration."
         sub="API-key auth, multipart upload, structured JSON back. No SDK required."
       />
-      <div className="mt-14 overflow-hidden rounded-2xl border border-stone-800 bg-stone-950 shadow-2xl shadow-stone-900/30">
-        <div className="flex items-center gap-2 border-b border-stone-800 px-5 py-3">
+      <div className="mt-14 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl shadow-zinc-900/30">
+        <div className="flex items-center gap-2 border-b border-zinc-800 px-5 py-3">
           <span className="h-3 w-3 rounded-full bg-red-400/80" />
           <span className="h-3 w-3 rounded-full bg-amber-400/80" />
           <span className="h-3 w-3 rounded-full bg-green-400/80" />
-          <span className="ml-2 font-mono text-xs text-stone-500">Terminal</span>
+          <span className="ml-2 font-mono text-xs text-zinc-500">Terminal</span>
         </div>
-        <div className="grid gap-px bg-stone-800 md:grid-cols-2">
-          <pre className="overflow-x-auto bg-stone-950 p-6 font-mono text-[13px] leading-relaxed text-stone-300">
+        <div className="grid gap-px bg-zinc-800 md:grid-cols-2">
+          <pre className="overflow-x-auto bg-zinc-950 p-6 font-mono text-[13px] leading-relaxed text-zinc-300">
             <code>
-              <span className="text-stone-500"># Send a résumé</span>
+              <span className="text-zinc-500"># Send a résumé</span>
               {"\n"}
               <span className="text-emerald-400">curl</span> -X POST {"\\"}
-              {"\n  "}https://api.your-domain.com<span className="text-stone-500">/api/v1/resume/parse</span> {"\\"}
+              {"\n  "}https://api.your-domain.com<span className="text-zinc-500">/api/v1/resume/parse</span> {"\\"}
               {"\n  "}-H <S>{'"X-API-Key: rp_live_…"'}</S> {"\\"}
               {"\n  "}-F <S>{'"file=@resume.pdf"'}</S>
             </code>
           </pre>
-          <pre className="overflow-x-auto bg-stone-950 p-6 font-mono text-[13px] leading-relaxed">
+          <pre className="overflow-x-auto bg-zinc-950 p-6 font-mono text-[13px] leading-relaxed">
             <code>
-              <span className="text-stone-500">{"// 200 OK"}</span>
+              <span className="text-zinc-500">{"// 200 OK"}</span>
               {"\n"}
-              <span className="text-stone-500">{"{"}</span>
+              <span className="text-zinc-500">{"{"}</span>
               {"\n  "}
               <K>{'"status"'}</K>: <S>{'"completed"'}</S>,
               {"\n  "}
-              <K>{'"data"'}</K>: <span className="text-stone-500">{"{ … }"}</span>,
+              <K>{'"data"'}</K>: <span className="text-zinc-500">{"{ … }"}</span>,
               {"\n  "}
-              <K>{'"confidence"'}</K>: <span className="text-stone-500">{"{"}</span>{" "}
-              <K>{'"overall"'}</K>: <span className="text-emerald-400">0.91</span> <span className="text-stone-500">{"}"}</span>
+              <K>{'"confidence"'}</K>: <span className="text-zinc-500">{"{"}</span>{" "}
+              <K>{'"overall"'}</K>: <span className="text-emerald-400">0.91</span> <span className="text-zinc-500">{"}"}</span>
               {"\n"}
-              <span className="text-stone-500">{"}"}</span>
+              <span className="text-zinc-500">{"}"}</span>
             </code>
           </pre>
         </div>
@@ -391,19 +391,19 @@ function CtaBand() {
 
 function Footer() {
   return (
-    <footer className="border-t border-stone-200/70 dark:border-stone-800/70">
+    <footer className="border-t border-zinc-200/70 dark:border-zinc-800/70">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-10 sm:flex-row">
         <div className="flex items-center gap-2.5">
           <Logo />
-          <span className="font-display font-semibold">Resume Parser</span>
+          <span className="font-display font-semibold">Blue-IQ Parser</span>
         </div>
-        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-stone-500">
-          <a href="#features" className="hover:text-stone-900 dark:hover:text-stone-200">Features</a>
-          <a href="#api" className="hover:text-stone-900 dark:hover:text-stone-200">API</a>
-          <Link href="/login" className="hover:text-stone-900 dark:hover:text-stone-200">Sign in</Link>
-          <Link href="/signup" className="hover:text-stone-900 dark:hover:text-stone-200">Get started</Link>
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-zinc-500">
+          <a href="#features" className="hover:text-zinc-900 dark:hover:text-zinc-200">Features</a>
+          <a href="#api" className="hover:text-zinc-900 dark:hover:text-zinc-200">API</a>
+          <Link href="/login" className="hover:text-zinc-900 dark:hover:text-zinc-200">Sign in</Link>
+          <Link href="/signup" className="hover:text-zinc-900 dark:hover:text-zinc-200">Get started</Link>
         </nav>
-        <p className="text-sm text-stone-400">© {new Date().getFullYear()} BlueIQ</p>
+        <p className="text-sm text-zinc-400">© {new Date().getFullYear()} BlueIQ</p>
       </div>
     </footer>
   );
@@ -416,7 +416,7 @@ function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: strin
     <div className="max-w-2xl">
       <p className="text-sm font-semibold tracking-wide text-indigo-600 uppercase dark:text-indigo-400">{eyebrow}</p>
       <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-balance">{title}</h2>
-      {sub && <p className="mt-4 text-lg leading-relaxed text-stone-600 dark:text-stone-400">{sub}</p>}
+      {sub && <p className="mt-4 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">{sub}</p>}
     </div>
   );
 }
@@ -430,22 +430,18 @@ function S({ children }: { children: ReactNode }) {
 
 function Logo() {
   return (
-    <span className="grid h-8 w-8 place-items-center rounded-lg bg-indigo-600 font-display text-sm font-bold text-white shadow-sm">
-      R
+    <span className="grid h-8 w-8 place-items-center rounded-lg bg-indigo-600 text-sm font-bold text-white shadow-sm">
+      B
     </span>
   );
 }
 
 function Underline() {
   return (
-    <svg
+    <span
       aria-hidden
-      viewBox="0 0 200 12"
-      className="absolute -bottom-1 left-0 h-2.5 w-full text-indigo-400/60"
-      preserveAspectRatio="none"
-    >
-      <path d="M2 8 C 50 2, 150 2, 198 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    </svg>
+      className="absolute -bottom-1.5 left-0 h-1 w-full rounded-full bg-indigo-500/40"
+    />
   );
 }
 

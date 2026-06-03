@@ -20,25 +20,32 @@ export async function adminFetch(path: string, init: RequestInit = {}): Promise<
   });
 }
 
+async function lookupByEmail(email: string): Promise<string | null> {
+  const res = await adminFetch(`companies/lookup?email=${encodeURIComponent(email)}`);
+  if (res.ok) return (await res.json()).company_id as string;
+  if (res.status === 404) return null;
+  throw new Error(`Lookup failed (HTTP ${res.status})`);
+}
+
 /** Find the company for this email, creating it on first sign-in (onboarding). */
 export async function resolveCompanyId(claims: SessionClaims): Promise<string> {
-  const lookup = await adminFetch(`companies/lookup?email=${encodeURIComponent(claims.email)}`);
-  if (lookup.ok) {
-    return (await lookup.json()).company_id as string;
-  }
-  if (lookup.status !== 404) {
-    throw new Error(`Lookup failed (HTTP ${lookup.status})`);
-  }
+  const existing = await lookupByEmail(claims.email);
+  if (existing) return existing;
+
   // First sign-in → create the company (onboard).
   const created = await adminFetch("companies", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name: claims.name || claims.email, email: claims.email }),
   });
-  if (!created.ok) {
-    throw new Error(`Onboarding failed (HTTP ${created.status})`);
+  if (created.ok) return (await created.json()).company_id as string;
+
+  // 409/422 means a concurrent first-load already created it — re-look-up.
+  if (created.status === 409 || created.status === 422) {
+    const afterRace = await lookupByEmail(claims.email);
+    if (afterRace) return afterRace;
   }
-  return (await created.json()).company_id as string;
+  throw new Error(`Onboarding failed (HTTP ${created.status})`);
 }
 
 /** Returns {claims, companyId} for the signed-in user, or null if not signed in. */
