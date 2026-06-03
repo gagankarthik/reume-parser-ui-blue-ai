@@ -44,6 +44,20 @@ export interface Usage {
   by_file_type: Record<string, number>;
 }
 
+export type WebhookEvent = "parse.completed" | "parse.failed" | "batch.completed";
+
+export interface Webhook {
+  webhook_id: string;
+  url: string;
+  events: WebhookEvent[];
+  status: string;
+  created_at: string;
+}
+
+export interface CreatedWebhook extends Webhook {
+  hmac_secret: string; // shown once
+}
+
 export interface ApiErrorBody {
   error?: { detail?: string };
   detail?: string;

@@ -1,7 +1,24 @@
 // Browser-side client: Cognito auth + account data (/api/account/*).
 
 import * as cognito from "@/lib/cognito";
-import { ApiError, type ApiErrorBody, type ApiKeyInfo, type IssuedKey, type Usage } from "@/lib/types";
+import {
+  ApiError,
+  type ApiErrorBody,
+  type ApiKeyInfo,
+  type CreatedWebhook,
+  type IssuedKey,
+  type Usage,
+  type Webhook,
+  type WebhookEvent,
+} from "@/lib/types";
+
+export interface Me {
+  email: string;
+  name: string | null;
+  company: { company_id: string; name?: string; email?: string; plan?: string; status?: string; created_at?: string };
+  key_count: number;
+  active_key_count: number;
+}
 
 async function handle<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -62,4 +79,28 @@ export async function revokeKey(keyHash: string): Promise<void> {
 
 export async function getUsage(days = 30): Promise<Usage> {
   return handle<Usage>(await fetch(`/api/account/usage?days=${days}`));
+}
+
+export async function getMe(): Promise<Me> {
+  return handle<Me>(await fetch("/api/account/me"));
+}
+
+// ── Webhooks ──────────────────────────────────────────────────────────────────
+
+export async function listWebhooks(): Promise<Webhook[]> {
+  return handle<Webhook[]>(await fetch("/api/account/webhooks"));
+}
+
+export async function createWebhook(url: string, events: WebhookEvent[]): Promise<CreatedWebhook> {
+  return handle<CreatedWebhook>(
+    await fetch("/api/account/webhooks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, events }),
+    }),
+  );
+}
+
+export async function deleteWebhook(webhookId: string): Promise<void> {
+  await handle(await fetch(`/api/account/webhooks/${encodeURIComponent(webhookId)}`, { method: "DELETE" }));
 }

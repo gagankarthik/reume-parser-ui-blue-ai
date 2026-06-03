@@ -13,19 +13,27 @@ import crypto from "node:crypto";
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
+  DeleteCommand,
   DynamoDBDocumentClient,
   GetCommand,
   PutCommand,
   QueryCommand,
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
-
-import type { ApiKeyInfo, IssuedKey, Usage } from "@/lib/types";
+import type {
+  ApiKeyInfo,
+  CreatedWebhook,
+  IssuedKey,
+  Usage,
+  Webhook,
+  WebhookEvent,
+} from "@/lib/types";
 
 const REGION = process.env.AWS_REGION || "us-east-2";
 const T_API_KEYS = process.env.DYNAMODB_TABLE_API_KEYS || "resume-parser-api-keys";
 const T_COMPANIES = process.env.DYNAMODB_TABLE_COMPANIES || "resume-parser-companies";
 const T_AUDIT = process.env.DYNAMODB_TABLE_AUDIT_LOGS || "resume-parser-audit-logs";
+const T_WEBHOOKS = process.env.DYNAMODB_TABLE_WEBHOOKS || "resume-parser-webhooks";
 const API_KEYS_COMPANY_INDEX = "company-index";
 const COMPANIES_EMAIL_INDEX = "email-index";
 const AUDIT_COMPANY_INDEX = "company-timestamp-index";
@@ -72,6 +80,11 @@ async function getCompanyByEmail(email: string): Promise<CompanyRecord | null> {
     }),
   );
   return (out.Items?.[0] as CompanyRecord) ?? null;
+}
+
+export async function getCompany(companyId: string): Promise<CompanyRecord | null> {
+  const out = await doc().send(new GetCommand({ TableName: T_COMPANIES, Key: { company_id: companyId } }));
+  return (out.Item as CompanyRecord) ?? null;
 }
 
 /** Resolve the company for a signed-in user, creating it on first sign-in. */
@@ -156,6 +169,78 @@ export async function revokeKey(companyId: string, keyHash: string): Promise<voi
       ExpressionAttributeNames: { "#s": "status" },
       ExpressionAttributeValues: { ":r": "revoked" },
     }),
+  );
+}
+
+// ── Webhooks ──────────────────────────────────────────────────────────────────
+
+const VALID_EVENTS: WebhookEvent[] = ["parse.completed", "parse.failed", "batch.completed"];
+
+/** Lightweight SSRF/scheme guard. The backend re-validates at delivery time. */
+function validateWebhookUrl(url: string): void {
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    throw new Error("Webhook URL is not a valid URL");
+  }
+  if (u.protocol !== "https:") throw new Error("Webhook URL must use HTTPS");
+  const host = u.hostname.toLowerCase();
+  if (
+    host === "localhost" ||
+    host === "0.0.0.0" ||
+    host.endsWith(".local") ||
+    /^127\./.test(host) ||
+    /^10\./.test(host) ||
+    /^192\.168\./.test(host) ||
+    /^169\.254\./.test(host) ||
+    /^172\.(1[6-9]|2\d|3[0-1])\./.test(host)
+  ) {
+    throw new Error("Webhook URL must be a public address");
+  }
+}
+
+export async function listWebhooks(companyId: string): Promise<Webhook[]> {
+  const out = await doc().send(
+    new QueryCommand({
+      TableName: T_WEBHOOKS,
+      KeyConditionExpression: "company_id = :c",
+      ExpressionAttributeValues: { ":c": companyId },
+    }),
+  );
+  return (out.Items ?? []).map((w) => ({
+    webhook_id: String(w.webhook_id),
+    url: String(w.url ?? ""),
+    events: (w.events as WebhookEvent[]) ?? [],
+    status: String(w.status ?? "active"),
+    created_at: String(w.created_at ?? ""),
+  }));
+}
+
+export async function createWebhook(
+  companyId: string,
+  url: string,
+  events: WebhookEvent[],
+): Promise<CreatedWebhook> {
+  validateWebhookUrl(url);
+  const clean = events.filter((e) => VALID_EVENTS.includes(e));
+  if (clean.length === 0) throw new Error("Select at least one event");
+
+  const webhook_id = crypto.randomUUID();
+  const hmac_secret = crypto.randomBytes(32).toString("hex");
+  const created_at = new Date().toISOString();
+  await doc().send(
+    new PutCommand({
+      TableName: T_WEBHOOKS,
+      Item: { company_id: companyId, webhook_id, url, hmac_secret, events: clean, status: "active", created_at },
+    }),
+  );
+  return { webhook_id, url, events: clean, status: "active", created_at, hmac_secret };
+}
+
+export async function deleteWebhook(companyId: string, webhookId: string): Promise<void> {
+  await doc().send(
+    new DeleteCommand({ TableName: T_WEBHOOKS, Key: { company_id: companyId, webhook_id: webhookId } }),
   );
 }
 

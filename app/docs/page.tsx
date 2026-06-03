@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { BackButton } from "@/components/BackButton";
+
 export const metadata = {
   title: "Docs — Blue-IQ Parser API",
   description: "How to authenticate and use your Blue-IQ Parser API keys.",
@@ -22,10 +24,13 @@ export default function DocsPage() {
       {/* Top bar */}
       <header className="sticky top-0 z-40 border-b border-zinc-200/70 bg-[var(--background)]/85 backdrop-blur-md dark:border-zinc-800/70">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-indigo-600 text-sm font-bold text-white">B</span>
-            Blue-IQ Parser
-          </Link>
+          <div className="flex items-center gap-1">
+            <BackButton />
+            <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-indigo-600 text-sm font-bold text-white">B</span>
+              Blue-IQ Parser
+            </Link>
+          </div>
           <div className="flex items-center gap-2">
             <Link href="/dashboard" className="rounded-full px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-200/60 dark:text-zinc-300 dark:hover:bg-zinc-800/60">
               Dashboard
