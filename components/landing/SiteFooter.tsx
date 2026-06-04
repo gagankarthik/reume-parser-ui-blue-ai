@@ -12,7 +12,7 @@ const COLUMNS: Col[] = [
     links: [
       { label: "Resume Parser API", href: "#api" },
       { label: "Confidence scoring", href: "#api" },
-      { label: "Webhooks", href: "#how" },
+      { label: "Webhooks", href: "#api" },
       { label: "Schema & validation", href: "#api" },
       { label: "Pricing", href: "#pricing" },
     ],

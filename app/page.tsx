@@ -57,26 +57,15 @@ export default async function Landing() {
 
 function Hero({ authed }: { authed?: boolean }) {
   return (
-    <section className="relative">
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-vibrant-soft" />
-        <span className="aurora-blob animate-aurora" style={{ background: "#1d4ed8", width: 520, height: 520, top: -180, left: "-10%", opacity: 0.32 }} />
-        <span className="aurora-blob animate-aurora" style={{ background: "#5f87f6", width: 420, height: 420, top: -40, right: "-8%", opacity: 0.28, animationDelay: "-7s" }} />
-      </div>
-
+    <section className="relative bg-surface">
       <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 pt-14 pb-20 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:pt-20 lg:pb-28">
         <div>
-          <span className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 px-4 py-1.5 text-xs font-semibold text-ink-soft shadow-sm backdrop-blur">
-            <span className="h-2 w-2 rounded-full bg-accent-600" aria-hidden />
-            Resume Parsing API
-          </span>
-
           <h1
-            className="animate-fade-up mt-6 font-display text-[2.9rem] leading-[1.03] font-bold tracking-tight text-balance text-ink sm:text-6xl lg:text-[4rem]"
+            className="animate-fade-up font-display text-[2.9rem] leading-[1.03] font-bold tracking-tight text-balance text-ink sm:text-6xl lg:text-[4rem]"
             style={{ animationDelay: "60ms" }}
           >
             Turn any resume into{" "}
-            <span className="text-gradient">clean structured data</span>
+            <span className="text-accent-600">clean structured data</span>
           </h1>
 
           <p
@@ -101,14 +90,6 @@ function Hero({ authed }: { authed?: boolean }) {
               Read the docs
             </Link>
           </div>
-
-          <div className="animate-fade-up mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-soft" style={{ animationDelay: "200ms" }}>
-            {["Privacy-first", "Any format", "Signed webhooks"].map((t) => (
-              <span key={t} className="inline-flex items-center gap-2">
-                <CheckMini /> {t}
-              </span>
-            ))}
-          </div>
         </div>
 
         <Reveal delay={120}>
@@ -122,20 +103,18 @@ function Hero({ authed }: { authed?: boolean }) {
 function HeroMockup() {
   return (
     <div className="relative">
-      <div aria-hidden className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-br from-accent-300/35 via-accent-400/20 to-accent-500/20 blur-2xl" />
       <Frame label="jane_okonkwo.pdf" badge="Parsed">
         <div className="grid grid-cols-[0.85fr_1.15fr] gap-4">
-          <div className="relative h-[150px] overflow-hidden rounded-xl border border-line bg-gradient-to-b from-accent-50 to-surface p-4">
+          <div className="h-[150px] overflow-hidden rounded-xl border border-line bg-accent-50 p-4">
             <div className="space-y-2.5">
-              <span className="block h-2 w-3/4 rounded-full bg-accent-200" />
+              <span className="block h-2 w-3/4 rounded-full bg-accent-300" />
               <span className="block h-2 w-full rounded-full bg-line-strong" />
               <span className="block h-2 w-5/6 rounded-full bg-line-strong" />
               <span className="block h-2 w-2/3 rounded-full bg-line-strong" />
-              <span className="mt-3 block h-2 w-1/2 rounded-full bg-accent-200" />
+              <span className="mt-3 block h-2 w-1/2 rounded-full bg-accent-300" />
               <span className="block h-2 w-full rounded-full bg-line-strong" />
               <span className="block h-2 w-4/5 rounded-full bg-line-strong" />
             </div>
-            <span aria-hidden className="animate-scanline absolute left-3 right-3 top-0 h-[2px] rounded-full bg-gradient-to-r from-transparent via-accent-500 to-transparent shadow-[0_0_14px_3px_rgba(29,78,216,0.5)]" />
           </div>
           <div className="space-y-2">
             {[
@@ -165,7 +144,7 @@ function HeroMockup() {
 function TrustStrip() {
   const cats = ["ATS Platforms", "Job Boards", "RPO & Volume", "Healthcare Staffing", "HR Tech"];
   return (
-    <section className="border-y border-line bg-surface">
+    <section className="border-y border-line bg-paper">
       <div className="mx-auto max-w-7xl px-6 py-9">
         <p className="text-center text-sm font-medium text-ink-soft/80">Built to power resume parsing across your stack</p>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
@@ -219,7 +198,7 @@ function FeatureRow({
 function Coverage() {
   const formats = ["PDF", "DOCX", "PNG", "JPG", "TIFF", "Scanned PDF"];
   return (
-    <section className="bg-surface">
+    <section className="bg-paper">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
@@ -251,7 +230,7 @@ function UseCases() {
     { icon: <PlugIcon />, title: "RPO & HR tech", body: "Embed structured parsing inside your product, and process volume over signed webhooks." },
   ];
   return (
-    <section id="solutions" className="bg-paper">
+    <section id="solutions" className="bg-surface">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
         <Reveal><Heading eyebrow="Solutions" title="One engine, every hiring workflow" /></Reveal>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
@@ -280,7 +259,7 @@ function Security() {
     { icon: <ListIcon />, title: "Content-free audit", body: "We log that a parse happened — never what was inside the document." },
   ];
   return (
-    <section id="security" className="border-y border-line bg-surface">
+    <section id="security" className="border-y border-line bg-paper">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
@@ -309,7 +288,7 @@ function Security() {
 
 function ApiSample() {
   return (
-    <section id="api" className="bg-paper">
+    <section id="api" className="bg-surface">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
         <Reveal><Heading eyebrow="Developer-first" title="A request and a response. That’s the integration." /></Reveal>
         <Reveal delay={100}>
@@ -353,12 +332,10 @@ function ApiSample() {
 
 function Cta({ authed }: { authed?: boolean }) {
   return (
-    <section id="pricing" className="bg-surface">
+    <section id="pricing" className="bg-paper">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-vibrant px-7 py-16 text-center shadow-[0_40px_90px_-45px_rgba(29,78,216,0.6)] sm:px-16 sm:py-20">
-            <div aria-hidden className="bg-dot-grid pointer-events-none absolute inset-0 text-white/[0.1]" />
-            <span aria-hidden className="aurora-blob" style={{ background: "#5f87f6", width: 360, height: 360, top: -130, right: -50, opacity: 0.4 }} />
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-accent-700 px-7 py-16 text-center shadow-[0_40px_90px_-45px_rgba(29,78,216,0.5)] sm:px-16 sm:py-20">
             <div className="relative">
               <h2 className="font-display text-3xl font-bold tracking-tight text-balance text-white sm:text-5xl">Parse your first resume today</h2>
               <p className="mx-auto mt-4 max-w-md text-lg text-blue-100">Create an account, generate a key, and make your first call in minutes — no credit card.</p>

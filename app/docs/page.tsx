@@ -15,6 +15,7 @@ const SECTIONS = [
   { id: "auth", label: "Authentication" },
   { id: "parse", label: "Parse a resume" },
   { id: "poll", label: "Poll async jobs" },
+  { id: "feedback", label: "Submit feedback" },
   { id: "webhooks", label: "Webhooks" },
   { id: "errors", label: "Errors" },
   { id: "quickstart", label: "Quickstart" },
@@ -119,7 +120,37 @@ export default function DocsPage() {
 → { "status": "completed", "data": { … }, "confidence": { … } }`}</Code>
           </Section>
 
-          <Section n="05" id="webhooks" title="Webhooks">
+          <Section n="05" id="feedback" title="Submit feedback">
+            <P>
+              After a user reviews and corrects a parsed resume, send the original and the
+              corrected JSON back so we can improve accuracy.{" "}
+              <Mono>POST /api/v1/resume/&#123;job_id&#125;/feedback</Mono> — server-to-server
+              (uses your <Mono>X-API-Key</Mono>). Returns <Mono>202 Accepted</Mono>; feedback is
+              processed asynchronously.
+            </P>
+            <Code>{`curl -X POST "${API_BASE}/api/v1/resume/01J3K…/feedback" \\
+  -H "X-API-Key: rp_live_your_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+        "original": { …parser JSON… },
+        "updated":  { …user-corrected JSON… },
+        "changed":  true
+      }'`}</Code>
+            <P>
+              Send it after the review step — only when the user changed something, or always as
+              a quality signal (both are accepted). If you omit <Mono>changed</Mono> we derive it
+              from the diff. The response lists the exact fields that changed.
+            </P>
+            <Code>{`{
+  "feedback_id": "01J3K…",
+  "job_id": "01J3K…",
+  "status": "accepted",
+  "changed": true,
+  "changed_fields": ["personal_info.full_name", "skills[1]"]
+}`}</Code>
+          </Section>
+
+          <Section n="06" id="webhooks" title="Webhooks">
             <P>
               Instead of polling, register a webhook to receive results. Each delivery is signed: verify{" "}
               <Mono>X-Signature</Mono> = <Mono>HMAC-SHA256(secret, &quot;&#123;timestamp&#125;.&#123;body&#125;&quot;)</Mono>{" "}
@@ -130,7 +161,7 @@ X-Timestamp: <unix seconds>
 X-Event:     parse.completed`}</Code>
           </Section>
 
-          <Section n="06" id="errors" title="Errors">
+          <Section n="07" id="errors" title="Errors">
             <P>All errors share one envelope. Branch on <Mono>error_code</Mono>; show <Mono>hint</Mono> to users.</P>
             <Code>{`{ "error": { "status_code": 413, "error_code": "FILE_TOO_LARGE",
             "detail": "…", "hint": "…", "request_id": "…" } }`}</Code>
@@ -145,7 +176,7 @@ X-Event:     parse.completed`}</Code>
             />
           </Section>
 
-          <Section n="07" id="quickstart" title="Quickstart">
+          <Section n="08" id="quickstart" title="Quickstart">
             <H3>Node.js</H3>
             <Code>{`const form = new FormData();
 form.append("file", fileBlob, "resume.pdf");
@@ -221,7 +252,7 @@ function Mono({ children }: { children: ReactNode }) {
 
 function Code({ children }: { children: string }) {
   return (
-    <pre className="overflow-x-auto rounded-xl border border-line bg-[#0a1330] p-4 font-mono text-[13px] leading-relaxed text-[#dbe4fb]">
+    <pre className="overflow-x-auto rounded-xl border border-line bg-[#0b1220] p-4 font-mono text-[13px] leading-relaxed text-[#dbe4f5]">
       <code>{children}</code>
     </pre>
   );

@@ -83,7 +83,7 @@ function Account({ email, collapsed }: { email: string; collapsed?: boolean }) {
           (collapsed ? "justify-center" : "")
         }
       >
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-accent-600 to-accent-800 text-sm font-semibold text-white shadow-sm ring-1 ring-black/10">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-600 text-sm font-semibold text-white shadow-sm ring-1 ring-black/10">
           {initial}
         </span>
         {!collapsed && (

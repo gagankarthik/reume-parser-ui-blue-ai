@@ -96,21 +96,7 @@ body {
   text-transform: uppercase;
 }
 
-/* ── Tight cobalt gradient text for the hero accent phrase ──────────────────── */
-.text-gradient {
-  background-image: linear-gradient(100deg, #1d4ed8, #3563ee 55%, #2f80ed);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* ── Deep enterprise blue gradient (primary buttons, CTA, dark bands) ───────── */
-.bg-vibrant {
-  background-image: linear-gradient(135deg, #1d4ed8, #1b3074);
-}
-.bg-vibrant-soft {
-  background-image: linear-gradient(165deg, #f6f8fb, #eff4ff 58%, #f6f8fb);
-}
+/* Enterprise theme uses solid fills only — no decorative gradients. */
 
 /* ── Hairline ruled divider ─────────────────────────────────────────────────── */
 .rule {
@@ -269,15 +255,6 @@ body {
 .reveal.in {
   opacity: 1;
   transform: none;
-}
-
-/* Aurora mesh blob for hero scenes. */
-.aurora-blob {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(60px);
-  opacity: 0.7;
-  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

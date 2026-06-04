@@ -65,7 +65,7 @@ const MENUS: Menu[] = [
       {
         heading: "Automation",
         items: [
-          { label: "Webhooks & events", desc: "Signed callbacks for async & batch jobs", href: "#how", icon: <BoltIcon /> },
+          { label: "Webhooks & events", desc: "Signed callbacks for async & batch jobs", href: "#api", icon: <BoltIcon /> },
           { label: "Schema & validation", desc: "One strict, versioned output contract", href: "#api", icon: <BracketsIcon /> },
         ],
       },
@@ -112,7 +112,7 @@ const MENUS: Menu[] = [
       {
         heading: "Learn",
         items: [
-          { label: "Guides", desc: "Patterns for parsing at scale", href: "#how", icon: <BookIcon /> },
+          { label: "Guides", desc: "Patterns for parsing at scale", href: "#api", icon: <BookIcon /> },
           { label: "Case studies", desc: "How teams cut manual data entry", href: "#solutions", icon: <ChartIcon /> },
         ],
       },
@@ -169,6 +169,7 @@ export function SiteNav({ authed = false }: { authed?: boolean }) {
   }
 
   return (
+    <>
     <header className="sticky top-0 z-50 border-b border-line/70 bg-paper/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-6">
         <Link href="/" className="shrink-0" onMouseEnter={scheduleClose}>
@@ -215,7 +216,7 @@ export function SiteNav({ authed = false }: { authed?: boolean }) {
           {authed ? (
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 rounded-full bg-vibrant px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-500/30 transition-all hover:-translate-y-px"
+              className="inline-flex items-center gap-1.5 rounded-full bg-accent-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-px hover:bg-accent-700"
             >
               Dashboard
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -230,7 +231,7 @@ export function SiteNav({ authed = false }: { authed?: boolean }) {
               </Link>
               <Link
                 href="/signup"
-                className="hidden rounded-full bg-vibrant px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-500/30 transition-all hover:-translate-y-px sm:inline-flex"
+                className="hidden rounded-full bg-accent-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-px hover:bg-accent-700 sm:inline-flex"
               >
                 Get started
               </Link>
@@ -247,18 +248,10 @@ export function SiteNav({ authed = false }: { authed?: boolean }) {
           </button>
         </div>
       </div>
-
-      {/* Backdrop for desktop dropdowns */}
-      {open && (
-        <div
-          aria-hidden
-          className="fixed inset-0 top-16 -z-10 hidden bg-ink/5 lg:block"
-          onMouseEnter={() => setOpen(null)}
-        />
-      )}
-
-      {mobile && <MobileSheet authed={authed} onNavigate={() => setMobile(false)} />}
     </header>
+
+    {mobile && <MobileSheet authed={authed} onNavigate={() => setMobile(false)} />}
+    </>
   );
 }
 
@@ -290,7 +283,7 @@ function MegaPanel({ menu, onNavigate }: { menu: Menu; onNavigate: () => void })
           <Link
             href={menu.feature.href}
             onClick={onNavigate}
-            className="group relative flex flex-col justify-between border-l border-line bg-gradient-to-br from-accent-50 via-surface to-brass-400/10 p-6 transition-colors hover:from-accent-100"
+            className="group relative flex flex-col justify-between border-l border-line bg-accent-50 p-6 transition-colors hover:bg-accent-100"
           >
             <div>
               <p className="label-caps text-accent-700">{menu.feature.eyebrow}</p>
