@@ -215,7 +215,7 @@ export function SiteNav({ authed = false }: { authed?: boolean }) {
           {authed ? (
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 rounded-full bg-accent-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:-translate-y-px hover:bg-accent-800"
+              className="inline-flex items-center gap-1.5 rounded-full bg-vibrant px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-500/30 transition-all hover:-translate-y-px"
             >
               Dashboard
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -230,7 +230,7 @@ export function SiteNav({ authed = false }: { authed?: boolean }) {
               </Link>
               <Link
                 href="/signup"
-                className="hidden rounded-full bg-accent-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:-translate-y-px hover:bg-accent-800 sm:inline-flex"
+                className="hidden rounded-full bg-vibrant px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-500/30 transition-all hover:-translate-y-px sm:inline-flex"
               >
                 Get started
               </Link>

@@ -41,7 +41,7 @@ interface Point {
 }
 
 /** Interactive area chart with hover guide + tooltip. */
-export function AreaChart({ data, label, color = "#1d54d4" }: { data: Point[]; label: string; color?: string }) {
+export function AreaChart({ data, label, color = "#6366f1" }: { data: Point[]; label: string; color?: string }) {
   const gid = useId().replace(/:/g, "");
   const wrapRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<number | null>(null);
