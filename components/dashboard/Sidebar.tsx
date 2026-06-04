@@ -12,7 +12,6 @@ const NAV = [
   { href: "/dashboard/analytics", label: "Analytics", icon: AnalyticsIcon },
   { href: "/dashboard/keys", label: "API Keys", icon: KeyIcon },
   { href: "/dashboard/webhooks", label: "Webhooks", icon: WebhookIcon },
-  { href: "/dashboard/profile", label: "Profile", icon: UserIcon },
   { href: "/docs", label: "Docs", icon: DocsIcon },
 ];
 
@@ -242,9 +241,6 @@ function AnalyticsIcon({ active }: { active?: boolean }) {
 }
 function KeyIcon({ active }: { active?: boolean }) {
   return <svg className={cls} viewBox="0 0 24 24" fill="none"><path d="M15 7a4 4 0 1 0-3.9 5L7 16v3h3v-2h2v-2h1.1A4 4 0 0 0 15 7z" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} strokeLinejoin="round" /></svg>;
-}
-function UserIcon({ active }: { active?: boolean }) {
-  return <svg className={cls} viewBox="0 0 24 24" fill="none"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM5 20a7 7 0 0 1 14 0" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} strokeLinecap="round" /></svg>;
 }
 function WebhookIcon({ active }: { active?: boolean }) {
   return <svg className={cls} viewBox="0 0 24 24" fill="none"><path d="M9 7a3 3 0 1 1 4 2.8L10 15M7 13a3 3 0 1 0 3 3h6M17 13a3 3 0 1 1-2.8 4" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} strokeLinecap="round" strokeLinejoin="round" /></svg>;

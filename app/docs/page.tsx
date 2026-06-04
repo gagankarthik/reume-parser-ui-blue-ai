@@ -26,10 +26,7 @@ export default function DocsPage() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b border-line bg-paper/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-6">
-          <div className="flex items-center gap-1">
-            <BackButton />
-            <Link href="/" className="hidden sm:block"><Logo className="h-7 w-auto" /></Link>
-          </div>
+          <Link href="/"><Logo className="h-7 w-auto" /></Link>
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link href="/dashboard" className="rounded-lg px-4 py-2 text-sm font-medium text-ink-soft transition-colors hover:bg-black/[0.04] hover:text-ink">
               Dashboard
@@ -41,7 +38,11 @@ export default function DocsPage() {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-6xl gap-12 px-5 py-10 sm:px-6 lg:py-14">
+      <div className="mx-auto max-w-6xl px-5 pt-6 sm:px-6">
+        <BackButton />
+      </div>
+
+      <div className="mx-auto flex max-w-6xl gap-12 px-5 pb-10 pt-4 sm:px-6 lg:pb-14">
         {/* TOC */}
         <aside className="hidden w-52 shrink-0 lg:block">
           <nav className="sticky top-24 space-y-1 text-sm">
