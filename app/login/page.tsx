@@ -70,7 +70,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center px-4">
+    <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center px-5 py-10">
       <Link href="/" className="mb-6 flex justify-center"><Logo className="h-8 w-auto" /></Link>
       <Card>
         {!needsConfirm ? (
