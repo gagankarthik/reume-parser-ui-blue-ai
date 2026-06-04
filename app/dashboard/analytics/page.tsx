@@ -89,17 +89,17 @@ export default function AnalyticsPage() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
-            <AreaChart label="Tokens per day" color="#6366f1" data={usage.by_day.map((d) => ({ date: d.date, value: d.tokens }))} />
-            <AreaChart label="Jobs per day" color="#ec4899" data={usage.by_day.map((d) => ({ date: d.date, value: d.jobs }))} />
+            <AreaChart label="Tokens per day" color="#1d4ed8" data={usage.by_day.map((d) => ({ date: d.date, value: d.tokens }))} />
+            <AreaChart label="Jobs per day" color="#d97706" data={usage.by_day.map((d) => ({ date: d.date, value: d.jobs }))} />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
             <Donut
               title="Job outcomes"
               segments={[
-                { label: "Completed", value: t!.completed, color: "#6366f1" },
-                { label: "Failed", value: t!.failed, color: "#ec4899" },
-                { label: "Other", value: other, color: "#a5b4cb" },
+                { label: "Completed", value: t!.completed, color: "#1d4ed8" },
+                { label: "Failed", value: t!.failed, color: "#dc2626" },
+                { label: "Other", value: other, color: "#94a3b8" },
               ]}
             />
             <BarList

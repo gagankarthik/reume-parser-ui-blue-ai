@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Outfit, Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-// Friendly geometric display — rounded, energetic, approachable.
-const display = Outfit({
+// Distinctive editorial grotesque for display — authoritative, enterprise, not generic.
+const display = Bricolage_Grotesque({
   variable: "--font-display",
   subsets: ["latin"],
   display: "swap",

@@ -6,12 +6,12 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --paper: #f6f6fe;        /* bright lavender-white canvas */
+  --paper: #f6f8fb;        /* crisp cool-grey canvas */
   --surface: #ffffff;      /* raised cards/sheets */
-  --ink: #191636;          /* deep indigo near-black */
-  --ink-soft: #5d5984;     /* muted indigo-slate */
-  --line: #ebe9f8;         /* soft lavender hairlines */
-  --line-strong: #dcd8f0;
+  --ink: #0b1220;          /* deep navy-black — high contrast */
+  --ink-soft: #475069;     /* slate for secondary text */
+  --line: #e6e9f1;         /* cool hairlines */
+  --line-strong: #ccd2df;
   --background: var(--paper);
   --foreground: var(--ink);
 }
@@ -30,22 +30,22 @@
   --font-mono: var(--font-mono);
   --font-display: var(--font-display);
 
-  /* Primary — vibrant indigo. */
-  --color-accent-50: #eef1ff;
-  --color-accent-100: #e0e6ff;
-  --color-accent-200: #c7d0fe;
-  --color-accent-300: #a5b1fc;
-  --color-accent-400: #818cf8;
-  --color-accent-500: #6366f1;
-  --color-accent-600: #4f46e5;
-  --color-accent-700: #4338ca;
-  --color-accent-800: #3730a3;
-  --color-accent-900: #2e2a7a;
+  /* Primary — confident cobalt blue. */
+  --color-accent-50: #eff4ff;
+  --color-accent-100: #dbe6fe;
+  --color-accent-200: #bfd1fd;
+  --color-accent-300: #93b2fb;
+  --color-accent-400: #5f87f6;
+  --color-accent-500: #3563ee;
+  --color-accent-600: #1d4ed8;
+  --color-accent-700: #1b3fb0;
+  --color-accent-800: #1c378f;
+  --color-accent-900: #1b3074;
 
-  /* Secondary — playful pink pop for highlights & gradients. */
-  --color-brass-400: #f472b6;
-  --color-brass-500: #ec4899;
-  --color-brass-600: #db2777;
+  /* Secondary — restrained amber pop for sparing highlights. */
+  --color-brass-400: #f59e0b;
+  --color-brass-500: #d97706;
+  --color-brass-600: #b45309;
 }
 
 body {
@@ -96,20 +96,20 @@ body {
   text-transform: uppercase;
 }
 
-/* ── Playful indigo→violet→pink gradient text for accents ───────────────────── */
+/* ── Tight cobalt gradient text for the hero accent phrase ──────────────────── */
 .text-gradient {
-  background-image: linear-gradient(100deg, #4f46e5, #8b5cf6 45%, #ec4899);
+  background-image: linear-gradient(100deg, #1d4ed8, #3563ee 55%, #2f80ed);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* ── Vibrant gradient fill (buttons, chips, blobs) ──────────────────────────── */
+/* ── Deep enterprise blue gradient (primary buttons, CTA, dark bands) ───────── */
 .bg-vibrant {
-  background-image: linear-gradient(100deg, #4f46e5, #7c3aed 50%, #ec4899);
+  background-image: linear-gradient(135deg, #1d4ed8, #1b3074);
 }
 .bg-vibrant-soft {
-  background-image: linear-gradient(135deg, #eef1ff, #f5e9ff 55%, #ffe9f4);
+  background-image: linear-gradient(165deg, #f6f8fb, #eff4ff 58%, #f6f8fb);
 }
 
 /* ── Hairline ruled divider ─────────────────────────────────────────────────── */
@@ -204,6 +204,20 @@ body {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.15; }
 }
+@keyframes scanline {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(150px); opacity: 0; }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes bar-grow {
+  from { width: 0; }
+}
+.animate-scanline { animation: scanline 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
 .animate-float { animation: float-y 6.5s ease-in-out infinite; }
 .animate-float-slow { animation: float-y2 7.5s ease-in-out infinite; }
@@ -274,6 +288,7 @@ body {
   .animate-aurora,
   .animate-spin-slow,
   .animate-blink,
+  .animate-scanline,
   .shimmer,
   .grow-x,
   .marquee {
