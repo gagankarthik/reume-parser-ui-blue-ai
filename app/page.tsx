@@ -142,14 +142,26 @@ function HeroMockup() {
 /* ── Trust strip ─────────────────────────────────────────────────────────── */
 
 function TrustStrip() {
-  const cats = ["ATS Platforms", "Job Boards", "RPO & Volume", "Healthcare Staffing", "HR Tech"];
+  const items = [
+    { icon: <UsersIcon />, label: "ATS Platforms" },
+    { icon: <BriefcaseIcon />, label: "Job Boards" },
+    { icon: <LayersIcon />, label: "RPO & Volume" },
+    { icon: <PulseIcon />, label: "Healthcare Staffing" },
+    { icon: <PlugIcon />, label: "HR Tech" },
+  ];
   return (
     <section className="border-y border-line bg-paper">
-      <div className="mx-auto max-w-7xl px-6 py-9">
-        <p className="text-center text-sm font-medium text-ink-soft/80">Built to power resume parsing across your stack</p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-          {cats.map((c) => (
-            <span key={c} className="text-sm font-bold uppercase tracking-wide text-ink-soft/55">{c}</span>
+      <div className="mx-auto max-w-7xl px-5 py-12 sm:px-6">
+        <p className="label-caps text-center text-ink-soft/60">Built to power resume parsing across your stack</p>
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          {items.map((it) => (
+            <span
+              key={it.label}
+              className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface py-2 pl-2 pr-5 text-sm font-semibold text-ink shadow-sm"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-50 text-accent-700">{it.icon}</span>
+              {it.label}
+            </span>
           ))}
         </div>
       </div>
@@ -492,6 +504,12 @@ function BriefcaseIcon() {
 }
 function PlugIcon() {
   return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M9 3v5M15 3v5M7 8h10v3a5 5 0 0 1-10 0V8zM12 16v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+function LayersIcon() {
+  return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M12 3l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 16l9 5 9-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+function PulseIcon() {
+  return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M3 12h4l2-5 4 10 2-5h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 function ShieldIcon() {
   return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3zM9.5 12l1.8 1.8L15 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
