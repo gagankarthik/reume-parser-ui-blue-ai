@@ -8,10 +8,12 @@ frontend:
         - npm ci --cache .npm --prefer-offline
     build:
       commands:
-        # NEXT_PUBLIC_* vars are inlined at build time. Amplify sets console env
-        # vars in the shell, but writing them into .env.production guarantees
-        # `next build` picks them up for the client bundle.
-        - env | grep -e '^NEXT_PUBLIC_' >> .env.production || true
+        # Amplify exposes console env vars to the BUILD shell but NOT to the
+        # Next.js SSR compute at request time. Writing them into .env.production
+        # makes both the public vars (inlined into the client bundle) AND the
+        # server secrets (ADMIN_API_TOKEN, BACKEND_API_URL) available at runtime,
+        # since Next.js loads .env.production on the server too.
+        - env | grep -E '^(NEXT_PUBLIC_|ADMIN_API_TOKEN=|BACKEND_API_URL=)' >> .env.production || true
         - npm run build
   artifacts:
     # Amplify auto-detects the Next.js SSR (WEB_COMPUTE) platform and serves
