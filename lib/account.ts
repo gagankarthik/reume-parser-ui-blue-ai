@@ -7,6 +7,7 @@ import {
   type ApiKeyInfo,
   type CreatedWebhook,
   type IssuedKey,
+  type PlatformStats,
   type Usage,
   type Webhook,
   type WebhookEvent,
@@ -83,6 +84,12 @@ export async function getUsage(days = 30): Promise<Usage> {
 
 export async function getMe(): Promise<Me> {
   return handle<Me>(await fetch("/api/account/me"));
+}
+
+// ── Admin (allow-listed operators only; the route enforces it) ────────────────
+
+export async function getPlatformStats(days = 30): Promise<PlatformStats> {
+  return handle<PlatformStats>(await fetch(`/api/admin/stats?days=${days}`));
 }
 
 // ── Webhooks ──────────────────────────────────────────────────────────────────

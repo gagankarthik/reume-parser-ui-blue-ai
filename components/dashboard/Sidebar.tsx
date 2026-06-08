@@ -7,13 +7,22 @@ import { useEffect, useState } from "react";
 import { BrandMark, Logo } from "@/components/ui";
 import { logout } from "@/lib/account";
 
-const NAV = [
+type NavItem = { href: string; label: string; icon: (p: { active?: boolean }) => React.ReactElement };
+
+const NAV: NavItem[] = [
   { href: "/dashboard", label: "Overview", icon: OverviewIcon },
   { href: "/dashboard/analytics", label: "Analytics", icon: AnalyticsIcon },
   { href: "/dashboard/keys", label: "API Keys", icon: KeyIcon },
   { href: "/dashboard/webhooks", label: "Webhooks", icon: WebhookIcon },
   { href: "/docs", label: "Docs", icon: DocsIcon },
 ];
+
+const ADMIN_ITEM: NavItem = { href: "/dashboard/admin", label: "Admin", icon: AdminIcon };
+
+/** Nav items for this user — admins also get the Admin overview (before Docs). */
+function navItems(isAdmin?: boolean): NavItem[] {
+  return isAdmin ? [...NAV.slice(0, 4), ADMIN_ITEM, ...NAV.slice(4)] : NAV;
+}
 
 function isActive(pathname: string, href: string): boolean {
   return href === "/dashboard" ? pathname === href : pathname.startsWith(href);
@@ -23,14 +32,16 @@ function NavLinks({
   pathname,
   collapsed,
   onNavigate,
+  items = NAV,
 }: {
   pathname: string;
   collapsed?: boolean;
   onNavigate?: () => void;
+  items?: NavItem[];
 }) {
   return (
     <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-      {NAV.map(({ href, label, icon: Icon }) => {
+      {items.map(({ href, label, icon: Icon }) => {
         const active = isActive(pathname, href);
         return (
           <Link
@@ -112,7 +123,7 @@ function Account({ email, collapsed }: { email: string; collapsed?: boolean }) {
 }
 
 /** Desktop rail (md+) — collapsible, persisted to localStorage. */
-export function Sidebar({ email }: { email: string }) {
+export function Sidebar({ email, isAdmin }: { email: string; isAdmin?: boolean }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
@@ -151,7 +162,7 @@ export function Sidebar({ email }: { email: string }) {
             )}
           </div>
 
-          <NavLinks pathname={pathname} collapsed={collapsed} />
+          <NavLinks pathname={pathname} collapsed={collapsed} items={navItems(isAdmin)} />
 
           {collapsed && (
             <div className="flex shrink-0 justify-center pb-1">
@@ -176,7 +187,7 @@ export function Sidebar({ email }: { email: string }) {
 }
 
 /** Mobile hamburger + slide-over drawer. */
-export function MobileNav({ email }: { email: string }) {
+export function MobileNav({ email, isAdmin }: { email: string; isAdmin?: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -222,7 +233,7 @@ export function MobileNav({ email }: { email: string }) {
                 </svg>
               </button>
             </div>
-            <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
+            <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} items={navItems(isAdmin)} />
             <Account email={email} />
           </div>
         </div>
@@ -247,6 +258,9 @@ function WebhookIcon({ active }: { active?: boolean }) {
 }
 function DocsIcon({ active }: { active?: boolean }) {
   return <svg className={cls} viewBox="0 0 24 24" fill="none"><path d="M7 3h7l4 4v14H7zM14 3v4h4M9 12h6M9 16h6" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} strokeLinejoin="round" /></svg>;
+}
+function AdminIcon({ active }: { active?: boolean }) {
+  return <svg className={cls} viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 8.6C8 18.6 5 15.4 5 11V6l7-3z" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} strokeLinejoin="round" /><path d="M9.5 12l1.8 1.8 3.4-3.6" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 function LogoutIcon() {
   return <svg className={cls} viewBox="0 0 24 24" fill="none"><path d="M15 12H6m9 0-3-3m3 3-3 3M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;

@@ -44,6 +44,35 @@ export interface Usage {
   by_file_type: Record<string, number>;
 }
 
+// ── Admin / platform-wide stats ───────────────────────────────────────────────
+
+export interface PlatformCompanyRow {
+  company_id: string;
+  name: string;
+  plan?: string;
+  status?: string;
+  jobs: number;
+  tokens: number;
+  active_keys: number;
+  last_active: string;
+}
+
+export interface PlatformStats {
+  window_days: number;
+  companies: { total: number; active: number };
+  active_keys: number;
+  totals: {
+    jobs: number;
+    completed: number;
+    failed: number;
+    ocr_jobs: number;
+    tokens_used: number;
+    avg_duration_ms: number;
+  };
+  by_day: { date: string; jobs: number; tokens: number }[];
+  companies_list: PlatformCompanyRow[];
+}
+
 export type WebhookEvent = "parse.completed" | "parse.failed" | "batch.completed";
 
 export interface Webhook {

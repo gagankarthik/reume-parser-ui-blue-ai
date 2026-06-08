@@ -61,6 +61,16 @@ export function ClockIcon(props: IconProps) {
   );
 }
 
+/** Users / companies — people. */
+export function UsersIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 6.2a3 3 0 0 1 0 5.6M16.5 19a5.5 5.5 0 0 0-2.7-4.7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 /** OCR / scanned documents — scan frame. */
 export function ScanIcon(props: IconProps) {
   return (

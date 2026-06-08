@@ -10,6 +10,7 @@ import type {
   ApiKeyInfo,
   CreatedWebhook,
   IssuedKey,
+  PlatformStats,
   Usage,
   Webhook,
   WebhookEvent,
@@ -211,5 +212,14 @@ export async function deleteWebhook(companyId: string, webhookId: string): Promi
 export async function getUsage(companyId: string, days = 30): Promise<Usage> {
   const d = Math.max(1, Math.min(days, 365));
   const { data } = await req<Usage>("GET", `/companies/${encodeURIComponent(companyId)}/usage?days=${d}`);
+  return data;
+}
+
+// ── Platform-wide stats (admin) ───────────────────────────────────────────────
+
+/** Aggregate usage across ALL companies — for the admin overview. */
+export async function getPlatformStats(days = 30): Promise<PlatformStats> {
+  const d = Math.max(1, Math.min(days, 365));
+  const { data } = await req<PlatformStats>("GET", `/stats?days=${d}`);
   return data;
 }
