@@ -13,12 +13,9 @@ function errMsg(e: unknown): string {
   return e instanceof ApiError ? e.message : e instanceof Error ? e.message : "Unexpected error";
 }
 
-type SortKey = "jobs" | "tokens";
-
 export default function AdminClient() {
   const [stats, setStats] = useState<PlatformStats | null>(null);
   const [days, setDays] = useState(30);
-  const [sort, setSort] = useState<SortKey>("jobs");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -41,7 +38,6 @@ export default function AdminClient() {
   const t = stats?.totals;
   const successRate = t && t.jobs ? Math.round((t.completed / t.jobs) * 100) : 0;
   const other = t ? Math.max(0, t.jobs - t.completed - t.failed) : 0;
-  const rows = [...(stats?.companies_list ?? [])].sort((a, b) => b[sort] - a[sort]);
 
   return (
     <div className="space-y-6">
@@ -51,9 +47,9 @@ export default function AdminClient() {
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 8.6C8 18.6 5 15.4 5 11V6l7-3z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M9.5 12l1.8 1.8 3.4-3.6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </span>
           <div>
-            <p className="label-caps text-accent-700">Platform</p>
-            <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-ink">Admin overview</h1>
-            <p className="mt-1 text-sm text-ink-soft">Customers and usage across the whole platform.</p>
+            <p className="label-caps text-accent-700">Platform · Admin</p>
+            <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-ink">Overview</h1>
+            <p className="mt-1 text-sm text-ink-soft">Usage across the whole platform.</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -112,7 +108,16 @@ export default function AdminClient() {
             </div>
           </div>
 
-          <CompaniesTable rows={rows} sort={sort} onSort={setSort} />
+          <Link
+            href="/dashboard/admin/customers"
+            className="group flex items-center justify-between rounded-2xl border border-line bg-surface p-5 transition-all hover:-translate-y-0.5 hover:border-accent-200 hover:shadow-[0_18px_40px_-30px_rgba(10,23,51,0.4)]"
+          >
+            <span>
+              <span className="block font-display text-base font-semibold tracking-tight text-ink">View all customers</span>
+              <span className="block text-sm text-ink-soft">{stats.companies.total.toLocaleString()} organisations · usage, keys, logs &amp; controls</span>
+            </span>
+            <svg className="h-5 w-5 text-ink-soft transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </Link>
         </>
       ) : null}
     </div>
@@ -124,80 +129,6 @@ function MiniStat({ label, value }: { label: string; value: string }) {
     <div className="rounded-2xl border border-line bg-surface p-4">
       <div className="label-caps text-ink-soft">{label}</div>
       <div className="mt-1.5 font-display text-xl font-semibold tabular-nums text-ink">{value}</div>
-    </div>
-  );
-}
-
-function CompaniesTable({
-  rows,
-  sort,
-  onSort,
-}: {
-  rows: PlatformStats["companies_list"];
-  sort: SortKey;
-  onSort: (k: SortKey) => void;
-}) {
-  return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-surface">
-      <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
-        <h3 className="font-display text-sm font-semibold tracking-tight text-ink">Customers</h3>
-        <div className="flex gap-1 rounded-lg border border-line p-1 text-xs">
-          {(["jobs", "tokens"] as SortKey[]).map((k) => (
-            <button
-              key={k}
-              onClick={() => onSort(k)}
-              className={
-                "rounded-md px-2.5 py-1 font-medium capitalize transition-colors " +
-                (sort === k ? "bg-accent-700 text-[var(--surface)]" : "text-ink-soft hover:bg-black/[0.04]")
-              }
-            >
-              {k}
-            </button>
-          ))}
-        </div>
-      </div>
-      {rows.length === 0 ? (
-        <div className="grid h-24 place-items-center text-sm text-ink-soft/70">No customers yet</div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[40rem] text-left text-sm">
-            <thead className="label-caps bg-black/[0.015] text-ink-soft">
-              <tr>
-                <th className="px-5 py-2.5 font-semibold">Customer</th>
-                <th className="px-4 py-2.5 font-semibold">Plan</th>
-                <th className="px-4 py-2.5 font-semibold">Status</th>
-                <th className="px-4 py-2.5 text-right font-semibold">Jobs</th>
-                <th className="px-4 py-2.5 text-right font-semibold">Tokens</th>
-                <th className="px-4 py-2.5 text-right font-semibold">Keys</th>
-                <th className="px-5 py-2.5 font-semibold">Last active</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((c) => (
-                <tr key={c.company_id} className="border-t border-line transition-colors hover:bg-black/[0.02]">
-                  <td className="px-5 py-3">
-                    <Link href={`/dashboard/admin/${encodeURIComponent(c.company_id)}`} className="font-medium text-accent-700 hover:underline">
-                      {c.name}
-                    </Link>
-                    <div className="truncate text-[11px] text-ink-soft">{c.email || c.company_id}</div>
-                  </td>
-                  <td className="px-4 py-3 text-ink-soft">{c.plan || "free"}</td>
-                  <td className="px-4 py-3">
-                    <span className={"inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium " + (c.status !== "disabled" ? "bg-accent-50 text-accent-700" : "bg-rose-50 text-rose-600")}>
-                      <span className={"h-1.5 w-1.5 rounded-full " + (c.status !== "disabled" ? "bg-accent-600" : "bg-rose-500")} />
-                      {c.status === "disabled" ? "Disabled" : "Active"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right font-mono tabular-nums text-ink">{c.jobs.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-right font-mono tabular-nums text-ink">{c.tokens.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-right font-mono tabular-nums text-ink-soft">{c.active_keys}</td>
-                  <td className="px-5 py-3 font-mono text-xs text-ink-soft">{c.last_active ? c.last_active.slice(0, 10) : "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
     </div>
   );
 }

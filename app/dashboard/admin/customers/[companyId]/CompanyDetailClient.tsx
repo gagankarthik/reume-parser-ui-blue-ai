@@ -85,7 +85,7 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
 
   return (
     <div className="space-y-6">
-      <Link href="/dashboard/admin" className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 hover:underline">
+      <Link href="/dashboard/admin/customers" className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 hover:underline">
         <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
         All customers
       </Link>

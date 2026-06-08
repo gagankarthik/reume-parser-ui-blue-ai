@@ -8,8 +8,11 @@ import { BrandMark, Logo } from "@/components/ui";
 import { logout } from "@/lib/account";
 
 type NavItem = { href: string; label: string; icon: (p: { active?: boolean }) => React.ReactElement };
+type Mode = "user" | "admin";
 
-const NAV: NavItem[] = [
+// Two completely separate navigations. Admins flip between them with the mode
+// switch; non-admins only ever see USER_NAV (and no switch).
+const USER_NAV: NavItem[] = [
   { href: "/dashboard", label: "Overview", icon: OverviewIcon },
   { href: "/dashboard/analytics", label: "Analytics", icon: AnalyticsIcon },
   { href: "/dashboard/keys", label: "API Keys", icon: KeyIcon },
@@ -17,22 +20,81 @@ const NAV: NavItem[] = [
   { href: "/docs", label: "Docs", icon: DocsIcon },
 ];
 
-const ADMIN_ITEM: NavItem = { href: "/dashboard/admin", label: "Admin", icon: AdminIcon };
+const ADMIN_NAV: NavItem[] = [
+  { href: "/dashboard/admin", label: "Overview", icon: AdminIcon },
+  { href: "/dashboard/admin/customers", label: "Customers", icon: CustomersIcon },
+  { href: "/docs", label: "Docs", icon: DocsIcon },
+];
 
-/** Nav items for this user — admins also get the Admin overview (before Docs). */
-function navItems(isAdmin?: boolean): NavItem[] {
-  return isAdmin ? [...NAV.slice(0, 4), ADMIN_ITEM, ...NAV.slice(4)] : NAV;
+function modeForPath(pathname: string): Mode {
+  return pathname.startsWith("/dashboard/admin") ? "admin" : "user";
+}
+
+function navForMode(mode: Mode): NavItem[] {
+  return mode === "admin" ? ADMIN_NAV : USER_NAV;
 }
 
 function isActive(pathname: string, href: string): boolean {
-  return href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+  // The two section roots ("/dashboard", "/dashboard/admin") match exactly so a
+  // sub-route (e.g. /dashboard/admin/customers) doesn't also light up the root.
+  if (href === "/dashboard" || href === "/dashboard/admin") return pathname === href;
+  return pathname.startsWith(href);
+}
+
+/** Admin-only switch between the user dashboard and the admin console. */
+function ModeSwitch({ mode, collapsed, onNavigate }: { mode: Mode; collapsed?: boolean; onNavigate?: () => void }) {
+  const router = useRouter();
+  function go(target: Mode) {
+    if (target !== mode) router.push(target === "admin" ? "/dashboard/admin" : "/dashboard");
+    onNavigate?.();
+  }
+
+  if (collapsed) {
+    const other: Mode = mode === "admin" ? "user" : "admin";
+    return (
+      <div className="flex justify-center px-2 pt-3">
+        <button
+          onClick={() => go(other)}
+          title={other === "admin" ? "Switch to Admin" : "Switch to User"}
+          aria-label={other === "admin" ? "Switch to Admin" : "Switch to User"}
+          className={
+            "grid h-9 w-9 place-items-center rounded-lg transition-colors " +
+            (mode === "admin" ? "bg-accent-700 text-[var(--surface)]" : "text-ink-soft hover:bg-black/[0.04] hover:text-ink")
+          }
+        >
+          <AdminIcon active={mode === "admin"} />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-3 pt-3">
+      <div className="flex gap-1 rounded-xl border border-line bg-paper p-1">
+        {(["user", "admin"] as Mode[]).map((m) => (
+          <button
+            key={m}
+            onClick={() => go(m)}
+            aria-pressed={mode === m}
+            className={
+              "flex-1 rounded-lg px-2 py-1.5 text-xs font-semibold capitalize transition-colors " +
+              (mode === m ? "bg-accent-700 text-[var(--surface)] shadow-sm" : "text-ink-soft hover:bg-black/[0.04] hover:text-ink")
+            }
+          >
+            {m}
+          </button>
+        ))}
+      </div>
+      <p className="mt-1.5 px-1 text-[10px] text-ink-soft/60">{mode === "admin" ? "Viewing as admin" : "Your account"}</p>
+    </div>
+  );
 }
 
 function NavLinks({
   pathname,
   collapsed,
   onNavigate,
-  items = NAV,
+  items = USER_NAV,
 }: {
   pathname: string;
   collapsed?: boolean;
@@ -125,6 +187,7 @@ function Account({ email, collapsed }: { email: string; collapsed?: boolean }) {
 /** Desktop rail (md+) — collapsible, persisted to localStorage. */
 export function Sidebar({ email, isAdmin }: { email: string; isAdmin?: boolean }) {
   const pathname = usePathname();
+  const mode = modeForPath(pathname);
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
@@ -162,7 +225,9 @@ export function Sidebar({ email, isAdmin }: { email: string; isAdmin?: boolean }
             )}
           </div>
 
-          <NavLinks pathname={pathname} collapsed={collapsed} items={navItems(isAdmin)} />
+          {isAdmin && <ModeSwitch mode={mode} collapsed={collapsed} />}
+
+          <NavLinks pathname={pathname} collapsed={collapsed} items={navForMode(mode)} />
 
           {collapsed && (
             <div className="flex shrink-0 justify-center pb-1">
@@ -189,6 +254,7 @@ export function Sidebar({ email, isAdmin }: { email: string; isAdmin?: boolean }
 /** Mobile hamburger + slide-over drawer. */
 export function MobileNav({ email, isAdmin }: { email: string; isAdmin?: boolean }) {
   const pathname = usePathname();
+  const mode = modeForPath(pathname);
   const [open, setOpen] = useState(false);
 
   useEffect(() => setOpen(false), [pathname]);
@@ -233,7 +299,8 @@ export function MobileNav({ email, isAdmin }: { email: string; isAdmin?: boolean
                 </svg>
               </button>
             </div>
-            <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} items={navItems(isAdmin)} />
+            {isAdmin && <ModeSwitch mode={mode} onNavigate={() => setOpen(false)} />}
+            <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} items={navForMode(mode)} />
             <Account email={email} />
           </div>
         </div>
@@ -261,6 +328,9 @@ function DocsIcon({ active }: { active?: boolean }) {
 }
 function AdminIcon({ active }: { active?: boolean }) {
   return <svg className={cls} viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 8.6C8 18.6 5 15.4 5 11V6l7-3z" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} strokeLinejoin="round" /><path d="M9.5 12l1.8 1.8 3.4-3.6" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+function CustomersIcon({ active }: { active?: boolean }) {
+  return <svg className={cls} viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} /><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 6.2a3 3 0 0 1 0 5.6M16.5 19a5.5 5.5 0 0 0-2.7-4.7" stroke="currentColor" strokeWidth={active ? 1.9 : 1.7} strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 function LogoutIcon() {
   return <svg className={cls} viewBox="0 0 24 24" fill="none"><path d="M15 12H6m9 0-3-3m3 3-3 3M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
