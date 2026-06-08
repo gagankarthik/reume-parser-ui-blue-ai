@@ -2,6 +2,8 @@
 
 import * as cognito from "@/lib/cognito";
 import {
+  type AdminCompany,
+  type AdminCompanyDetail,
   ApiError,
   type ApiErrorBody,
   type ApiKeyInfo,
@@ -90,6 +92,25 @@ export async function getMe(): Promise<Me> {
 
 export async function getPlatformStats(days = 30): Promise<PlatformStats> {
   return handle<PlatformStats>(await fetch(`/api/admin/stats?days=${days}`));
+}
+
+export async function getAdminCompany(companyId: string, days = 30): Promise<AdminCompanyDetail> {
+  return handle<AdminCompanyDetail>(
+    await fetch(`/api/admin/companies/${encodeURIComponent(companyId)}?days=${days}`),
+  );
+}
+
+export async function updateAdminCompany(
+  companyId: string,
+  patch: { plan?: string; status?: string },
+): Promise<AdminCompany> {
+  return handle<AdminCompany>(
+    await fetch(`/api/admin/companies/${encodeURIComponent(companyId)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    }),
+  );
 }
 
 // ── Webhooks ──────────────────────────────────────────────────────────────────

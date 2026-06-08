@@ -7,6 +7,9 @@
 //   - ADMIN_API_TOKEN   shared secret sent as the X-Admin-Token header
 
 import type {
+  AdminCompany,
+  AdminCompanyDetail,
+  AdminLogEntry,
   ApiKeyInfo,
   CreatedWebhook,
   IssuedKey,
@@ -222,4 +225,44 @@ export async function getPlatformStats(days = 30): Promise<PlatformStats> {
   const d = Math.max(1, Math.min(days, 365));
   const { data } = await req<PlatformStats>("GET", `/stats?days=${d}`);
   return data;
+}
+
+/** Update a company's plan and/or status (activate/deactivate). */
+export async function updateCompany(
+  companyId: string,
+  patch: { plan?: string; status?: string },
+): Promise<AdminCompany> {
+  const { data } = await req<AdminCompany>(
+    "PATCH",
+    `/companies/${encodeURIComponent(companyId)}`,
+    patch,
+  );
+  return data;
+}
+
+/** Recent activity logs for one company (content-free audit entries). */
+export async function getCompanyLogs(companyId: string, days = 30, limit = 100): Promise<AdminLogEntry[]> {
+  const d = Math.max(1, Math.min(days, 365));
+  const { data } = await req<AdminLogEntry[]>(
+    "GET",
+    `/companies/${encodeURIComponent(companyId)}/logs?days=${d}&limit=${limit}`,
+  );
+  return data ?? [];
+}
+
+/** Everything the admin org-detail page needs, assembled in one round of calls. */
+export async function getCompanyDetail(companyId: string, days = 30): Promise<AdminCompanyDetail> {
+  const [company, usage, keys, webhooks, logs] = await Promise.all([
+    getCompany(companyId),
+    getUsage(companyId, days),
+    listKeys(companyId),
+    listWebhooks(companyId),
+    getCompanyLogs(companyId, days),
+  ]);
+  if (!company) {
+    const err = new Error("Company not found") as Error & { status: number };
+    err.status = 404;
+    throw err;
+  }
+  return { company, usage, keys, webhooks, logs };
 }

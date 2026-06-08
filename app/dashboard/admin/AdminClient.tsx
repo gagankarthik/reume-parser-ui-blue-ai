@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { AreaChart, Donut, StatCard } from "@/components/charts";
@@ -164,6 +165,7 @@ function CompaniesTable({
               <tr>
                 <th className="px-5 py-2.5 font-semibold">Customer</th>
                 <th className="px-4 py-2.5 font-semibold">Plan</th>
+                <th className="px-4 py-2.5 font-semibold">Status</th>
                 <th className="px-4 py-2.5 text-right font-semibold">Jobs</th>
                 <th className="px-4 py-2.5 text-right font-semibold">Tokens</th>
                 <th className="px-4 py-2.5 text-right font-semibold">Keys</th>
@@ -174,13 +176,16 @@ function CompaniesTable({
               {rows.map((c) => (
                 <tr key={c.company_id} className="border-t border-line transition-colors hover:bg-black/[0.02]">
                   <td className="px-5 py-3">
-                    <div className="font-medium text-ink">{c.name}</div>
-                    <div className="font-mono text-[11px] text-ink-soft/70">{c.company_id}</div>
+                    <Link href={`/dashboard/admin/${encodeURIComponent(c.company_id)}`} className="font-medium text-accent-700 hover:underline">
+                      {c.name}
+                    </Link>
+                    <div className="truncate text-[11px] text-ink-soft">{c.email || c.company_id}</div>
                   </td>
+                  <td className="px-4 py-3 text-ink-soft">{c.plan || "free"}</td>
                   <td className="px-4 py-3">
-                    <span className={"inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium " + (c.status === "active" ? "bg-accent-50 text-accent-700" : "bg-black/[0.05] text-ink-soft")}>
-                      <span className={"h-1.5 w-1.5 rounded-full " + (c.status === "active" ? "bg-accent-600" : "bg-ink-soft/50")} />
-                      {c.plan || "free"}
+                    <span className={"inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium " + (c.status !== "disabled" ? "bg-accent-50 text-accent-700" : "bg-rose-50 text-rose-600")}>
+                      <span className={"h-1.5 w-1.5 rounded-full " + (c.status !== "disabled" ? "bg-accent-600" : "bg-rose-500")} />
+                      {c.status === "disabled" ? "Disabled" : "Active"}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right font-mono tabular-nums text-ink">{c.jobs.toLocaleString()}</td>

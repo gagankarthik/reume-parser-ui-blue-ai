@@ -49,6 +49,7 @@ export interface Usage {
 export interface PlatformCompanyRow {
   company_id: string;
   name: string;
+  email?: string;
   plan?: string;
   status?: string;
   jobs: number;
@@ -71,6 +72,35 @@ export interface PlatformStats {
   };
   by_day: { date: string; jobs: number; tokens: number }[];
   companies_list: PlatformCompanyRow[];
+}
+
+export interface AdminCompany {
+  company_id: string;
+  name?: string;
+  email?: string;
+  plan?: string;
+  status?: string;
+  created_at?: string;
+  active_key_count?: number;
+}
+
+export interface AdminLogEntry {
+  job_id: string;
+  timestamp: string;
+  file_type: string;
+  status: string;
+  duration_ms: number;
+  ocr_used: boolean;
+  ai_tokens_used: number;
+  error_code: string;
+}
+
+export interface AdminCompanyDetail {
+  company: AdminCompany;
+  usage: Usage;
+  keys: ApiKeyInfo[];
+  webhooks: Webhook[];
+  logs: AdminLogEntry[];
 }
 
 export type WebhookEvent = "parse.completed" | "parse.failed" | "batch.completed";
