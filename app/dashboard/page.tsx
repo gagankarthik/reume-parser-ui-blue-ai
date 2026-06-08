@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 import { StatCard } from "@/components/charts";
+import { JobsIcon, KeyIcon as KeyStatIcon, SuccessIcon, TokenIcon } from "@/components/icons";
 import { ErrorBanner, Spinner } from "@/components/ui";
 import { getUsage, listKeys } from "@/lib/account";
 import { ApiError, type Usage } from "@/lib/types";
@@ -63,10 +64,10 @@ export default function OverviewPage() {
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard label="Active keys" value={activeKeys ?? "—"} accent="accent" />
-            <StatCard label="Jobs · 30d" value={t ? t.jobs.toLocaleString() : "—"} accent="ink" />
-            <StatCard label="Tokens used" value={t ? t.tokens_used.toLocaleString() : "—"} accent="brass" />
-            <StatCard label="Success rate" value={t ? `${successRate}%` : "—"} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} />
+            <StatCard label="Active keys" value={activeKeys ?? "—"} accent="accent" icon={<KeyStatIcon />} />
+            <StatCard label="Jobs · 30d" value={t ? t.jobs.toLocaleString() : "—"} accent="ink" icon={<JobsIcon />} />
+            <StatCard label="Tokens used" value={t ? t.tokens_used.toLocaleString() : "—"} accent="brass" icon={<TokenIcon />} />
+            <StatCard label="Success rate" value={t ? `${successRate}%` : "—"} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} icon={<SuccessIcon />} />
           </div>
 
           <div>

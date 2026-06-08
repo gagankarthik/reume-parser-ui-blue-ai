@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { AreaChart, BarList, Donut, StatCard } from "@/components/charts";
+import { ClockIcon, JobsIcon, KeyIcon, ScanIcon, SuccessIcon, TokenIcon } from "@/components/icons";
 import { Button, ErrorBanner, Spinner } from "@/components/ui";
 import { getUsage, listKeys } from "@/lib/account";
 import { ApiError, type Usage } from "@/lib/types";
@@ -82,10 +83,10 @@ export default function AnalyticsPage() {
       ) : usage ? (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard label="Active keys" value={activeKeys ?? "—"} accent="accent" />
-            <StatCard label={`Jobs · ${days}d`} value={t!.jobs.toLocaleString()} accent="ink" />
-            <StatCard label="Tokens used" value={t!.tokens_used.toLocaleString()} accent="brass" />
-            <StatCard label="Success rate" value={`${successRate}%`} sub={`${t!.completed} ok · ${t!.failed} failed`} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} />
+            <StatCard label="Active keys" value={activeKeys ?? "—"} accent="accent" icon={<KeyIcon />} />
+            <StatCard label={`Jobs · ${days}d`} value={t!.jobs.toLocaleString()} accent="ink" icon={<JobsIcon />} />
+            <StatCard label="Tokens used" value={t!.tokens_used.toLocaleString()} accent="brass" icon={<TokenIcon />} />
+            <StatCard label="Success rate" value={`${successRate}%`} sub={`${t!.completed} ok · ${t!.failed} failed`} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} icon={<SuccessIcon />} />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
@@ -108,10 +109,18 @@ export default function AnalyticsPage() {
             />
           </div>
 
-          <div className="rounded-2xl border border-line bg-surface p-5 text-sm text-ink-soft">
-            Avg. processing time: <b className="font-mono text-ink">{t!.avg_duration_ms.toLocaleString()} ms</b> ·
-            OCR jobs: <b className="font-mono text-ink">{t!.ocr_jobs}</b> ·{" "}
-            <Link href="/dashboard/keys" className="font-medium text-accent-700 hover:underline">Manage API keys →</Link>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-2xl border border-line bg-surface p-5 text-sm text-ink-soft">
+            <span className="flex items-center gap-2">
+              <span className="text-accent-700"><ClockIcon width={18} height={18} /></span>
+              Avg. processing time <b className="font-mono text-ink">{t!.avg_duration_ms.toLocaleString()} ms</b>
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="text-accent-700"><ScanIcon width={18} height={18} /></span>
+              OCR jobs <b className="font-mono text-ink">{t!.ocr_jobs.toLocaleString()}</b>
+            </span>
+            <Link href="/dashboard/keys" className="ml-auto inline-flex items-center gap-1.5 font-medium text-accent-700 hover:underline">
+              <KeyIcon width={16} height={16} /> Manage API keys →
+            </Link>
           </div>
         </>
       ) : null}

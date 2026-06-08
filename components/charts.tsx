@@ -4,12 +4,14 @@
 import { useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
-const ACCENTS: Record<string, string> = {
-  accent: "bg-accent-600",
-  brass: "bg-brass-500",
-  amber: "bg-amber-500",
-  rose: "bg-rose-500",
-  ink: "bg-ink/40",
+// Accent → solid hex (icon/segment color). Soft tints are derived with an alpha
+// suffix so we never depend on Tailwind shade classes that may not be generated.
+const COLORS: Record<string, string> = {
+  accent: "#1d4ed8",
+  brass: "#a87a2c",
+  amber: "#d97706",
+  rose: "#e11d48",
+  ink: "#475569",
 };
 
 export function StatCard({
@@ -17,17 +19,30 @@ export function StatCard({
   value,
   sub,
   accent = "accent",
+  icon,
 }: {
   label: string;
   value: ReactNode;
   sub?: string;
-  accent?: keyof typeof ACCENTS;
+  accent?: keyof typeof COLORS;
+  icon?: ReactNode;
 }) {
+  const c = COLORS[accent];
   return (
-    <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(10,23,51,0.04)]">
-      <div className="label-caps flex items-center gap-2 text-ink-soft">
-        <span className={`h-1.5 w-1.5 rounded-full ${ACCENTS[accent]}`} />
-        {label}
+    <div className="group rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(10,23,51,0.04)] transition-all hover:-translate-y-0.5 hover:border-accent-200 hover:shadow-[0_18px_40px_-30px_rgba(10,23,51,0.4)]">
+      <div className="flex items-center justify-between">
+        <div className="label-caps flex items-center gap-2 text-ink-soft">
+          <span className="h-1.5 w-1.5 rounded-full" style={{ background: c }} />
+          {label}
+        </div>
+        {icon && (
+          <span
+            className="grid h-9 w-9 place-items-center rounded-xl transition-transform group-hover:scale-105"
+            style={{ background: `${c}14`, color: c, boxShadow: `inset 0 0 0 1px ${c}26` }}
+          >
+            {icon}
+          </span>
+        )}
       </div>
       <div className="mt-3 font-display text-3xl font-semibold tabular-nums tracking-tight text-ink">{value}</div>
       {sub && <div className="mt-1 text-xs text-ink-soft">{sub}</div>}
@@ -104,7 +119,8 @@ export function AreaChart({ data, label, color = "#1d4ed8" }: { data: Point[]; l
   );
 }
 
-/** Donut via conic-gradient; segments with a legend. */
+/** Interactive donut — hover a segment or legend row to highlight it; the center
+ *  shows the focused slice's share, or the total when nothing is hovered. */
 export function Donut({
   title,
   segments,
@@ -112,37 +128,74 @@ export function Donut({
   title: string;
   segments: { label: string; value: number; color: string }[];
 }) {
+  const [active, setActive] = useState<number | null>(null);
   const total = segments.reduce((s, x) => s + x.value, 0);
-  let acc = 0;
-  const stops = segments
-    .map((s) => {
-      const start = total ? (acc / total) * 360 : 0;
-      acc += s.value;
-      const end = total ? (acc / total) * 360 : 0;
-      return `${s.color} ${start}deg ${end}deg`;
-    })
-    .join(", ");
-  const bg = total ? `conic-gradient(${stops})` : "conic-gradient(var(--line) 0deg 360deg)";
+
+  const r = 54;
+  const C = 2 * Math.PI * r;
+  const arcs = segments.map((s, i) => {
+    const frac = total ? s.value / total : 0;
+    // Cumulative length of all preceding segments — computed functionally (no
+    // outer-variable mutation, which the React compiler lint forbids). n is tiny.
+    const start = segments.slice(0, i).reduce((sum, p) => sum + (total ? p.value / total : 0) * C, 0);
+    return { ...s, dash: frac * C, start, frac };
+  });
+
+  const focused = active !== null ? arcs[active] : null;
+  const centerValue = focused ? focused.value : total;
+  const centerLabel = focused ? `${Math.round(focused.frac * 100)}%` : "total";
 
   return (
     <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(10,23,51,0.04)]">
       <h3 className="mb-4 font-display text-sm font-semibold tracking-tight text-ink">{title}</h3>
       <div className="flex items-center gap-6">
         <div className="relative h-32 w-32 shrink-0">
-          <div className="h-32 w-32 rounded-full" style={{ background: bg }} />
-          <div className="absolute inset-0 m-auto grid h-20 w-20 place-items-center rounded-full bg-surface text-center">
+          <svg viewBox="0 0 132 132" className="h-32 w-32 -rotate-90">
+            <circle cx="66" cy="66" r={r} fill="none" stroke="var(--color-line, #e5e7eb)" strokeWidth="15" />
+            {total > 0 &&
+              arcs.map((a, i) => (
+                <circle
+                  key={a.label}
+                  cx="66"
+                  cy="66"
+                  r={r}
+                  fill="none"
+                  stroke={a.color}
+                  strokeWidth={active === i ? 18 : 15}
+                  strokeDasharray={`${a.dash} ${C - a.dash}`}
+                  strokeDashoffset={C - a.start}
+                  strokeLinecap="butt"
+                  className="cursor-pointer transition-[stroke-width,opacity] duration-150"
+                  opacity={active === null || active === i ? 1 : 0.3}
+                  onMouseEnter={() => setActive(i)}
+                  onMouseLeave={() => setActive(null)}
+                />
+              ))}
+          </svg>
+          <div className="pointer-events-none absolute inset-0 m-auto grid h-20 w-20 place-items-center rounded-full text-center">
             <div>
-              <div className="font-display text-xl font-semibold tabular-nums text-ink">{total.toLocaleString()}</div>
-              <div className="label-caps text-ink-soft/70">total</div>
+              <div className="font-display text-xl font-semibold tabular-nums text-ink">{centerValue.toLocaleString()}</div>
+              <div className="label-caps text-ink-soft/70" style={focused ? { color: focused.color } : undefined}>
+                {centerLabel}
+              </div>
             </div>
           </div>
         </div>
-        <ul className="space-y-2 text-sm">
-          {segments.map((s) => (
-            <li key={s.label} className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-sm" style={{ background: s.color }} />
+        <ul className="flex-1 space-y-1.5 text-sm">
+          {arcs.map((s, i) => (
+            <li
+              key={s.label}
+              onMouseEnter={() => setActive(i)}
+              onMouseLeave={() => setActive(null)}
+              className={
+                "flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 transition-colors " +
+                (active === i ? "bg-black/[0.04]" : "")
+              }
+            >
+              <span className="h-2.5 w-2.5 rounded-sm transition-transform" style={{ background: s.color, transform: active === i ? "scale(1.25)" : undefined }} />
               <span className="text-ink-soft">{s.label}</span>
               <span className="ml-auto font-mono font-medium tabular-nums text-ink">{s.value.toLocaleString()}</span>
+              <span className="w-9 text-right font-mono text-xs text-ink-soft/70">{Math.round(s.frac * 100)}%</span>
             </li>
           ))}
         </ul>
@@ -151,9 +204,13 @@ export function Donut({
   );
 }
 
-/** Horizontal bar list (e.g. by file type). */
+/** Interactive horizontal bar list — hover a row to highlight its bar and reveal
+ *  its share of the total. */
 export function BarList({ title, items }: { title: string; items: { label: string; value: number }[] }) {
+  const [active, setActive] = useState<number | null>(null);
   const max = Math.max(1, ...items.map((i) => i.value));
+  const total = items.reduce((s, i) => s + i.value, 0);
+
   return (
     <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(10,23,51,0.04)]">
       <h3 className="mb-4 font-display text-sm font-semibold tracking-tight text-ink">{title}</h3>
@@ -161,17 +218,37 @@ export function BarList({ title, items }: { title: string; items: { label: strin
         <Empty />
       ) : (
         <ul className="space-y-3">
-          {items.map((i) => (
-            <li key={i.label}>
-              <div className="mb-1 flex justify-between text-xs">
-                <span className="font-mono text-ink-soft">{i.label}</span>
-                <span className="font-mono font-medium tabular-nums text-ink">{i.value.toLocaleString()}</span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-black/[0.06]">
-                <div className="h-full rounded-full bg-accent-600" style={{ width: `${(i.value / max) * 100}%` }} />
-              </div>
-            </li>
-          ))}
+          {items.map((i, idx) => {
+            const pct = total ? Math.round((i.value / total) * 100) : 0;
+            const on = active === idx;
+            return (
+              <li
+                key={i.label}
+                onMouseEnter={() => setActive(idx)}
+                onMouseLeave={() => setActive(null)}
+                className="cursor-default rounded-lg px-1 py-0.5 transition-colors"
+              >
+                <div className="mb-1 flex items-center justify-between text-xs">
+                  <span className="font-mono text-ink-soft">{i.label}</span>
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="font-mono text-[11px] text-ink-soft/70 transition-opacity"
+                      style={{ opacity: on ? 1 : 0 }}
+                    >
+                      {pct}%
+                    </span>
+                    <span className="font-mono font-medium tabular-nums text-ink">{i.value.toLocaleString()}</span>
+                  </span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-black/[0.06]">
+                  <div
+                    className="h-full rounded-full transition-[width,background-color] duration-300"
+                    style={{ width: `${(i.value / max) * 100}%`, background: on ? "#1e40af" : "#1d4ed8" }}
+                  />
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
