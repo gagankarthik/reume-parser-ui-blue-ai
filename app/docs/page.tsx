@@ -14,6 +14,7 @@ const SECTIONS = [
   { id: "get-key", label: "Get an API key" },
   { id: "auth", label: "Authentication" },
   { id: "parse", label: "Parse a resume" },
+  { id: "output", label: "Output fields" },
   { id: "poll", label: "Poll async jobs" },
   { id: "feedback", label: "Submit feedback" },
   { id: "webhooks", label: "Webhooks" },
@@ -93,7 +94,7 @@ export default function DocsPage() {
           <Section n="03" id="parse" title="Parse a resume">
             <P>
               <Mono>POST /api/v1/resume/parse</Mono> with <Mono>multipart/form-data</Mono> and a single{" "}
-              <Mono>file</Mono> field. Supported: PDF, DOCX, PNG, JPG, TIFF (max 10&nbsp;MB).
+              <Mono>file</Mono> field. Supported: PDF, DOCX, PNG, JPG, TIFF, WEBP (max 10&nbsp;MB).
             </P>
             <Code>{`curl -X POST "${API_BASE}/api/v1/resume/parse" \\
   -H "X-API-Key: rp_live_your_key" \\
@@ -101,18 +102,56 @@ export default function DocsPage() {
             <P>
               Digital PDFs and DOCX return the result immediately (<Mono>status: &quot;completed&quot;</Mono>).
               Scanned PDFs and images need OCR and return <Mono>status: &quot;processing&quot;</Mono> with a{" "}
-              <Mono>job_id</Mono> to poll (or use a webhook).
+              <Mono>job_id</Mono> to poll (or use a webhook). Add{" "}
+              <Mono>-F &quot;force_textract=true&quot;</Mono> to force high-accuracy OCR on a difficult scan.
             </P>
             <Code>{`{
   "job_id": "01J3K…",
   "status": "completed",
-  "data": { "personal_info": { … }, "experience": [ … ], "skills": [ … ] },
-  "confidence": { "overall": 0.91 },
-  "poll_url": null
+  "data": {
+    "personal_info":  { "full_name": "…", "credentials": ["RN", "BSN"], … },
+    "experience":     [ … ],
+    "education":      [ … ],
+    "skills":         [ … ],
+    "certifications": [ … ],
+    "licenses":       [ { "license_type": "RN", "state": "FL", "license_number": "RN9411204" } ],
+    "references":     [ … ]
+  },
+  "confidence":        { "overall": 0.91, "personal_info": 0.96, "experience": 0.88 },
+  "skills_validation": { "recognized_ratio": 0.8 },
+  "partial":           false,
+  "warnings":          [],
+  "poll_url":          null
 }`}</Code>
           </Section>
 
-          <Section n="04" id="poll" title="Poll async jobs">
+          <Section n="04" id="output" title="Output fields">
+            <P>
+              Every completed parse returns a healthcare-normalized record. Specialties are resolved to
+              canonical taxonomy names, credentials and state licences are captured separately, and each
+              section carries a confidence score so you can route low-confidence records to human review.
+            </P>
+            <Table
+              head={["Field", "What it holds"]}
+              rows={[
+                ["data.personal_info", "Name, post-nominal credentials[] (RN, BSN, MPH…), full address, contact, summary"],
+                ["data.experience[]", "Per-role facility, title, dates, location, profession, specialties, shift, responsibilities[]"],
+                ["data.licenses[]", "State licences with license_number, state, status, and compact flag — kept separate from certifications"],
+                ["data.certifications[]", "Time-limited certifications (BLS, ACLS, CCRN…) with issuer and dates"],
+                ["confidence", "Per-section + overall scores, 0–1"],
+                ["skills_validation", "Taxonomy match ratio and recognized / unrecognized split"],
+                ["partial · warnings", "partial=true flags a degraded record; warnings[] explains what to review"],
+              ]}
+            />
+            <P>
+              <b>Always check <Mono>partial</Mono>.</b> When extraction degrades on a difficult document the API
+              still returns whatever could be recovered (rather than failing), with <Mono>partial: true</Mono>{" "}
+              and a human-readable <Mono>warnings</Mono> list — surface these records for review instead of
+              auto-importing them.
+            </P>
+          </Section>
+
+          <Section n="05" id="poll" title="Poll async jobs">
             <P>
               For async jobs, poll <Mono>GET /api/v1/resume/job/&#123;job_id&#125;</Mono> until{" "}
               <Mono>status</Mono> is <Mono>completed</Mono> or <Mono>failed</Mono>. Results are kept for 1 hour.
@@ -121,7 +160,7 @@ export default function DocsPage() {
 → { "status": "completed", "data": { … }, "confidence": { … } }`}</Code>
           </Section>
 
-          <Section n="05" id="feedback" title="Submit feedback">
+          <Section n="06" id="feedback" title="Submit feedback">
             <P>
               After a user reviews and corrects a parsed resume, send the original and the
               corrected JSON back so we can improve accuracy.{" "}
@@ -151,7 +190,7 @@ export default function DocsPage() {
 }`}</Code>
           </Section>
 
-          <Section n="06" id="webhooks" title="Webhooks">
+          <Section n="07" id="webhooks" title="Webhooks">
             <P>
               Instead of polling, register a webhook to receive results. Each delivery is signed: verify{" "}
               <Mono>X-Signature</Mono> = <Mono>HMAC-SHA256(secret, &quot;&#123;timestamp&#125;.&#123;body&#125;&quot;)</Mono>{" "}
@@ -162,7 +201,7 @@ X-Timestamp: <unix seconds>
 X-Event:     parse.completed`}</Code>
           </Section>
 
-          <Section n="07" id="errors" title="Errors">
+          <Section n="08" id="errors" title="Errors">
             <P>All errors share one envelope. Branch on <Mono>error_code</Mono>; show <Mono>hint</Mono> to users.</P>
             <Code>{`{ "error": { "status_code": 413, "error_code": "FILE_TOO_LARGE",
             "detail": "…", "hint": "…", "request_id": "…" } }`}</Code>
@@ -177,7 +216,7 @@ X-Event:     parse.completed`}</Code>
             />
           </Section>
 
-          <Section n="08" id="quickstart" title="Quickstart">
+          <Section n="09" id="quickstart" title="Quickstart">
             <H3>Node.js</H3>
             <Code>{`const form = new FormData();
 form.append("file", fileBlob, "resume.pdf");
