@@ -16,6 +16,7 @@ const SECTIONS = [
   { id: "parse", label: "Parse a resume" },
   { id: "output", label: "Output fields" },
   { id: "poll", label: "Poll async jobs" },
+  { id: "batch", label: "Batch & large files" },
   { id: "feedback", label: "Submit feedback" },
   { id: "webhooks", label: "Webhooks" },
   { id: "errors", label: "Errors" },
@@ -159,12 +160,33 @@ export default function DocsPage() {
             <P>
               For async jobs, poll <Mono>GET /api/v1/resume/job/&#123;job_id&#125;</Mono> until{" "}
               <Mono>status</Mono> is <Mono>completed</Mono> or <Mono>failed</Mono>. Results are kept for 1 hour.
+              A failed job carries an <Mono>error</Mono> message — and a parse you&apos;re unhappy with can be re-run
+              with <Mono>POST /api/v1/resume/&#123;job_id&#125;/retry</Mono> (the file is re-uploaded; up to 3 retries).
             </P>
             <Code>{`GET /api/v1/resume/job/01J3K…
-→ { "status": "completed", "data": { … }, "confidence": { … } }`}</Code>
+→ { "status": "completed", "data": { … }, "confidence": { … },
+    "partial": false, "warnings": [] }`}</Code>
           </Section>
 
-          <Section n="06" id="feedback" title="Submit feedback">
+          <Section n="06" id="batch" title="Batch & large files">
+            <P>
+              <b>Batch:</b> send up to 200 files in one <Mono>multipart/form-data</Mono> request to{" "}
+              <Mono>POST /api/v1/resume/batch</Mono>. You get a <Mono>batch_id</Mono> plus per-file{" "}
+              <Mono>job_ids</Mono>; poll <Mono>GET /api/v1/resume/batch/&#123;batch_id&#125;</Mono> for overall
+              progress, or subscribe to the <Mono>batch.completed</Mono> webhook.
+            </P>
+            <Code>{`curl -X POST "${API_BASE}/api/v1/resume/batch" \\
+  -H "X-API-Key: rp_live_your_key" \\
+  -F "files=@a.pdf" -F "files=@b.docx" -F "files=@c.png"`}</Code>
+            <P>
+              <b>Large files (&gt; ~6 MB):</b> the direct endpoint is capped by the platform request limit, so use the
+              two-step flow — <Mono>POST /api/v1/resume/upload-url</Mono> returns a presigned S3 form; upload the file
+              straight to storage, then call <Mono>POST /api/v1/resume/parse-uploaded</Mono> with the returned{" "}
+              <Mono>job_id</Mono> (and optional <Mono>force_textract</Mono>) and poll as usual. Files up to 10&nbsp;MB.
+            </P>
+          </Section>
+
+          <Section n="07" id="feedback" title="Submit feedback">
             <P>
               After a user reviews and corrects a parsed resume, send the original and the
               corrected JSON back so we can improve accuracy.{" "}
@@ -194,7 +216,7 @@ export default function DocsPage() {
 }`}</Code>
           </Section>
 
-          <Section n="07" id="webhooks" title="Webhooks">
+          <Section n="08" id="webhooks" title="Webhooks">
             <P>
               Instead of polling, register a webhook to receive results. Each delivery is signed: verify{" "}
               <Mono>X-Signature</Mono> = <Mono>HMAC-SHA256(secret, &quot;&#123;timestamp&#125;.&#123;body&#125;&quot;)</Mono>{" "}
@@ -205,7 +227,7 @@ X-Timestamp: <unix seconds>
 X-Event:     parse.completed`}</Code>
           </Section>
 
-          <Section n="08" id="errors" title="Errors">
+          <Section n="09" id="errors" title="Errors">
             <P>All errors share one envelope. Branch on <Mono>error_code</Mono>; show <Mono>hint</Mono> to users.</P>
             <Code>{`{ "error": { "status_code": 413, "error_code": "FILE_TOO_LARGE",
             "detail": "…", "hint": "…", "request_id": "…" } }`}</Code>
@@ -221,7 +243,7 @@ X-Event:     parse.completed`}</Code>
             />
           </Section>
 
-          <Section n="09" id="quickstart" title="Quickstart">
+          <Section n="10" id="quickstart" title="Quickstart">
             <H3>Node.js</H3>
             <Code>{`const form = new FormData();
 form.append("file", fileBlob, "resume.pdf");

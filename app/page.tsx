@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -6,48 +7,67 @@ import { getSessionClaims } from "@/lib/session";
 import { SiteNav } from "@/components/landing/SiteNav";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { Reveal } from "@/components/landing/Reveal";
+import { ParseDemo } from "@/components/landing/ParseDemo";
 
-export const metadata = {
-  title: "Blue-IQ Parser API — structured data from any resume",
+export const metadata: Metadata = {
+  title: "Blue-IQ Parser — healthcare resume parsing API",
   description:
-    "Turn PDF, DOCX, and scanned resumes into schema-validated JSON with one API call. Confidence scores, signed webhooks, privacy-first.",
+    "Parse PDF, DOCX, and scanned resumes into schema-validated JSON. Built for healthcare staffing: licence numbers, credentials, specialties, and travel work histories — with confidence scores and signed webhooks.",
+  keywords: [
+    "resume parsing API",
+    "healthcare resume parser",
+    "CV parsing",
+    "nurse licence extraction",
+    "OCR resume",
+    "structured resume JSON",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    title: "Blue-IQ Parser — healthcare resume parsing API",
+    description:
+      "One API call turns any resume — including scans — into schema-validated, confidence-scored JSON that knows what an RN licence is.",
+    siteName: "Blue-IQ Parser",
+  },
+  twitter: {
+    card: "summary",
+    title: "Blue-IQ Parser — healthcare resume parsing API",
+    description:
+      "Schema-validated JSON from any resume, built for healthcare staffing.",
+  },
+};
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Blue-IQ Parser API",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Web",
+  description:
+    "Healthcare-grade resume parsing API: PDF, DOCX, and scanned resumes to schema-validated JSON with licence numbers, credentials, specialties, confidence scores, and signed webhooks.",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free to start — no credit card required" },
 };
 
 export default async function Landing() {
   const authed = !!(await getSessionClaims());
   return (
     <div className="relative overflow-x-clip">
+      {/* Static, server-defined JSON-LD; "<" escaped so "</script>" can never break out. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD).replace(/</g, "\\u003c") }}
+      />
       <SiteNav authed={authed} />
-      <Hero authed={authed} />
-      <TrustStrip />
-      <FeatureRow
-        eyebrow="Predictable output"
-        title="Schema-validated JSON, every single time"
-        body="Every response is a strict, documented shape — personal info, experience, education, skills, certifications. Build against one contract and stop writing defensive code for the resume that breaks your parser."
-        points={["Strict, versioned schema", "Stable field names", "Empty fields, never missing keys"]}
-        visual={<SchemaVisual />}
-      />
-      <FeatureRow
-        reverse
-        tint
-        eyebrow="Human-in-the-loop"
-        title="Confidence scores you can route on"
-        body="Per-field scores from 0 to 1 let you auto-accept clean records and send only the uncertain ones to a person. Most files clear automatically — your team reviews the handful that actually need eyes."
-        points={["Per-field and overall scores", "Auto-accept thresholds", "Route the rest to review"]}
-        visual={<ConfidenceVisual />}
-      />
-      <FeatureRow
-        eyebrow="Async at scale"
-        title="Signed webhooks for batch and OCR jobs"
-        body="Scanned files and high-volume batches return over signed webhooks you can verify — no polling loops, no lost results. Each delivery carries an HMAC signature and timestamp."
-        points={["HMAC-signed deliveries", "parse.completed · parse.failed · batch.completed", "Automatic retries"]}
-        visual={<WebhookVisual />}
-      />
-      <Coverage />
-      <UseCases />
-      <Security />
-      <ApiSample />
-      <Cta authed={authed} />
+      <main>
+        <Hero authed={authed} />
+        <SpecStrip />
+        <Healthcare />
+        <Pipeline />
+        <Review />
+        <Developers />
+        <Security />
+        <Cta authed={authed} />
+      </main>
       <SiteFooter />
     </div>
   );
@@ -57,147 +77,296 @@ export default async function Landing() {
 
 function Hero({ authed }: { authed?: boolean }) {
   return (
-    <section className="relative bg-surface">
-      <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 pt-14 pb-20 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:pt-20 lg:pb-28">
-        <div>
-          <h1
-            className="animate-fade-up font-display text-[2.9rem] leading-[1.03] font-bold tracking-tight text-balance text-ink sm:text-6xl lg:text-[4rem]"
-            style={{ animationDelay: "60ms" }}
-          >
-            Turn any resume into{" "}
-            <span className="text-accent-600">clean structured data</span>
-          </h1>
-
-          <p
-            className="animate-fade-up mt-6 max-w-lg text-lg leading-relaxed text-ink-soft"
-            style={{ animationDelay: "100ms" }}
-          >
-            One API call extracts schema-validated, confidence-scored JSON from any PDF, DOCX, or scan — built for the documents your candidates actually send.
+    <section className="relative bg-surface" aria-label="Introduction">
+      <div className="bg-grid absolute inset-x-0 top-0 h-[34rem] text-line" aria-hidden />
+      <div className="relative mx-auto grid max-w-7xl items-start gap-12 px-5 pb-16 pt-12 sm:px-6 lg:grid-cols-[1.04fr_0.96fr] lg:gap-16 lg:pb-24 lg:pt-20">
+        <div className="lg:pt-6">
+          <p className="animate-fade-up label-caps inline-flex items-center gap-2 text-accent-700" style={{ animationDelay: "40ms" }}>
+            <span className="h-px w-8 bg-accent-400" aria-hidden />
+            Resume Parsing API · Healthcare-grade
           </p>
 
-          <div className="animate-fade-up mt-9 flex flex-wrap items-center gap-3" style={{ animationDelay: "150ms" }}>
+          <h1
+            className="animate-fade-up mt-5 font-display text-[2.6rem] font-bold leading-[1.04] tracking-tight text-balance text-ink sm:text-[3.4rem] lg:text-[3.8rem]"
+            style={{ animationDelay: "90ms" }}
+          >
+            The resume parser that knows what an RN licence is.
+          </h1>
+
+          <p className="animate-fade-up mt-6 max-w-xl text-lg leading-relaxed text-ink-soft" style={{ animationDelay: "140ms" }}>
+            One call turns any PDF, DOCX, or scan into schema-validated JSON — licence numbers, post-nominal
+            credentials, canonical specialties, and travel work histories where the agency never swallows the
+            facility. Confidence-scored, so your team only reviews what needs eyes.
+          </p>
+
+          <div className="animate-fade-up mt-9 flex flex-wrap items-center gap-3" style={{ animationDelay: "190ms" }}>
             <Link
               href={authed ? "/dashboard" : "/signup"}
-              className="group inline-flex items-center gap-2 rounded-full bg-accent-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent-600/25 transition-all hover:-translate-y-0.5 hover:bg-accent-700"
+              className="group inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
             >
-              {authed ? "Go to dashboard" : "Get your API key"}
+              {authed ? "Go to dashboard" : "Get an API key"}
               <Arrow />
             </Link>
             <Link
               href="/docs"
-              className="inline-flex items-center gap-2 rounded-full border-2 border-line-strong bg-surface px-7 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-line-strong bg-surface px-6 py-3 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
             >
               Read the docs
             </Link>
           </div>
+
+          <p className="animate-fade-up mt-5 font-mono text-xs text-ink-soft/70" style={{ animationDelay: "230ms" }}>
+            curl -F &quot;file=@resume.pdf&quot; — that&apos;s the integration.
+          </p>
         </div>
 
-        <Reveal delay={120}>
-          <HeroMockup />
+        <Reveal delay={140}>
+          <ParseDemo />
         </Reveal>
       </div>
     </section>
   );
 }
 
-function HeroMockup() {
+/* ── Spec strip — facts, not logos ───────────────────────────────────────── */
+
+function SpecStrip() {
+  const specs: [string, string][] = [
+    ["6", "input formats, scans included"],
+    ["40+", "structured output fields"],
+    ["2-stage", "OCR with Textract fallback"],
+    ["≤ 2 min", "per resume, scans included"],
+    ["0", "documents retained after parsing"],
+  ];
   return (
-    <div className="relative">
-      <Frame label="jane_okonkwo.pdf" badge="Parsed">
-        <div className="grid grid-cols-[0.85fr_1.15fr] gap-4">
-          <div className="h-[150px] overflow-hidden rounded-xl border border-line bg-accent-50 p-4">
-            <div className="space-y-2.5">
-              <span className="block h-2 w-3/4 rounded-full bg-accent-300" />
-              <span className="block h-2 w-full rounded-full bg-line-strong" />
-              <span className="block h-2 w-5/6 rounded-full bg-line-strong" />
-              <span className="block h-2 w-2/3 rounded-full bg-line-strong" />
-              <span className="mt-3 block h-2 w-1/2 rounded-full bg-accent-300" />
-              <span className="block h-2 w-full rounded-full bg-line-strong" />
-              <span className="block h-2 w-4/5 rounded-full bg-line-strong" />
-            </div>
+    <section className="border-y border-line bg-paper" aria-label="At a glance">
+      <dl className="mx-auto grid max-w-7xl grid-cols-2 divide-line px-5 sm:px-6 md:grid-cols-5 md:divide-x">
+        {specs.map(([n, label]) => (
+          <div key={label} className="px-2 py-7 md:px-6">
+            <dt className="sr-only">{label}</dt>
+            <dd>
+              <span className="block font-display text-3xl font-bold tracking-tight text-ink">{n}</span>
+              <span className="mt-1 block text-[13px] leading-snug text-ink-soft">{label}</span>
+            </dd>
           </div>
-          <div className="space-y-2">
-            {[
-              ["name", "Jane Okonkwo, RN"],
-              ["role", "ICU Nurse"],
-              ["location", "Austin, TX"],
-              ["skills", "ACLS · Triage"],
-            ].map(([k, v]) => (
-              <div key={k} className="flex items-center justify-between rounded-lg border border-line bg-surface px-3 py-2">
-                <span className="label-caps text-ink-soft/70">{k}</span>
-                <span className="truncate pl-2 text-xs font-semibold text-ink">{v}</span>
-              </div>
-            ))}
-            <div className="flex items-center justify-between rounded-lg border border-accent-200 bg-accent-50 px-3 py-2">
-              <span className="label-caps text-accent-700">confidence</span>
-              <span className="font-mono text-sm font-bold text-accent-700">0.94</span>
-            </div>
-          </div>
-        </div>
-      </Frame>
-    </div>
+        ))}
+      </dl>
+    </section>
   );
 }
 
-/* ── Trust strip ─────────────────────────────────────────────────────────── */
+/* ── Section header (numbered, left-aligned — same family as /docs) ──────── */
 
-function TrustStrip() {
-  const items = [
-    { icon: <UsersIcon />, label: "ATS Platforms" },
-    { icon: <BriefcaseIcon />, label: "Job Boards" },
-    { icon: <LayersIcon />, label: "RPO & Volume" },
-    { icon: <PulseIcon />, label: "Healthcare Staffing" },
-    { icon: <PlugIcon />, label: "HR Tech" },
+function SectionHead({ n, eyebrow, title, lede }: { n: string; eyebrow: string; title: string; lede?: string }) {
+  return (
+    <Reveal>
+      <div className="max-w-3xl">
+        <p className="label-caps flex items-center gap-3 text-accent-700">
+          <span className="font-display text-base font-semibold italic text-accent-600/70">{n}</span>
+          {eyebrow}
+        </p>
+        <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-balance text-ink sm:text-[2.5rem] sm:leading-[1.08]">
+          {title}
+        </h2>
+        {lede && <p className="mt-4 text-lg leading-relaxed text-ink-soft">{lede}</p>}
+        <hr className="rule mt-7" />
+      </div>
+    </Reveal>
+  );
+}
+
+/* ── 01 · Healthcare field ledger ────────────────────────────────────────── */
+
+function Healthcare() {
+  const rows: { field: string; what: string; detail: string }[] = [
+    {
+      field: "licenses[]",
+      what: "Real practice licences",
+      detail: "Number verbatim with letter prefix, state as written, compact/multistate flag, status — never mislabelled as a certification.",
+    },
+    {
+      field: "personal_info.credentials[]",
+      what: "Post-nominals, preserved",
+      detail: "“Jane Smith, RN, BSN, CCRN” → name cleanly split from every credential, in order, exactly as written.",
+    },
+    {
+      field: "experience[].agency_name",
+      what: "Travel histories, untangled",
+      detail: "One entry per facility under an agency umbrella. The staffing agency lands in agency_name — it never overwrites the hospital.",
+    },
+    {
+      field: "experience[].specialties[]",
+      what: "Canonical specialties",
+      detail: "“Med Surg/Tele”, “CVICU”, “L&D” resolved against a 360+ entry clinical taxonomy — consistent values you can filter on.",
+    },
+    {
+      field: "professional_associations[]",
+      what: "Memberships & committees",
+      detail: "Sigma Theta Tau, AACN, unit committees, process-owner roles — captured, not silently dropped.",
+    },
+    {
+      field: "certifications[]",
+      what: "Certs with honest dates",
+      detail: "BLS, ACLS, CCRN with issued vs. expiry kept apart — an unlabelled date is never guessed into an expiry.",
+    },
   ];
   return (
-    <section className="border-y border-line bg-paper">
-      <div className="mx-auto max-w-7xl px-5 py-12 sm:px-6">
-        <p className="label-caps text-center text-ink-soft/60">Built to power resume parsing across your stack</p>
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-          {items.map((it) => (
-            <span
-              key={it.label}
-              className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface py-2 pl-2 pr-5 text-sm font-semibold text-ink shadow-sm"
-            >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-50 text-accent-700">{it.icon}</span>
-              {it.label}
-            </span>
+    <section id="solutions" className="bg-surface" aria-label="Built for healthcare staffing">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
+        <SectionHead
+          n="01"
+          eyebrow="Built for healthcare staffing"
+          title="Generic parsers see text. This one sees a clinician."
+          lede="Nurses and allied health professionals carry structure most parsers destroy — licences with numbers, credential strings after names, travel assignments nested under agencies. Blue-IQ extracts each into its own field."
+        />
+        <div className="mt-12 grid gap-x-12 gap-y-0 lg:grid-cols-2">
+          {rows.map((r, i) => (
+            <Reveal key={r.field} delay={(i % 2) * 80}>
+              <div className="group flex gap-5 border-b border-line py-7 transition-colors hover:bg-accent-50/40 sm:px-3">
+                <span className="font-display text-sm font-semibold italic text-accent-600/60">{String(i + 1).padStart(2, "0")}</span>
+                <div className="min-w-0">
+                  <h3 className="font-display text-lg font-bold tracking-tight text-ink">{r.what}</h3>
+                  <p className="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{r.detail}</p>
+                  <code className="mt-3 inline-block rounded-md bg-accent-50 px-2 py-1 font-mono text-xs text-accent-800 ring-1 ring-inset ring-accent-100">
+                    {r.field}
+                  </code>
+                </div>
+              </div>
+            </Reveal>
           ))}
         </div>
+        <Reveal delay={120}>
+          <p className="mt-8 max-w-3xl text-[15px] leading-relaxed text-ink-soft">
+            Not nurse-only: radiologic and CT/MRI technologists, respiratory therapists, OT/PT/SLP, surgical and lab
+            techs, and social workers parse with the same depth. And it remains a fully general resume parser — send
+            it an accountant and you get clean JSON back.
+          </p>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-/* ── Alternating feature rows ────────────────────────────────────────────── */
+/* ── 02 · Pipeline ───────────────────────────────────────────────────────── */
 
-function FeatureRow({
-  eyebrow, title, body, points, visual, reverse, tint,
-}: {
-  eyebrow: string; title: string; body: string; points: string[]; visual: ReactNode; reverse?: boolean; tint?: boolean;
-}) {
+function Pipeline() {
+  const steps: { title: string; body: string; mono: string }[] = [
+    {
+      title: "Read anything",
+      body: "Digital text comes straight out. Scans and photos run tiered OCR — Tesseract first, AWS Textract when quality demands it.",
+      mono: "pdf · docx · png · jpg · tiff · scan",
+    },
+    {
+      title: "Map the document",
+      body: "A multi-pass engine locates every role before extracting it, so a 15-job travel history keeps all 15 employers.",
+      mono: "structure → per-role extraction",
+    },
+    {
+      title: "Validate, never invent",
+      body: "Output is forced through a strict schema. A missing date stays null — it is never padded into a fake one.",
+      mono: "08/2018, not 08/01/2018",
+    },
+    {
+      title: "Score and flag",
+      body: "Per-section confidence plus plain-language warnings: a summary that looks copied, a name the email contradicts.",
+      mono: '"confidence": { "overall": 0.93 }',
+    },
+  ];
   return (
-    <section className={tint ? "bg-paper" : "bg-surface"}>
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <Reveal className={reverse ? "lg:order-2" : ""}>
-            <p className="label-caps text-accent-600">{eyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-balance text-ink sm:text-[2.4rem] sm:leading-[1.1]">{title}</h2>
-            <p className="mt-5 text-lg leading-relaxed text-ink-soft">{body}</p>
-            <ul className="mt-7 space-y-3">
-              {points.map((p) => (
-                <li key={p} className="flex items-center gap-3 text-[15px] font-medium text-ink">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-100 text-accent-700"><CheckMini /></span>
-                  {p}
-                </li>
-              ))}
-            </ul>
-            <Link href="/docs" className="mt-7 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-600 hover:text-accent-700">
-              Read the docs <Arrow />
-            </Link>
-          </Reveal>
-          <Reveal delay={120} className={reverse ? "lg:order-1" : ""}>
-            {visual}
+    <section className="border-y border-line bg-paper" aria-label="How a parse runs">
+      <div className="bg-ledger">
+        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
+          <SectionHead
+            n="02"
+            eyebrow="How a parse runs"
+            title="Four stages between upload and JSON."
+          />
+          <ol className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-2 xl:grid-cols-4">
+            {steps.map((s, i) => (
+              <Reveal as="li" key={s.title} delay={i * 80} className="bg-surface">
+                <div className="flex h-full flex-col p-7">
+                  <span className="font-display text-2xl font-bold italic text-accent-600/50">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="mt-4 font-display text-lg font-bold tracking-tight text-ink">{s.title}</h3>
+                  <p className="mt-2 grow text-sm leading-relaxed text-ink-soft">{s.body}</p>
+                  <code className="mt-5 block truncate border-t border-line pt-3 font-mono text-[11px] text-ink-soft/80">{s.mono}</code>
+                </div>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── 03 · Confidence & review ────────────────────────────────────────────── */
+
+function Review() {
+  const fields: [string, number][] = [
+    ["personal_info", 0.96],
+    ["experience", 0.91],
+    ["education", 0.88],
+    ["skills", 0.74],
+  ];
+  return (
+    <section className="bg-surface" aria-label="Confidence scores and review routing">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
+          <div>
+            <SectionHead
+              n="03"
+              eyebrow="Human-in-the-loop"
+              title="Your team reviews four resumes, not four hundred."
+              lede="Every section carries a 0–1 confidence score. Set a threshold: clean records flow straight into your system, and only the uncertain ones queue for a person. Degraded parses come back flagged partial with plain-language warnings — never a silent failure."
+            />
+            <Reveal delay={80}>
+              <ul className="mt-8 space-y-3 text-[15px] text-ink">
+                {[
+                  "Per-section and overall scores on every response",
+                  "partial: true on degraded documents — nothing fails silently",
+                  "Warnings a recruiter can read, not error codes",
+                  "Feedback endpoint: corrected JSON flows back to improve the model",
+                ].map((p) => (
+                  <li key={p} className="flex gap-3">
+                    <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden />
+                    <span className="text-ink-soft">{p}</span>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
+
+          <Reveal delay={120}>
+            <div className="rounded-2xl border border-line bg-paper p-6 sm:p-8">
+              <div className="flex items-baseline justify-between">
+                <span className="label-caps text-ink-soft/70">confidence</span>
+                <span className="font-mono text-xs text-ink-soft/60">threshold 0.80</span>
+              </div>
+              <div className="mt-6 space-y-5">
+                {fields.map(([label, s], i) => {
+                  const low = s < 0.8;
+                  return (
+                    <div key={label}>
+                      <div className="flex items-baseline justify-between text-sm">
+                        <span className="font-mono text-[13px] text-ink">{label}</span>
+                        <span className={"font-mono text-[13px] font-semibold " + (low ? "text-brass-500" : "text-accent-700")}>
+                          {s.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+                        <span
+                          className={"grow-x block h-full rounded-full " + (low ? "bg-brass-400" : "bg-accent-600")}
+                          style={{ width: `${s * 100}%`, animationDelay: `${i * 120}ms` }}
+                        />
+                      </div>
+                      <p className="mt-1.5 text-xs text-ink-soft/70">
+                        {low ? "→ queued for human review" : "→ auto-accepted"}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </Reveal>
         </div>
       </div>
@@ -205,53 +374,78 @@ function FeatureRow({
   );
 }
 
-/* ── Coverage ────────────────────────────────────────────────────────────── */
+/* ── 04 · Developers ─────────────────────────────────────────────────────── */
 
-function Coverage() {
-  const formats = ["PDF", "DOCX", "PNG", "JPG", "TIFF", "Scanned PDF"];
+function Developers() {
   return (
-    <section className="bg-paper">
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
-        <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="label-caps text-accent-600">Coverage</p>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-balance text-ink sm:text-[2.4rem] sm:leading-[1.1]">Every format your candidates send</h2>
-            <p className="mt-4 text-lg leading-relaxed text-ink-soft">From a crisp PDF to a phone photo of a printed CV — tiered OCR falls back automatically, only when it’s needed.</p>
-          </div>
-        </Reveal>
+    <section id="api" className="border-y border-line bg-paper" aria-label="Developer experience">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
+        <SectionHead
+          n="04"
+          eyebrow="Developer-first"
+          title="A request and a response. That’s the integration."
+          lede="No SDK required, no callback gymnastics for the simple case. Async OCR jobs return a job_id to poll — or register a signed webhook and skip polling entirely."
+        />
+
         <Reveal delay={100}>
-          <div className="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-3">
-            {formats.map((f) => (
-              <div key={f} className="flex items-center justify-center gap-2 rounded-2xl border border-line bg-paper py-6 text-base font-bold text-ink">
-                <span className="text-accent-600"><FileIcon /></span> {f}
-              </div>
-            ))}
+          <div className="mt-12 overflow-hidden rounded-2xl border border-[#1e2942] bg-[#0b1220] shadow-[0_44px_90px_-50px_rgba(11,18,32,0.8)]">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
+              <span className="font-mono text-xs text-[#7d889e]">POST /api/v1/resume/parse</span>
+              <Link href="/docs" className="font-mono text-xs text-[#8fb4ff] hover:text-white">
+                full reference →
+              </Link>
+            </div>
+            <div className="grid gap-px bg-white/10 lg:grid-cols-2">
+              <pre className="overflow-x-auto bg-[#0b1220] p-6 font-mono text-[13px] leading-relaxed text-[#dbe4f5]">
+                <code>
+                  <span className="text-[#64748b]"># one call</span>
+                  {"\n"}<span className="text-[#8fb4ff]">curl</span> -X POST \
+                  {"\n  "}{API_BASE}<span className="text-[#64748b]">/api/v1/resume/parse</span> \
+                  {"\n  "}-H <S>&quot;X-API-Key: rp_live_…&quot;</S> \
+                  {"\n  "}-F <S>&quot;file=@resume.pdf&quot;</S>
+                  {"\n\n"}<span className="text-[#64748b]"># difficult scan? force high-accuracy OCR</span>
+                  {"\n  "}-F <S>&quot;force_textract=true&quot;</S>
+                </code>
+              </pre>
+              <pre className="overflow-x-auto bg-[#0b1220] p-6 font-mono text-[13px] leading-relaxed text-[#dbe4f5]">
+                <code>
+                  <span className="text-[#64748b]">{"// 200 OK"}</span>
+                  {"\n"}<span className="text-[#64748b]">{"{"}</span>
+                  {"\n  "}<K>&quot;status&quot;</K>: <S>&quot;completed&quot;</S>,
+                  {"\n  "}<K>&quot;data&quot;</K>: <span className="text-[#64748b]">{"{"}</span> <K>&quot;licenses&quot;</K>, <K>&quot;experience&quot;</K>, <K>&quot;credentials&quot;</K>… <span className="text-[#64748b]">{"}"}</span>,
+                  {"\n  "}<K>&quot;confidence&quot;</K>: <span className="text-[#64748b]">{"{"}</span> <K>&quot;overall&quot;</K>: <span className="text-[#f0b454]">0.91</span> <span className="text-[#64748b]">{"}"}</span>,
+                  {"\n  "}<K>&quot;partial&quot;</K>: <span className="text-[#f0b454]">false</span>,
+                  {"\n  "}<K>&quot;warnings&quot;</K>: <span className="text-[#64748b]">[]</span>
+                  {"\n"}<span className="text-[#64748b]">{"}"}</span>
+                </code>
+              </pre>
+            </div>
           </div>
         </Reveal>
-      </div>
-    </section>
-  );
-}
 
-/* ── Use cases ───────────────────────────────────────────────────────────── */
-
-function UseCases() {
-  const cards = [
-    { icon: <UsersIcon />, title: "ATS & recruiting", body: "Auto-fill candidate records straight into your tracking system — no manual re-keying." },
-    { icon: <BriefcaseIcon />, title: "Job boards", body: "One-click apply: turn any upload into a complete, structured profile the moment it lands." },
-    { icon: <PlugIcon />, title: "RPO & HR tech", body: "Embed structured parsing inside your product, and process volume over signed webhooks." },
-  ];
-  return (
-    <section id="solutions" className="bg-surface">
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
-        <Reveal><Heading eyebrow="Solutions" title="One engine, every hiring workflow" /></Reveal>
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {cards.map((c, i) => (
-            <Reveal key={c.title} delay={i * 80}>
-              <div className="group h-full rounded-3xl border border-line bg-surface p-8 transition-all hover:-translate-y-1 hover:border-accent-200 hover:shadow-[0_28px_56px_-30px_rgba(29,78,216,0.35)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-600 text-white shadow-lg shadow-accent-600/25">{c.icon}</div>
-                <h3 className="mt-6 font-display text-xl font-bold tracking-tight text-ink">{c.title}</h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-ink-soft">{c.body}</p>
+        <div className="mt-6 grid gap-5 md:grid-cols-3">
+          {[
+            {
+              h: "Uniform errors",
+              p: "Every failure shares one envelope with a machine error_code and a hint written for end users.",
+              c: '"error_code": "FILE_TOO_LARGE"',
+            },
+            {
+              h: "Signed webhooks",
+              p: "Async results carry an HMAC-SHA256 signature and timestamp. Verify, then trust the payload.",
+              c: "X-Signature: sha256=…",
+            },
+            {
+              h: "Batch up to 200",
+              p: "Submit a folder of resumes in one request; per-file jobs report back individually.",
+              c: "POST /api/v1/resume/batch",
+            },
+          ].map((b, i) => (
+            <Reveal key={b.h} delay={i * 70}>
+              <div className="h-full rounded-2xl border border-line bg-surface p-6">
+                <h3 className="font-display text-base font-bold tracking-tight text-ink">{b.h}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{b.p}</p>
+                <code className="mt-4 block truncate border-t border-line pt-3 font-mono text-[11px] text-ink-soft/80">{b.c}</code>
               </div>
             </Reveal>
           ))}
@@ -261,80 +455,38 @@ function UseCases() {
   );
 }
 
-/* ── Security (not an add-on) ────────────────────────────────────────────── */
+/* ── 05 · Security ───────────────────────────────────────────────────────── */
 
 function Security() {
-  const items = [
-    { icon: <ShieldIcon />, title: "Zero retention", body: "Resumes are parsed in memory and deleted on completion — never written to disk." },
-    { icon: <LockIcon />, title: "Encrypted in transit", body: "Every request runs over TLS, authenticated with a per-account key you can rotate." },
-    { icon: <SignIcon />, title: "Signed webhooks", body: "Async results carry an HMAC signature, so you can trust the payload’s origin." },
-    { icon: <ListIcon />, title: "Content-free audit", body: "We log that a parse happened — never what was inside the document." },
+  const items: [string, string][] = [
+    ["Zero document retention", "Resumes are parsed in memory and deleted on completion. There is no stored copy to breach."],
+    ["Encrypted in transit", "Every request runs over TLS, authenticated by a per-account key you can rotate at any time."],
+    ["Signed webhooks", "Async deliveries carry an HMAC-SHA256 signature and timestamp; replay-window guidance is in the docs."],
+    ["Content-free audit trail", "We log that a parse happened — duration, file type, token spend — never what the document said."],
   ];
   return (
-    <section id="security" className="border-y border-line bg-paper">
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
-        <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="label-caps text-accent-600">Security &amp; privacy</p>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-balance text-ink sm:text-[2.4rem] sm:leading-[1.1]">Security isn’t an add-on. It’s the default.</h2>
-            <p className="mt-4 text-lg leading-relaxed text-ink-soft">Candidate documents are some of the most sensitive data you handle. Blue-IQ treats them that way.</p>
+    <section id="security" className="bg-surface" aria-label="Security and privacy">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
+        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <SectionHead
+            n="05"
+            eyebrow="Security & privacy"
+            title="Candidate documents are radioactive. Handle accordingly."
+            lede="A resume is PII end-to-end. The safest place to keep it is nowhere — so that’s the design."
+          />
+          <div>
+            <dl className="divide-y divide-line border-y border-line">
+              {items.map(([t, d], i) => (
+                <Reveal key={t} delay={i * 60}>
+                  <div className="grid gap-2 py-6 sm:grid-cols-[200px_1fr] sm:gap-8">
+                    <dt className="font-display text-base font-bold tracking-tight text-ink">{t}</dt>
+                    <dd className="text-[15px] leading-relaxed text-ink-soft">{d}</dd>
+                  </div>
+                </Reveal>
+              ))}
+            </dl>
           </div>
-        </Reveal>
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((it, i) => (
-            <Reveal key={it.title} delay={i * 70}>
-              <div className="h-full rounded-3xl border border-line bg-paper p-6">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-600 text-white shadow-lg shadow-accent-600/25">{it.icon}</span>
-                <h3 className="mt-5 font-display text-base font-bold tracking-tight text-ink">{it.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{it.body}</p>
-              </div>
-            </Reveal>
-          ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-/* ── API sample ──────────────────────────────────────────────────────────── */
-
-function ApiSample() {
-  return (
-    <section id="api" className="bg-surface">
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
-        <Reveal><Heading eyebrow="Developer-first" title="A request and a response. That’s the integration." /></Reveal>
-        <Reveal delay={100}>
-          <div className="mt-12 overflow-hidden rounded-[1.75rem] border border-[#1e2942] bg-[#0b1220] shadow-[0_40px_80px_-40px_rgba(29,78,216,0.45)]">
-            <div className="flex items-center gap-2 border-b border-white/10 px-5 py-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-              <span className="ml-2 font-mono text-xs text-[#7d889e]">Terminal</span>
-            </div>
-            <div className="grid gap-px bg-white/10 md:grid-cols-2">
-              <pre className="overflow-x-auto bg-[#0b1220] p-6 font-mono text-[13px] leading-relaxed text-[#dbe4f5]">
-                <code>
-                  <span className="text-[#7d889e]"># Send a resume</span>
-                  {"\n"}<span className="text-[#8fb4ff]">curl</span> -X POST {"\\"}
-                  {"\n  "}{API_BASE}<span className="text-[#7d889e]">/api/v1/resume/parse</span> {"\\"}
-                  {"\n  "}-H <S>{'"X-API-Key: rp_live_…"'}</S> {"\\"}
-                  {"\n  "}-F <S>{'"file=@resume.pdf"'}</S>
-                </code>
-              </pre>
-              <pre className="overflow-x-auto bg-[#0b1220] p-6 font-mono text-[13px] leading-relaxed text-[#dbe4f5]">
-                <code>
-                  <span className="text-[#7d889e]">{"// 200 OK"}</span>
-                  {"\n"}<span className="text-[#7d889e]">{"{"}</span>
-                  {"\n  "}<K>{'"status"'}</K>: <S>{'"completed"'}</S>,
-                  {"\n  "}<K>{'"data"'}</K>: <span className="text-[#7d889e]">{"{ … }"}</span>,
-                  {"\n  "}<K>{'"confidence"'}</K>: <span className="text-[#7d889e]">{"{"}</span>{" "}
-                  <K>{'"overall"'}</K>: <span className="text-[#f59e0b]">0.91</span> <span className="text-[#7d889e]">{"}"}</span>
-                  {"\n"}<span className="text-[#7d889e]">{"}"}</span>
-                </code>
-              </pre>
-            </div>
-          </div>
-        </Reveal>
       </div>
     </section>
   );
@@ -344,22 +496,31 @@ function ApiSample() {
 
 function Cta({ authed }: { authed?: boolean }) {
   return (
-    <section id="pricing" className="bg-paper">
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-24">
+    <section id="pricing" className="relative border-t border-line bg-paper" aria-label="Get started">
+      <div className="bg-grid absolute inset-0 text-line" aria-hidden />
+      <div className="relative mx-auto max-w-7xl px-5 py-24 text-center sm:px-6 lg:py-32">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-accent-700 px-7 py-16 text-center shadow-[0_40px_90px_-45px_rgba(29,78,216,0.5)] sm:px-16 sm:py-20">
-            <div className="relative">
-              <h2 className="font-display text-3xl font-bold tracking-tight text-balance text-white sm:text-5xl">Parse your first resume today</h2>
-              <p className="mx-auto mt-4 max-w-md text-lg text-blue-100">Create an account, generate a key, and make your first call in minutes — no credit card.</p>
-              <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-                <Link href={authed ? "/dashboard" : "/signup"} className="rounded-full bg-white px-7 py-3.5 text-sm font-bold text-accent-700 shadow-lg transition-transform hover:-translate-y-0.5">
-                  {authed ? "Go to dashboard" : "Create your account"}
-                </Link>
-                <Link href="/docs" className="rounded-full border-2 border-white/40 px-7 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white/10">
-                  Read the docs
-                </Link>
-              </div>
-            </div>
+          <p className="label-caps text-accent-700">Start free · no credit card</p>
+          <h2 className="mx-auto mt-4 max-w-3xl font-display text-4xl font-bold tracking-tight text-balance text-ink sm:text-5xl">
+            Your first parsed resume is five minutes away.
+          </h2>
+          <p className="mx-auto mt-4 max-w-md text-lg text-ink-soft">
+            Create an account, generate a key, send a file. The dashboard tracks every job from day one.
+          </p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href={authed ? "/dashboard" : "/signup"}
+              className="group inline-flex items-center gap-2 rounded-lg bg-accent-700 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
+            >
+              {authed ? "Go to dashboard" : "Create your account"}
+              <Arrow />
+            </Link>
+            <Link
+              href="/docs"
+              className="inline-flex items-center gap-2 rounded-lg border border-line-strong bg-surface px-7 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
+            >
+              Read the docs
+            </Link>
           </div>
         </Reveal>
       </div>
@@ -367,116 +528,7 @@ function Cta({ authed }: { authed?: boolean }) {
   );
 }
 
-/* ── Visuals (product frames) ────────────────────────────────────────────── */
-
-function Frame({ label, badge, children }: { label: string; badge?: string; children: ReactNode }) {
-  return (
-    <div className="overflow-hidden rounded-[1.75rem] border border-white/70 bg-surface shadow-[0_40px_90px_-45px_rgba(29,78,216,0.45)]">
-      <div className="flex items-center gap-2 border-b border-line px-4 py-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-        <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-        <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-        <span className="ml-2 inline-flex items-center gap-2 text-xs font-medium text-ink-soft"><FileIcon /> {label}</span>
-        {badge && (
-          <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[0.7rem] font-semibold text-emerald-600">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> {badge}
-          </span>
-        )}
-      </div>
-      <div className="p-5">{children}</div>
-    </div>
-  );
-}
-
-function SchemaVisual() {
-  const rows = [
-    ["personal_info", "object"],
-    ["experience", "array"],
-    ["education", "array"],
-    ["skills", "array"],
-    ["certifications", "array"],
-  ];
-  return (
-    <Frame label="schema.json">
-      <div className="space-y-2">
-        {rows.map(([k, t]) => (
-          <div key={k} className="flex items-center justify-between rounded-lg border border-line bg-surface px-3.5 py-2.5">
-            <span className="font-mono text-sm text-ink">{k}</span>
-            <span className="rounded-md bg-accent-50 px-2 py-0.5 font-mono text-[0.7rem] font-semibold text-accent-700">{t}</span>
-          </div>
-        ))}
-      </div>
-    </Frame>
-  );
-}
-
-function ConfidenceVisual() {
-  const fields: [string, number][] = [
-    ["full_name", 0.98],
-    ["email", 0.96],
-    ["experience", 0.91],
-    ["education", 0.74],
-    ["skills", 0.62],
-  ];
-  return (
-    <Frame label="confidence.json">
-      <div className="space-y-3.5">
-        {fields.map(([label, s], i) => {
-          const low = s < 0.8;
-          return (
-            <div key={label}>
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-mono text-ink">{label}</span>
-                <span className={"font-mono font-semibold " + (low ? "text-amber-600" : "text-accent-700")}>{s.toFixed(2)}</span>
-              </div>
-              <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-line">
-                <span className={"grow-x block h-full rounded-full " + (low ? "bg-amber-500" : "bg-accent-600")} style={{ width: `${s * 100}%`, animationDelay: `${i * 110}ms` }} />
-              </div>
-            </div>
-          );
-        })}
-        <p className="pt-1 text-xs text-ink-soft"><span className="font-semibold text-amber-600">Amber</span> fields fall below your threshold → route to review.</p>
-      </div>
-    </Frame>
-  );
-}
-
-function WebhookVisual() {
-  const events = [
-    { e: "parse.completed", ok: true },
-    { e: "batch.completed", ok: true },
-    { e: "parse.failed", ok: false },
-  ];
-  return (
-    <Frame label="deliveries">
-      <div className="space-y-2">
-        {events.map((ev) => (
-          <div key={ev.e} className="flex items-center gap-3 rounded-lg border border-line bg-surface px-3.5 py-3">
-            <span className={"grid h-7 w-7 place-items-center rounded-full text-white " + (ev.ok ? "bg-accent-600" : "bg-amber-500")}>
-              {ev.ok ? <CheckMini /> : <span className="text-xs font-bold">!</span>}
-            </span>
-            <span className="font-mono text-xs text-ink">{ev.e}</span>
-            <span className="ml-auto font-mono text-[0.7rem] text-ink-soft">200 · 38ms</span>
-          </div>
-        ))}
-        <div className="mt-1 rounded-lg bg-[#0b1220] px-3.5 py-2.5 font-mono text-[11px] text-[#8fb4ff]">
-          X-Signature: <span className="text-[#dbe4f5]">sha256=…</span>
-        </div>
-      </div>
-    </Frame>
-  );
-}
-
 /* ── Bits ────────────────────────────────────────────────────────────────── */
-
-function Heading({ eyebrow, title }: { eyebrow: string; title: string }) {
-  return (
-    <div className="mx-auto max-w-2xl text-center">
-      <p className="label-caps text-accent-600">{eyebrow}</p>
-      <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-balance text-ink sm:text-[2.5rem] sm:leading-[1.08]">{title}</h2>
-    </div>
-  );
-}
 
 function K({ children }: { children: ReactNode }) {
   return <span className="text-[#7fb4ff]">{children}</span>;
@@ -484,42 +536,10 @@ function K({ children }: { children: ReactNode }) {
 function S({ children }: { children: ReactNode }) {
   return <span className="text-[#86efac]">{children}</span>;
 }
-
-/* icons */
-const ic = "h-5 w-5";
 function Arrow() {
-  return <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-function CheckMini() {
-  return <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-function FileIcon() {
-  return <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none"><path d="M14 3v4a1 1 0 0 0 1 1h4M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-function UsersIcon() {
-  return <svg className={ic} viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.8" /><path d="M3 20a6 6 0 0 1 12 0M16 5.5a3 3 0 0 1 0 5.5M21 20a6 6 0 0 0-4-5.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
-}
-function BriefcaseIcon() {
-  return <svg className={ic} viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18" stroke="currentColor" strokeWidth="1.8" /></svg>;
-}
-function PlugIcon() {
-  return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M9 3v5M15 3v5M7 8h10v3a5 5 0 0 1-10 0V8zM12 16v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-function LayersIcon() {
-  return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M12 3l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 16l9 5 9-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-function PulseIcon() {
-  return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M3 12h4l2-5 4 10 2-5h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-function ShieldIcon() {
-  return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3zM9.5 12l1.8 1.8L15 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-function LockIcon() {
-  return <svg className={ic} viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" strokeWidth="1.8" /><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
-}
-function SignIcon() {
-  return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M9 11l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-function ListIcon() {
-  return <svg className={ic} viewBox="0 0 24 24" fill="none"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
+  return (
+    <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }

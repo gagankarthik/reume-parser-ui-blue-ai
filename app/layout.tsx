@@ -25,8 +25,14 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Blue-IQ Parser — resume parsing API",
-  description: "AI resume parsing API — sign up, onboard, and generate API keys.",
+  // Resolves canonical/OG URLs; set NEXT_PUBLIC_SITE_URL to the public domain in prod.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  title: {
+    default: "Blue-IQ Parser — healthcare resume parsing API",
+    template: "%s · Blue-IQ Parser",
+  },
+  description:
+    "Parse PDF, DOCX, and scanned resumes into schema-validated JSON — licences, credentials, specialties, confidence scores, and signed webhooks.",
 };
 
 export default function RootLayout({
