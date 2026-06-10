@@ -115,6 +115,8 @@ export default function DocsPage() {
     "skills":         [ … ],
     "certifications": [ … ],
     "licenses":       [ { "license_type": "RN", "state": "FL", "license_number": "RN9411204" } ],
+    "professional_associations": [ "Sigma Theta Tau International Member", "Sepsis Clinical Services Committee" ],
+    "awards":         [ "Summa Cum Laude (2015)" ],
     "references":     [ … ]
   },
   "confidence":        { "overall": 0.91, "personal_info": 0.96, "experience": 0.88 },
@@ -138,9 +140,11 @@ export default function DocsPage() {
                 ["data.experience[]", "Per-role facility, title, dates, location, profession, specialties, shift, responsibilities[]"],
                 ["data.licenses[]", "State licences with license_number, state, status, and compact flag — kept separate from certifications"],
                 ["data.certifications[]", "Time-limited certifications (BLS, ACLS, CCRN…) with issuer and dates"],
+                ["data.professional_associations[]", "Society / honor-society memberships, committees, and collaboratives (Sigma Theta Tau, unit committees…)"],
+                ["data.awards[] · publications[]", "Awards and academic honors (Summa Cum Laude…); publications as citation strings"],
                 ["confidence", "Per-section + overall scores, 0–1"],
                 ["skills_validation", "Taxonomy match ratio and recognized / unrecognized split"],
-                ["partial · warnings", "partial=true flags a degraded record; warnings[] explains what to review"],
+                ["partial · warnings", "partial=true flags a degraded record; warnings[] explains what to review (e.g. no email detected on a low-quality scan, or a name that looks truncated vs the email)"],
               ]}
             />
             <P>
@@ -212,6 +216,7 @@ X-Event:     parse.completed`}</Code>
                 ["413 / 415", "FILE_TOO_LARGE · UNSUPPORTED_FILE_TYPE"],
                 ["404", "JOB_NOT_FOUND"],
                 ["500", "PARSE_FAILED · EXTRACTION_FAILED · OCR_FAILED"],
+                ["failed job (poll)", "WORKER_DISPATCH_FAILED — async processing could not start; retry the upload"],
               ]}
             />
           </Section>

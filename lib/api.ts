@@ -161,7 +161,8 @@ function validateWebhookUrl(url: string): void {
     throw new Error("Webhook URL is not a valid URL");
   }
   if (u.protocol !== "https:") throw new Error("Webhook URL must use HTTPS");
-  const host = u.hostname.toLowerCase();
+  // URL.hostname keeps IPv6 brackets ("[::1]") — strip them so the checks see the raw address.
+  const host = u.hostname.toLowerCase().replace(/^\[|\]$/g, "");
   if (
     host === "localhost" ||
     host === "0.0.0.0" ||
@@ -170,7 +171,12 @@ function validateWebhookUrl(url: string): void {
     /^10\./.test(host) ||
     /^192\.168\./.test(host) ||
     /^169\.254\./.test(host) ||
-    /^172\.(1[6-9]|2\d|3[0-1])\./.test(host)
+    /^172\.(1[6-9]|2\d|3[0-1])\./.test(host) ||
+    // IPv6: loopback, unspecified, link-local (fe80::/10), unique-local (fc00::/7)
+    host === "::1" ||
+    host === "::" ||
+    /^fe[89ab]/.test(host) ||
+    /^f[cd]/.test(host)
   ) {
     throw new Error("Webhook URL must be a public address");
   }
@@ -213,7 +219,7 @@ export async function deleteWebhook(companyId: string, webhookId: string): Promi
 // ── Usage / stats ─────────────────────────────────────────────────────────────
 
 export async function getUsage(companyId: string, days = 30): Promise<Usage> {
-  const d = Math.max(1, Math.min(days, 365));
+  const d = Math.max(1, Math.min(Number.isFinite(days) ? days : 30, 365));
   const { data } = await req<Usage>("GET", `/companies/${encodeURIComponent(companyId)}/usage?days=${d}`);
   return data;
 }
@@ -222,7 +228,7 @@ export async function getUsage(companyId: string, days = 30): Promise<Usage> {
 
 /** Aggregate usage across ALL companies — for the admin overview. */
 export async function getPlatformStats(days = 30): Promise<PlatformStats> {
-  const d = Math.max(1, Math.min(days, 365));
+  const d = Math.max(1, Math.min(Number.isFinite(days) ? days : 30, 365));
   const { data } = await req<PlatformStats>("GET", `/stats?days=${d}`);
   return data;
 }
@@ -242,10 +248,10 @@ export async function updateCompany(
 
 /** Recent activity logs for one company (content-free audit entries). */
 export async function getCompanyLogs(companyId: string, days = 30, limit = 100): Promise<AdminLogEntry[]> {
-  const d = Math.max(1, Math.min(days, 365));
+  const d = Math.max(1, Math.min(Number.isFinite(days) ? days : 30, 365));
   const { data } = await req<AdminLogEntry[]>(
     "GET",
-    `/companies/${encodeURIComponent(companyId)}/logs?days=${d}&limit=${limit}`,
+    `/companies/${encodeURIComponent(companyId)}/logs?days=${d}&limit=${Math.max(1, Math.min(Number.isFinite(limit) ? limit : 100, 500))}`,
   );
   return data ?? [];
 }
