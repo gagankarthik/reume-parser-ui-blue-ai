@@ -1,13 +1,55 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { StatCard } from "@/components/charts";
 import { JobsIcon, SuccessIcon, TokenIcon } from "@/components/icons";
 import { Badge, Button, ErrorBanner, Spinner } from "@/components/ui";
 import { getAdminCompany, updateAdminCompany } from "@/lib/account";
-import { ApiError, type AdminCompanyDetail } from "@/lib/types";
+import { ApiError, type AdminCompanyDetail, type KeyUsageRow } from "@/lib/types";
+
+/**
+ * Roll per-key usage up from the org's activity logs. Each log carries the key
+ * that produced it (key_hash); we count jobs and sum tokens per key, then join
+ * against the live key list so every key appears (even with zero recent usage)
+ * and used-but-unlisted keys (e.g. revoked, since deleted) still show up.
+ */
+function rollUpKeyUsage(detail: AdminCompanyDetail): { rows: KeyUsageRow[]; attributed: boolean } {
+  const agg = new Map<string, { jobs: number; tokens: number; prefix: string }>();
+  let attributed = false;
+  for (const l of detail.logs) {
+    if (!l.key_hash) continue;
+    attributed = true;
+    const cur = agg.get(l.key_hash) ?? { jobs: 0, tokens: 0, prefix: l.key_prefix ?? "" };
+    cur.jobs += 1;
+    cur.tokens += l.ai_tokens_used || 0;
+    if (!cur.prefix && l.key_prefix) cur.prefix = l.key_prefix;
+    agg.set(l.key_hash, cur);
+  }
+
+  const seen = new Set<string>();
+  const rows: KeyUsageRow[] = detail.keys.map((k) => {
+    seen.add(k.key_hash);
+    const u = agg.get(k.key_hash);
+    return {
+      key_hash: k.key_hash,
+      key_prefix: k.key_prefix || u?.prefix || "",
+      status: k.status,
+      jobs: u?.jobs ?? 0,
+      tokens: u?.tokens ?? 0,
+    };
+  });
+
+  // Keys that produced activity but are no longer in the key list.
+  for (const [hash, u] of agg) {
+    if (seen.has(hash)) continue;
+    rows.push({ key_hash: hash, key_prefix: u.prefix, status: "unknown", jobs: u.jobs, tokens: u.tokens });
+  }
+
+  rows.sort((a, b) => b.tokens - a.tokens || b.jobs - a.jobs);
+  return { rows, attributed };
+}
 
 const PLANS = ["free", "starter", "pro", "enterprise"];
 
@@ -47,6 +89,7 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
   const disabled = c?.status === "disabled";
   const t = detail?.usage?.totals;
   const successRate = t && t.jobs ? Math.round((t.completed / t.jobs) * 100) : 0;
+  const keyUsage = useMemo(() => (detail ? rollUpKeyUsage(detail) : null), [detail]);
   const planOptions = c?.plan && !PLANS.includes(c.plan) ? [c.plan, ...PLANS] : PLANS;
 
   async function savePlan() {
@@ -163,20 +206,54 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
             <StatCard label="Success rate" value={`${successRate}%`} sub={`${t!.completed} ok · ${t!.failed} failed`} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} icon={<SuccessIcon />} />
           </div>
 
-          {/* API keys */}
-          <Panel title={`API keys (${detail.keys.length})`}>
-            {detail.keys.length === 0 ? (
+          {/* API keys — with per-key usage rolled up from recent activity */}
+          <Panel
+            title={`API keys (${detail.keys.length})`}
+            subtitle={
+              keyUsage?.attributed
+                ? `Usage from the ${detail.logs.length} most recent events in this window`
+                : undefined
+            }
+          >
+            {(keyUsage?.rows.length ?? 0) === 0 ? (
               <EmptyRow text="No API keys" />
             ) : (
-              detail.keys.map((k) => (
-                <div key={k.key_hash} className="flex items-center justify-between border-t border-line px-5 py-3 first:border-t-0">
-                  <span className="font-mono text-sm text-ink">{k.key_prefix}…</span>
-                  <span className="flex items-center gap-3 text-xs text-ink-soft">
-                    <Badge tone={k.status === "active" ? "success" : "neutral"}>{k.status}</Badge>
-                    <span className="font-mono">{k.created_at ? k.created_at.slice(0, 10) : "—"}</span>
-                  </span>
-                </div>
-              ))
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[40rem] text-left text-sm">
+                  <thead className="label-caps bg-black/[0.015] text-ink-soft">
+                    <tr>
+                      <th className="px-5 py-2.5 font-semibold">Key</th>
+                      <th className="px-4 py-2.5 font-semibold">Status</th>
+                      <th className="px-4 py-2.5 text-right font-semibold">Jobs</th>
+                      <th className="px-4 py-2.5 text-right font-semibold">Tokens</th>
+                      <th className="px-5 py-2.5 text-right font-semibold">Share</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {keyUsage!.rows.map((k) => {
+                      const share = t && t.tokens_used ? Math.round((k.tokens / t.tokens_used) * 100) : 0;
+                      return (
+                        <tr key={k.key_hash} className="border-t border-line">
+                          <td className="px-5 py-3 font-mono text-sm text-ink">{k.key_prefix || k.key_hash.slice(0, 8)}…</td>
+                          <td className="px-4 py-3">
+                            <Badge tone={k.status === "active" ? "success" : k.status === "unknown" ? "neutral" : "neutral"}>
+                              {k.status === "unknown" ? "deleted" : k.status}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3 text-right font-mono tabular-nums text-ink">{k.jobs.toLocaleString()}</td>
+                          <td className="px-4 py-3 text-right font-mono tabular-nums text-ink">{k.tokens.toLocaleString()}</td>
+                          <td className="px-5 py-3 text-right font-mono tabular-nums text-ink-soft">{keyUsage!.attributed ? `${share}%` : "—"}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {!keyUsage!.attributed && (
+                  <p className="border-t border-line px-5 py-3 text-xs text-ink-soft">
+                    Per-key usage is unavailable — recent activity isn’t attributed to a specific key.
+                  </p>
+                )}
+              </div>
             )}
           </Panel>
 
@@ -238,11 +315,12 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
   );
 }
 
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+function Panel({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-line bg-surface">
       <div className="border-b border-line px-5 py-3.5">
         <h3 className="font-display text-sm font-semibold tracking-tight text-ink">{title}</h3>
+        {subtitle && <p className="mt-0.5 text-xs text-ink-soft">{subtitle}</p>}
       </div>
       {children}
     </div>

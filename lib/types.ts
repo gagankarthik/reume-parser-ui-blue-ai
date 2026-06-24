@@ -93,6 +93,19 @@ export interface AdminLogEntry {
   ocr_used: boolean;
   ai_tokens_used: number;
   error_code: string;
+  // The key that produced the job, when the backend attributes it. Used to
+  // build the per-key usage breakdown. Absent on older/unattributed events.
+  key_hash?: string;
+  key_prefix?: string;
+}
+
+/** Per-key usage rolled up from activity logs, for the admin org detail. */
+export interface KeyUsageRow {
+  key_hash: string;
+  key_prefix: string;
+  status: string; // "active" / "revoked" / "unknown" (for keys no longer listed)
+  jobs: number;
+  tokens: number;
 }
 
 export interface AdminCompanyDetail {
