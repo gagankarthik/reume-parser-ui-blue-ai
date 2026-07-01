@@ -23,8 +23,18 @@ const USER_NAV: NavItem[] = [
 const ADMIN_NAV: NavItem[] = [
   { href: "/dashboard/admin", label: "Overview", icon: AdminIcon },
   { href: "/dashboard/admin/customers", label: "Customers", icon: CustomersIcon },
+  { href: "/dashboard/admin/data", label: "Data", icon: DatabaseIcon },
   { href: "/docs", label: "Docs", icon: DocsIcon },
 ];
+
+function DatabaseIcon({ active }: { active?: boolean }) {
+  return (
+    <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" strokeWidth={active ? 2 : 1.7}>
+      <ellipse cx="12" cy="5" rx="8" ry="3" stroke="currentColor" strokeWidth="inherit" />
+      <path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" stroke="currentColor" strokeWidth="inherit" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 function modeForPath(pathname: string): Mode {
   return pathname.startsWith("/dashboard/admin") ? "admin" : "user";
