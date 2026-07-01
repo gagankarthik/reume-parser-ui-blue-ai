@@ -17,6 +17,11 @@ interface ScanResult {
   scannedCount: number;
   truncated: boolean;
 }
+interface TableSummary extends TableRef {
+  count: number;
+  sizeBytes: number;
+  ok: boolean;
+}
 
 function cellText(v: unknown): string {
   if (v == null) return "—";
@@ -53,6 +58,7 @@ function JsonBlock({ value, max = "max-h-[26rem]" }: { value: unknown; max?: str
 
 export default function DataClient({ tables }: { tables: TableRef[] }) {
   const [active, setActive] = useState(tables[0]?.id ?? "");
+  const [summary, setSummary] = useState<TableSummary[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ code: number; ms: number } | null>(null);
   const [data, setData] = useState<ScanResult | null>(null);
@@ -92,6 +98,14 @@ export default function DataClient({ tables }: { tables: TableRef[] }) {
     }
   }, [active, load]);
 
+  // Live at-a-glance counts for every table.
+  useEffect(() => {
+    fetch("/api/admin/dynamo?summary=1")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setSummary(d?.tables ?? null))
+      .catch(() => {});
+  }, []);
+
   const items = data?.items ?? [];
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -118,6 +132,26 @@ export default function DataClient({ tables }: { tables: TableRef[] }) {
         <p className="label-caps text-accent-700">Admin · DynamoDB</p>
         <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink">Data viewer</h1>
         <p className="mt-1 text-sm text-ink-soft">Live contents of the resume-parser tables (region us-east-2). Read-only.</p>
+      </div>
+
+      {/* At-a-glance: every table + item count */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+        {(summary ?? tables.map((t) => ({ ...t, count: -1, sizeBytes: 0, ok: true }))).map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setActive(t.id)}
+            className={cn(
+              "rounded-xl border p-3 text-left transition-all hover:-translate-y-0.5",
+              active === t.id ? "border-accent-300 bg-accent-50 shadow-sm" : "border-line bg-surface hover:border-accent-200",
+            )}
+          >
+            <p className="truncate text-[11px] font-medium uppercase tracking-wide text-ink-soft">{t.label}</p>
+            <p className="mt-1 font-display text-2xl font-semibold tabular-nums text-ink">
+              {(t as TableSummary).count >= 0 ? (t as TableSummary).count.toLocaleString() : "…"}
+            </p>
+            {"ok" in t && !(t as TableSummary).ok && <p className="text-[10px] text-red-600">unreachable</p>}
+          </button>
+        ))}
       </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
