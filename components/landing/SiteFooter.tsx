@@ -33,7 +33,7 @@ const COLUMNS: Col[] = [
       { label: "Quickstart", href: "/docs#quickstart" },
       { label: "Webhook events", href: "/docs#webhooks" },
       { label: "Error handling", href: "/docs#errors" },
-      { label: "Batch & large files", href: "/docs#batch" },
+      { label: "UAT console", href: "https://uat.parsinglab.blue-iq.ai/" },
     ],
   },
   {
@@ -80,7 +80,11 @@ export function SiteFooter() {
                           {l.label}
                         </Link>
                       ) : (
-                        <a href={l.href} className="text-sm text-ink-soft transition-colors hover:text-accent-700">
+                        <a
+                          href={l.href}
+                          {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                          className="text-sm text-ink-soft transition-colors hover:text-accent-700"
+                        >
                           {l.label}
                         </a>
                       )}
