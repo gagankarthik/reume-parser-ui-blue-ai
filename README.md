@@ -37,10 +37,10 @@ npm run dev                        # http://localhost:3000
 
 | Var | Purpose |
 |---|---|
-| `BACKEND_API_URL` | Base URL of the Resume Parser backend (e.g. `https://api.your-domain.com`) |
+| `BACKEND_API_URL` | Base URL of the Resume Parser backend (production: `https://api.parsinglab.blue-iq.ai`) |
 | `ADMIN_API_TOKEN` | Shared secret sent as `X-Admin-Token`; must match the backend's `ADMIN_API_TOKEN` |
 | `NEXT_PUBLIC_COGNITO_USER_POOL_ID` / `NEXT_PUBLIC_COGNITO_CLIENT_ID` | Cognito IDs (public; used by both browser SDK and server token verification) |
-| `NEXT_PUBLIC_API_BASE_URL` | Public API base URL shown in `/docs` samples (optional; defaults to the deployed Lambda URL) |
+| `NEXT_PUBLIC_API_BASE_URL` | Public API base URL shown in `/docs` samples (optional; defaults to `https://api.parsinglab.blue-iq.ai`) |
 
 **Cognito pool requirements:** email as the sign-in identifier, a public app client
 (no secret — the SDK uses SRP), and the `email`/`name` attributes.
