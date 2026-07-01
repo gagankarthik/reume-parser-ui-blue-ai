@@ -196,8 +196,8 @@ function Healthcare() {
     },
     {
       field: "experience[].specialties[]",
-      what: "Canonical specialties",
-      detail: "“Med Surg/Tele”, “CVICU”, “L&D” resolved against a 360+ entry clinical taxonomy — consistent values you can filter on.",
+      what: "Specialties mapped to platform IDs",
+      detail: "“Med Surg/Tele”, “CVICU”, “L&D” matched to your platform’s specialty IDs — profession-scoped, with a confidence score, exact names kept, and anything unmatched flagged for review instead of dropped.",
     },
     {
       field: "professional_associations[]",

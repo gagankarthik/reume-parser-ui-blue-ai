@@ -130,15 +130,16 @@ export default function DocsPage() {
 
           <Section n="04" id="output" title="Output fields">
             <P>
-              Every completed parse returns a healthcare-normalized record. Specialties are resolved to
-              canonical taxonomy names, credentials and state licences are captured separately, and each
-              section carries a confidence score so you can route low-confidence records to human review.
+              Every completed parse returns a healthcare-normalized record. Each per-role specialty is
+              mapped to a platform specialty <Mono>id</Mono> (scoped to the role&apos;s profession) with a
+              confidence score, credentials and state licences are captured separately, and each section
+              carries a confidence score so you can route low-confidence records to human review.
             </P>
             <Table
               head={["Field", "What it holds"]}
               rows={[
                 ["data.personal_info", "Name, post-nominal credentials[] (RN, BSN, MPH…), full address, contact, summary"],
-                ["data.experience[]", "Per-role facility, title, dates, location, profession, specialties, shift, responsibilities[]"],
+                ["data.experience[]", "Per-role facility, title, dates, location, profession, specialties[] (each mapped to a platform specialty_id + confidence), shift, responsibilities[]"],
                 ["data.licenses[]", "State licences with license_number, state, status, and compact flag — kept separate from certifications"],
                 ["data.certifications[]", "Time-limited certifications (BLS, ACLS, CCRN…) with issuer and dates"],
                 ["data.professional_associations[]", "Society / honor-society memberships, committees, and collaboratives (Sigma Theta Tau, unit committees…)"],
@@ -154,6 +155,35 @@ export default function DocsPage() {
               and a human-readable <Mono>warnings</Mono> list — surface these records for review instead of
               auto-importing them.
             </P>
+            <P>
+              <b>Specialty mapping.</b> Each role&apos;s <Mono>specialties[]</Mono> is an array of objects, not
+              strings. Every specialty is matched to a platform specialty <Mono>id</Mono> through a tiered
+              match — exact name → full name → keyword → an AI shortlist for the rest — <b>scoped to the
+              role&apos;s profession</b>, so the same name resolves to the right id (an RN&apos;s{" "}
+              <Mono>ICU</Mono> and a CNA&apos;s <Mono>ICU</Mono> carry different ids). The platform&apos;s exact
+              names are preserved (never re-worded), and each match carries a <Mono>confidence</Mono> plus the{" "}
+              <Mono>match_tier</Mono> that resolved it. A specialty that doesn&apos;t map is <b>still returned</b>{" "}
+              with <Mono>specialty_id: null</Mono> and <Mono>matched: false</Mono> — review it, don&apos;t drop it.
+            </P>
+            <Code>{`"specialties": [
+  {
+    "name":         "ICU",        // platform's exact name, preserved
+    "raw":          "ICU",        // original text as written on the résumé
+    "specialty_id": "56",         // platform id — null when unmatched
+    "group":        "ICU",
+    "confidence":   1.0,          // 0–1 certainty of the id
+    "matched":      true,
+    "match_tier":   "name"        // name | full_name | keywords | ai | null
+  },
+  {
+    "name":         "Cardiac Drip Unit",
+    "raw":          "Cardiac Drip Unit",
+    "specialty_id": null,         // no confident match → kept for admin review
+    "confidence":   0.0,
+    "matched":      false,
+    "match_tier":   null
+  }
+]`}</Code>
           </Section>
 
           <Section n="05" id="poll" title="Poll async jobs">

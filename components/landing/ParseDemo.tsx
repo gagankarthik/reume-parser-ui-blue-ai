@@ -136,9 +136,19 @@ const JSON_LINES: JsonLine[] = [
       <>
         {"      "}
         <Key>specialties</Key>
-        <Pun>: [</Pun>
-        <Str>Intensive Care Unit</Str>
-        <Pun>{"] }],"}</Pun>
+        <Pun>: [{"{ "}</Pun>
+        <Key>name</Key>
+        <Pun>: </Pun>
+        <Str>ICU</Str>
+        <Pun>, </Pun>
+        <Key>specialty_id</Key>
+        <Pun>: </Pun>
+        <Str>56</Str>
+        <Pun>, </Pun>
+        <Key>confidence</Key>
+        <Pun>: </Pun>
+        <Num>1.0</Num>
+        <Pun>{" }] }],"}</Pun>
       </>
     ),
   },
