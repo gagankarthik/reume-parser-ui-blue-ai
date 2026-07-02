@@ -6,12 +6,12 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --paper: #f6f8fb;        /* crisp cool-grey canvas */
+  --paper: #f7f9fc;        /* crisp cool near-white enterprise canvas */
   --surface: #ffffff;      /* raised cards/sheets */
-  --ink: #0b1220;          /* deep navy-black — high contrast */
-  --ink-soft: #475069;     /* slate for secondary text */
+  --ink: #0e1626;          /* deep cool navy-ink, high contrast */
+  --ink-soft: #4a5568;     /* cool slate for secondary text */
   --line: #e6e9f1;         /* cool hairlines */
-  --line-strong: #ccd2df;
+  --line-strong: #ced5e2;
   --background: var(--paper);
   --foreground: var(--ink);
 }
@@ -30,22 +30,22 @@
   --font-mono: var(--font-mono);
   --font-display: var(--font-display);
 
-  /* Primary — confident cobalt blue. */
-  --color-accent-50: #eff4ff;
-  --color-accent-100: #dbe6fe;
-  --color-accent-200: #bfd1fd;
-  --color-accent-300: #93b2fb;
-  --color-accent-400: #5f87f6;
-  --color-accent-500: #3563ee;
-  --color-accent-600: #1d4ed8;
-  --color-accent-700: #1b3fb0;
-  --color-accent-800: #1c378f;
-  --color-accent-900: #1b3074;
+  /* Primary: Blue-IQ deep blue (#002181) with a brighter cobalt mid. */
+  --color-accent-50: #eef2fe;
+  --color-accent-100: #dde5fc;
+  --color-accent-200: #bfccf8;
+  --color-accent-300: #93a7f0;
+  --color-accent-400: #5f7ce6;
+  --color-accent-500: #2c49d6;
+  --color-accent-600: #123aa8;
+  --color-accent-700: #002181;
+  --color-accent-800: #001a66;
+  --color-accent-900: #001452;
 
-  /* Secondary — restrained amber pop for sparing highlights. */
-  --color-brass-400: #f59e0b;
-  --color-brass-500: #d97706;
-  --color-brass-600: #b45309;
+  /* Secondary: warm amber for sparing highlights (low-confidence, flags). */
+  --color-brass-400: #c9920c;
+  --color-brass-500: #b07a08;
+  --color-brass-600: #8a5f06;
 }
 
 body {

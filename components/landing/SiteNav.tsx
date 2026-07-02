@@ -1,7 +1,7 @@
 "use client";
 
-// Enterprise top navigation with mega-menu dropdowns (Solutions / Products /
-// Developers / Resources), a Pricing link, and auth CTAs. Hover-to-open on
+// Enterprise top navigation with mega-menu dropdowns (Product / Developers),
+// a Pricing link, a Company link to blue-iq.ai, and auth CTAs. Hover-to-open on
 // desktop with keyboard + click support; a full slide-down sheet on mobile.
 
 import Link from "next/link";
@@ -18,64 +18,39 @@ type Menu = {
   id: string;
   label: string;
   columns: { heading: string; items: MenuItem[] }[];
-  feature?: { eyebrow: string; title: string; body: string; href: string; cta: string };
+  feature?: { eyebrow: string; title: string; body: string; href: string; cta: string; geo?: string };
 };
 
 const MENUS: Menu[] = [
   {
-    id: "solutions",
-    label: "Solutions",
+    id: "product",
+    label: "Product",
     columns: [
       {
-        heading: "By industry",
+        heading: "Capabilities",
         items: [
-          { label: "Healthcare staffing", desc: "360+ clinical specialties, licenses & credentials", href: "#solutions", icon: <PulseIcon /> },
-          { label: "Recruiting & ATS", desc: "Auto-fill candidate records, zero re-keying", href: "#solutions", icon: <UsersIcon /> },
-          { label: "Job boards", desc: "One-click apply from any resume upload", href: "#solutions", icon: <BriefcaseIcon /> },
+          { label: "Resume Parser API", desc: "PDF, DOCX & scanned files to structured JSON", href: "#api", icon: <FileIcon /> },
+          { label: "Confidence scoring", desc: "Per-field scores to route human review", href: "#api", icon: <GaugeIcon /> },
+          { label: "Webhooks & events", desc: "Signed callbacks for async & batch jobs", href: "#api", icon: <BoltIcon /> },
+          { label: "Schema & validation", desc: "One strict, versioned output contract", href: "#api", icon: <BracketsIcon /> },
         ],
       },
       {
-        heading: "By scale",
+        heading: "By industry",
         items: [
-          { label: "RPO & high-volume", desc: "Batch, webhooks & retries for clean hand-off", href: "#solutions", icon: <LayersIcon /> },
-          { label: "Background screening", desc: "Structured history & dates you can verify", href: "#solutions", icon: <ShieldIcon /> },
-          { label: "HR tech & ERP", desc: "Embed structured parsing inside your product", href: "#solutions", icon: <PlugIcon /> },
+          { label: "Healthcare staffing", desc: "Clinical specialties, licences & credentials", href: "#solutions", icon: <PulseIcon /> },
+          { label: "Recruiting & ATS", desc: "Auto-fill candidate records, zero re-keying", href: "#solutions", icon: <UsersIcon /> },
+          { label: "Security & privacy", desc: "In-memory processing, zero retention", href: "#security", icon: <ShieldIcon /> },
         ],
       },
     ],
     feature: {
       eyebrow: "Featured",
       title: "Healthcare-grade extraction",
-      body: "Normalize specialties, licenses, and certifications across every clinical resume format.",
+      body: "Normalise specialties, licences, and certifications across every clinical resume format.",
       href: "#solutions",
-      cta: "Explore healthcare",
-    },
-  },
-  {
-    id: "products",
-    label: "Products",
-    columns: [
-      {
-        heading: "Platform",
-        items: [
-          { label: "Resume Parser API", desc: "PDF, DOCX & scanned files → structured JSON", href: "#api", icon: <FileIcon /> },
-          { label: "Confidence scoring", desc: "Per-field scores to route human review", href: "#api", icon: <GaugeIcon /> },
-        ],
-      },
-      {
-        heading: "Automation",
-        items: [
-          { label: "Webhooks & events", desc: "Signed callbacks for async & batch jobs", href: "#api", icon: <BoltIcon /> },
-          { label: "Schema & validation", desc: "One strict, versioned output contract", href: "#api", icon: <BracketsIcon /> },
-        ],
-      },
-    ],
-    feature: {
-      eyebrow: "Predictable output",
-      title: "One schema, every resume",
-      body: "Build against a single documented contract — stable field names, empty values, never missing keys.",
-      href: "#api",
-      cta: "See the schema",
+      cta: "See healthcare",
+      geo: "Geometric-Line-08.svg",
     },
   },
   {
@@ -86,14 +61,14 @@ const MENUS: Menu[] = [
         heading: "Build",
         items: [
           { label: "API documentation", desc: "Auth, parsing, polling, webhooks & errors", href: "/docs", icon: <BookIcon /> },
-          { label: "Quickstart", desc: "First structured response in minutes", href: "/docs", icon: <RocketIcon /> },
+          { label: "Quickstart", desc: "First structured response in minutes", href: "/docs#quickstart", icon: <RocketIcon /> },
         ],
       },
       {
         heading: "Reference",
         items: [
-          { label: "Webhook events", desc: "parse.completed, parse.failed, batch.completed", href: "/docs", icon: <BoltIcon /> },
-          { label: "Error handling", desc: "Status codes & retry guidance", href: "/docs", icon: <AlertIcon /> },
+          { label: "Webhook events", desc: "parse.completed, parse.failed, batch.completed", href: "/docs#webhooks", icon: <BoltIcon /> },
+          { label: "Error handling", desc: "Status codes & retry guidance", href: "/docs#errors", icon: <AlertIcon /> },
         ],
       },
     ],
@@ -103,33 +78,7 @@ const MENUS: Menu[] = [
       body: "API-key auth, multipart upload, structured JSON back. Integrate with the stack you already run.",
       href: "/docs",
       cta: "Read the docs",
-    },
-  },
-  {
-    id: "resources",
-    label: "Resources",
-    columns: [
-      {
-        heading: "Learn",
-        items: [
-          { label: "Guides", desc: "Patterns for parsing at scale", href: "#api", icon: <BookIcon /> },
-          { label: "Case studies", desc: "How teams cut manual data entry", href: "#solutions", icon: <ChartIcon /> },
-        ],
-      },
-      {
-        heading: "Company",
-        items: [
-          { label: "Security & privacy", desc: "In-memory processing, zero retention", href: "#security", icon: <ShieldIcon /> },
-          { label: "Why Blue-IQ", desc: "Accuracy, speed, privacy & coverage", href: "#api", icon: <SparkIcon /> },
-        ],
-      },
-    ],
-    feature: {
-      eyebrow: "Privacy by design",
-      title: "Files are processed, never kept",
-      body: "Resumes are parsed in memory and deleted on completion. Content-free audit metadata only.",
-      href: "#security",
-      cta: "Our approach",
+      geo: "Geometric-Line-13.svg",
     },
   },
 ];
@@ -171,14 +120,19 @@ export function SiteNav({ authed = false }: { authed?: boolean }) {
   return (
     <>
     <header className="sticky top-0 z-50 border-b border-line/70 bg-paper/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-6">
-        <Link href="/" className="shrink-0" onMouseEnter={scheduleClose}>
+      <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-6" onMouseLeave={scheduleClose}>
+        <div className="flex shrink-0 items-center gap-2.5">
+          <Link href="/" className="flex items-center" onMouseEnter={scheduleClose}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="Blue-IQ" className="h-7 w-auto sm:h-8" />
+          </Link>
+          <span className="hidden h-6 w-px bg-line sm:block" aria-hidden />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="Blue-IQ" className="h-7 w-auto sm:h-8" />
-        </Link>
+          <img src="/Geometrics/Geometric-Line-16.svg" alt="" aria-hidden className="hidden h-6 w-6 select-none opacity-40 sm:block" />
+        </div>
 
-        {/* Desktop nav — single centered panel so it never runs off-screen */}
-        <nav className="relative hidden items-center gap-1 lg:flex" onMouseLeave={scheduleClose}>
+        {/* Desktop nav, single centered panel so it never runs off-screen */}
+        <nav className="hidden items-center gap-1 lg:flex">
           {MENUS.map((m) => (
             <div key={m.id} onMouseEnter={() => openMenu(m.id)}>
               <button
@@ -206,9 +160,16 @@ export function SiteNav({ authed = false }: { authed?: boolean }) {
             Pricing
           </a>
 
-          {open && (
-            <MegaPanel menu={MENUS.find((m) => m.id === open)!} onNavigate={() => setOpen(null)} />
-          )}
+          <a
+            href="https://blue-iq.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            onMouseEnter={scheduleClose}
+            className="inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+          >
+            Company
+            <svg className="h-3.5 w-3.5 opacity-60" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </a>
         </nav>
 
         {/* Right side */}
@@ -247,6 +208,10 @@ export function SiteNav({ authed = false }: { authed?: boolean }) {
             {mobile ? <CloseIcon /> : <BurgerIcon />}
           </button>
         </div>
+
+        {open && (
+          <MegaPanel menu={MENUS.find((m) => m.id === open)!} onNavigate={() => setOpen(null)} />
+        )}
       </div>
     </header>
 
@@ -261,13 +226,13 @@ function MegaPanel({ menu, onNavigate }: { menu: Menu; onNavigate: () => void })
   return (
     <div
       role="menu"
-      className="animate-menu absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3"
+      className="animate-menu absolute left-1/2 top-full z-50 hidden w-[min(43rem,calc(100vw-1.5rem))] -translate-x-1/2 pt-3 lg:block"
     >
-      <div className="grid w-[min(46rem,calc(100vw-2rem))] grid-cols-[1.4fr_0.9fr] overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_24px_60px_-24px_rgba(10,23,51,0.28)]">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-6 p-6">
+      <div className="grid w-full grid-cols-[1.45fr_0.85fr] overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_24px_60px_-24px_rgba(10,23,51,0.28)]">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-4 p-5">
           {menu.columns.map((col) => (
             <div key={col.heading}>
-              <p className="label-caps mb-3 text-ink-soft/70">{col.heading}</p>
+              <p className="label-caps mb-1.5 text-ink-soft/70">{col.heading}</p>
               <ul className="space-y-1">
                 {col.items.map((it) => (
                   <li key={it.label}>
@@ -283,16 +248,25 @@ function MegaPanel({ menu, onNavigate }: { menu: Menu; onNavigate: () => void })
           <Link
             href={menu.feature.href}
             onClick={onNavigate}
-            className="group relative flex flex-col justify-between border-l border-line bg-accent-50 p-6 transition-colors hover:bg-accent-100"
+            className="group relative flex flex-col justify-between overflow-hidden border-l border-line bg-accent-50 p-5 transition-colors hover:bg-accent-100"
           >
-            <div>
+            {menu.feature.geo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`/Geometrics/${menu.feature.geo}`}
+                alt=""
+                aria-hidden
+                className="pointer-events-none absolute -right-4 -top-4 h-20 w-20 select-none opacity-[0.5] transition-transform duration-500 group-hover:rotate-6 group-hover:scale-105"
+              />
+            )}
+            <div className="relative">
               <p className="label-caps text-accent-700">{menu.feature.eyebrow}</p>
-              <h4 className="mt-3 font-display text-lg font-semibold tracking-tight text-ink">
+              <h4 className="mt-2.5 font-display text-[1.05rem] font-semibold leading-snug tracking-tight text-ink">
                 {menu.feature.title}
               </h4>
-              <p className="mt-2 text-sm leading-relaxed text-ink-soft">{menu.feature.body}</p>
+              <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">{menu.feature.body}</p>
             </div>
-            <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent-700">
+            <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent-700">
               {menu.feature.cta}
               <Arrow />
             </span>
@@ -305,13 +279,13 @@ function MegaPanel({ menu, onNavigate }: { menu: Menu; onNavigate: () => void })
 
 function PanelLink({ item, onNavigate }: { item: MenuItem; onNavigate: () => void }) {
   const inner = (
-    <span className="flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-accent-50">
-      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-50 text-accent-700 ring-1 ring-inset ring-accent-100">
+    <span className="flex items-start gap-2.5 rounded-lg p-2 transition-colors hover:bg-accent-50">
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accent-50 text-accent-700 ring-1 ring-inset ring-accent-100">
         {item.icon}
       </span>
       <span>
-        <span className="block text-sm font-semibold text-ink">{item.label}</span>
-        <span className="mt-0.5 block text-xs leading-relaxed text-ink-soft">{item.desc}</span>
+        <span className="block text-[13px] font-semibold text-ink">{item.label}</span>
+        <span className="mt-0.5 block text-[11px] leading-snug text-ink-soft">{item.desc}</span>
       </span>
     </span>
   );
@@ -320,7 +294,7 @@ function PanelLink({ item, onNavigate }: { item: MenuItem; onNavigate: () => voi
       {inner}
     </Link>
   ) : (
-    <a href={item.href} onClick={onNavigate} role="menuitem">
+    <a href={item.href} onClick={onNavigate} role="menuitem" {...(item.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
       {inner}
     </a>
   );
@@ -364,6 +338,10 @@ function MobileSheet({ authed, onNavigate }: { authed?: boolean; onNavigate: () 
         <a href="#pricing" onClick={onNavigate} className="block border-b border-line/70 py-3.5 text-base font-semibold text-ink">
           Pricing
         </a>
+        <a href="https://blue-iq.ai" target="_blank" rel="noopener noreferrer" onClick={onNavigate} className="flex items-center gap-1.5 border-b border-line/70 py-3.5 text-base font-semibold text-ink">
+          Company
+          <svg className="h-4 w-4 opacity-60" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </a>
       </div>
 
       <div className="mt-6 flex flex-col gap-2.5">
@@ -401,7 +379,7 @@ function MobileLink({ item, onNavigate }: { item: MenuItem; onNavigate: () => vo
   return item.href.startsWith("/") ? (
     <Link href={item.href} onClick={onNavigate}>{inner}</Link>
   ) : (
-    <a href={item.href} onClick={onNavigate}>{inner}</a>
+    <a href={item.href} onClick={onNavigate} {...(item.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{inner}</a>
   );
 }
 

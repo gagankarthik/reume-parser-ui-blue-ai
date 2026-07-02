@@ -2,7 +2,7 @@
 
 // The hero demo: a résumé fragment beside the JSON it becomes. Hovering (or
 // tapping) a résumé line highlights exactly the output lines it produced, and
-// vice versa — the product explained in one interaction. Auto-cycles gently
+// vice versa, the product explained in one interaction. Auto-cycles gently
 // until the visitor touches it.
 
 import { useEffect, useRef, useState } from "react";
@@ -14,8 +14,8 @@ const ORDER: Seg[] = ["name", "license", "work", "certs", "assoc"];
 const RESUME_LINES: { seg: Seg; text: string; indent?: boolean }[] = [
   { seg: "name", text: "Maria Delgado, RN, BSN, CCRN" },
   { seg: "contact", text: "maria.delgado@outlook.com · (737) 555-0182 · Austin, TX" },
-  { seg: "license", text: "TX RN License #885201 — Compact" },
-  { seg: "work", text: "Travel RN, ICU — Aya Healthcare" },
+  { seg: "license", text: "TX RN License #885201, Compact" },
+  { seg: "work", text: "Travel RN, ICU, Aya Healthcare" },
   { seg: "work", text: "St. David’s Medical Center · 01/2023 – 09/2024", indent: true },
   { seg: "certs", text: "ACLS · BLS (exp. 12/2026)" },
   { seg: "assoc", text: "American Association of Critical-Care Nurses, Member" },
@@ -206,7 +206,7 @@ const JSON_LINES: JsonLine[] = [
 const SEG_LABEL: Record<Seg, string> = {
   name: "Post-nominal credentials, split and kept",
   contact: "Contact anchors",
-  license: "A real licence — number, state, compact status",
+  license: "A real licence, number, state, compact status",
   work: "Agency and facility, never confused",
   certs: "Certifications with their dates",
   assoc: "Memberships & committees, not dropped",
@@ -296,7 +296,7 @@ export function ParseDemo() {
 
       <figcaption className="mt-3 flex min-h-5 items-center gap-2 px-1 text-[13px] text-ink-soft" aria-live="polite">
         <span className={"h-1.5 w-1.5 shrink-0 rounded-full transition-colors " + (active ? "bg-accent-500" : "bg-line-strong")} />
-        {active ? SEG_LABEL[active] : "Hover the résumé — or the JSON — to trace a field."}
+        {active ? SEG_LABEL[active] : "Hover the résumé, or the JSON, to trace a field."}
       </figcaption>
     </figure>
   );

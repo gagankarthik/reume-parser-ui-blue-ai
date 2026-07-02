@@ -7,12 +7,11 @@ import { getSessionClaims } from "@/lib/session";
 import { SiteNav } from "@/components/landing/SiteNav";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { Reveal } from "@/components/landing/Reveal";
-import { ParseDemo } from "@/components/landing/ParseDemo";
 
 export const metadata: Metadata = {
-  title: "Blue-IQ Parser — healthcare resume parsing API",
+  title: "ParsingLab | Healthcare Resume Parsing API",
   description:
-    "Parse PDF, DOCX, and scanned resumes into schema-validated JSON. Built for healthcare staffing: licence numbers, credentials, specialties, and travel work histories — with confidence scores and signed webhooks.",
+    "Parse PDF, DOCX, and scanned resumes into schema-validated JSON. Built for healthcare staffing: licence numbers, credentials, specialties, and travel work histories, with confidence scores and signed webhooks.",
   keywords: [
     "resume parsing API",
     "healthcare resume parser",
@@ -24,14 +23,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    title: "Blue-IQ Parser — healthcare resume parsing API",
+    title: "ParsingLab | Healthcare Resume Parsing API",
     description:
-      "One API call turns any resume — including scans — into schema-validated, confidence-scored JSON that knows what an RN licence is.",
+      "One API call turns any resume, including scans, into schema-validated, confidence-scored JSON that knows what an RN licence is.",
     siteName: "Blue-IQ Parser",
   },
   twitter: {
     card: "summary",
-    title: "Blue-IQ Parser — healthcare resume parsing API",
+    title: "ParsingLab | Healthcare Resume Parsing API",
     description:
       "Schema-validated JSON from any resume, built for healthcare staffing.",
   },
@@ -45,7 +44,7 @@ const JSON_LD = {
   operatingSystem: "Web",
   description:
     "Healthcare-grade resume parsing API: PDF, DOCX, and scanned resumes to schema-validated JSON with licence numbers, credentials, specialties, confidence scores, and signed webhooks.",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free to start — no credit card required" },
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free to start, no credit card required" },
 };
 
 export default async function Landing() {
@@ -77,8 +76,9 @@ export default async function Landing() {
 
 function Hero({ authed }: { authed?: boolean }) {
   return (
-    <section className="relative bg-surface" aria-label="Introduction">
+    <section className="relative overflow-hidden bg-surface" aria-label="Introduction">
       <div className="bg-grid absolute inset-x-0 top-0 h-[34rem] text-line" aria-hidden />
+      <Geo src="Geometric-Line-04.svg" className="hidden lg:block right-[4%] top-[7.5rem] h-16 w-16 opacity-[0.35]" />
       <div className="relative mx-auto grid max-w-7xl items-start gap-12 px-5 pb-16 pt-12 sm:px-6 lg:grid-cols-[1.04fr_0.96fr] lg:gap-16 lg:pb-24 lg:pt-20">
         <div className="lg:pt-6">
           <p className="animate-fade-up label-caps inline-flex items-center gap-2 text-accent-700" style={{ animationDelay: "40ms" }}>
@@ -87,14 +87,14 @@ function Hero({ authed }: { authed?: boolean }) {
           </p>
 
           <h1
-            className="animate-fade-up mt-5 font-display text-[2.6rem] font-bold leading-[1.04] tracking-tight text-balance text-ink sm:text-[3.4rem] lg:text-[3.8rem]"
+            className="animate-fade-up mt-5 font-display text-[2.6rem] font-semibold leading-[1.02] tracking-tight text-balance text-ink sm:text-[3.4rem] lg:text-[3.8rem]"
             style={{ animationDelay: "90ms" }}
           >
             The resume parser that knows what an RN licence is.
           </h1>
 
           <p className="animate-fade-up mt-6 max-w-xl text-lg leading-relaxed text-ink-soft" style={{ animationDelay: "140ms" }}>
-            One call turns any PDF, DOCX, or scan into schema-validated JSON — licence numbers, post-nominal
+            One call turns any PDF, DOCX, or scan into schema-validated JSON: licence numbers, post-nominal
             credentials, canonical specialties, and travel work histories where the agency never swallows the
             facility. Confidence-scored, so your team only reviews what needs eyes.
           </p>
@@ -102,33 +102,88 @@ function Hero({ authed }: { authed?: boolean }) {
           <div className="animate-fade-up mt-9 flex flex-wrap items-center gap-3" style={{ animationDelay: "190ms" }}>
             <Link
               href={authed ? "/dashboard" : "/signup"}
-              className="group inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
+              className="group inline-flex items-center gap-2 rounded-full bg-accent-700 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
             >
               {authed ? "Go to dashboard" : "Get an API key"}
               <Arrow />
             </Link>
             <Link
               href="/docs"
-              className="inline-flex items-center gap-2 rounded-lg border border-line-strong bg-surface px-6 py-3 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
+              className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface px-6 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
             >
               Read the docs
             </Link>
           </div>
-
-          <p className="animate-fade-up mt-5 font-mono text-xs text-ink-soft/70" style={{ animationDelay: "230ms" }}>
-            curl -F &quot;file=@resume.pdf&quot; — that&apos;s the integration.
-          </p>
         </div>
 
         <Reveal delay={140}>
-          <ParseDemo />
+          <HeroVisual />
         </Reveal>
       </div>
     </section>
   );
 }
 
-/* ── Spec strip — facts, not logos ───────────────────────────────────────── */
+/* ── Hero visual: healthcare staff imagery + extracted-fields overlay ──────── */
+// NOTE: swap the two Unsplash URLs for your own licensed clinician photography.
+function HeroVisual() {
+  return (
+    <div className="relative mx-auto w-full max-w-[520px] pt-2 lg:mr-0 lg:pt-0">
+      {/* primary clinician photo */}
+      <div className="relative overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_44px_90px_-50px_rgba(14,22,38,0.55)]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=900&q=70"
+          alt="A clinical team reviewing patient records"
+          className="h-[380px] w-full object-cover sm:h-[440px]"
+          loading="eager"
+        />
+        <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 58%, rgba(14,22,38,0.16))" }} />
+      </div>
+
+      {/* secondary photo, overlapping top-right */}
+      <div className="absolute -right-4 -top-5 hidden w-32 overflow-hidden rounded-xl border-4 border-surface shadow-lg sm:block">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=420&q=70"
+          alt="A nurse in scrubs"
+          className="h-40 w-full object-cover"
+          loading="lazy"
+        />
+      </div>
+
+      {/* floating extracted-fields card */}
+      <div className="absolute -bottom-6 -left-3 w-[248px] rounded-xl border border-line bg-surface/95 p-4 shadow-[0_24px_50px_-24px_rgba(14,22,38,0.5)] backdrop-blur sm:-left-8">
+        <div className="flex items-center justify-between">
+          <span className="label-caps text-accent-700">Extracted</span>
+          <span className="font-mono text-[10px] text-ink-soft/70">1.8s</span>
+        </div>
+        <dl className="mt-3 space-y-2 text-[13px]">
+          <FieldLine k="Name" v="Jane Okafor, RN" />
+          <FieldLine k="Licence" v="RN0198432 · TX" />
+          <FieldLine k="Specialty" v="CVICU" />
+        </dl>
+        <div className="mt-3 flex items-center gap-1.5 border-t border-line pt-2.5 text-[11px] font-medium text-accent-700">
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          confidence 0.96
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FieldLine({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <dt className="text-ink-soft/70">{k}</dt>
+      <dd className="font-medium text-ink">{v}</dd>
+    </div>
+  );
+}
+
+/* ── Spec strip, facts, not logos ───────────────────────────────────────── */
 
 function SpecStrip() {
   const specs: [string, string][] = [
@@ -145,7 +200,7 @@ function SpecStrip() {
           <div key={label} className="px-2 py-7 md:px-6">
             <dt className="sr-only">{label}</dt>
             <dd>
-              <span className="block font-display text-3xl font-bold tracking-tight text-ink">{n}</span>
+              <span className="block font-display text-3xl font-semibold tracking-tight text-ink">{n}</span>
               <span className="mt-1 block text-[13px] leading-snug text-ink-soft">{label}</span>
             </dd>
           </div>
@@ -155,7 +210,7 @@ function SpecStrip() {
   );
 }
 
-/* ── Section header (numbered, left-aligned — same family as /docs) ──────── */
+/* ── Section header (numbered, left-aligned, same family as /docs) ──────── */
 
 function SectionHead({ n, eyebrow, title, lede }: { n: string; eyebrow: string; title: string; lede?: string }) {
   return (
@@ -165,7 +220,7 @@ function SectionHead({ n, eyebrow, title, lede }: { n: string; eyebrow: string; 
           <span className="font-display text-base font-semibold italic text-accent-600/70">{n}</span>
           {eyebrow}
         </p>
-        <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-balance text-ink sm:text-[2.5rem] sm:leading-[1.08]">
+        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-[2.5rem] sm:leading-[1.08]">
           {title}
         </h2>
         {lede && <p className="mt-4 text-lg leading-relaxed text-ink-soft">{lede}</p>}
@@ -178,36 +233,36 @@ function SectionHead({ n, eyebrow, title, lede }: { n: string; eyebrow: string; 
 /* ── 01 · Healthcare field ledger ────────────────────────────────────────── */
 
 function Healthcare() {
-  const rows: { field: string; what: string; detail: string }[] = [
+  const rows: { label: string; what: string; detail: string }[] = [
     {
-      field: "licenses[]",
+      label: "Licences",
       what: "Real practice licences",
-      detail: "Number verbatim with letter prefix, state as written, compact/multistate flag, status — never mislabelled as a certification.",
+      detail: "Number verbatim with letter prefix, state as written, compact and multistate flag, and status, never mislabelled as a certification.",
     },
     {
-      field: "personal_info.credentials[]",
+      label: "Credentials",
       what: "Post-nominals, preserved",
-      detail: "“Jane Smith, RN, BSN, CCRN” → name cleanly split from every credential, in order, exactly as written.",
+      detail: "“Jane Smith, RN, BSN, CCRN” becomes a clean name split from every credential, in order, exactly as written.",
     },
     {
-      field: "experience[].agency_name",
+      label: "Work history",
       what: "Travel histories, untangled",
-      detail: "One entry per facility under an agency umbrella. The staffing agency lands in agency_name — it never overwrites the hospital.",
+      detail: "One entry per facility under an agency umbrella. The staffing agency is kept in its own field and never overwrites the hospital where the assignment happened.",
     },
     {
-      field: "experience[].specialties[]",
-      what: "Specialties mapped to platform IDs",
-      detail: "“Med Surg/Tele”, “CVICU”, “L&D” matched to your platform’s specialty IDs — profession-scoped, with a confidence score, exact names kept, and anything unmatched flagged for review instead of dropped.",
+      label: "Specialties",
+      what: "Specialties mapped to your platform",
+      detail: "“Med Surg/Tele”, “CVICU”, “L&D” matched to your platform’s specialties: profession-scoped, with a confidence score, exact names kept, and anything unmatched flagged for review instead of dropped.",
     },
     {
-      field: "professional_associations[]",
+      label: "Associations",
       what: "Memberships & committees",
-      detail: "Sigma Theta Tau, AACN, unit committees, process-owner roles — captured, not silently dropped.",
+      detail: "Sigma Theta Tau, AACN, unit committees, and process-owner roles: captured, not silently dropped.",
     },
     {
-      field: "certifications[]",
+      label: "Certifications",
       what: "Certs with honest dates",
-      detail: "BLS, ACLS, CCRN with issued vs. expiry kept apart — an unlabelled date is never guessed into an expiry.",
+      detail: "BLS, ACLS, CCRN with issued and expiry dates kept apart, so an unlabelled date is never guessed into an expiry.",
     },
   ];
   return (
@@ -217,19 +272,21 @@ function Healthcare() {
           n="01"
           eyebrow="Built for healthcare staffing"
           title="Generic parsers see text. This one sees a clinician."
-          lede="Nurses and allied health professionals carry structure most parsers destroy — licences with numbers, credential strings after names, travel assignments nested under agencies. Blue-IQ extracts each into its own field."
+          lede="Nurses and allied health professionals carry structure most parsers destroy, licences with numbers, credential strings after names, travel assignments nested under agencies. Blue-IQ extracts each into its own field."
         />
         <div className="mt-12 grid gap-x-12 gap-y-0 lg:grid-cols-2">
           {rows.map((r, i) => (
-            <Reveal key={r.field} delay={(i % 2) * 80}>
+            <Reveal key={r.label} delay={(i % 2) * 80}>
               <div className="group flex gap-5 border-b border-line py-7 transition-colors hover:bg-accent-50/40 sm:px-3">
                 <span className="font-display text-sm font-semibold italic text-accent-600/60">{String(i + 1).padStart(2, "0")}</span>
                 <div className="min-w-0">
-                  <h3 className="font-display text-lg font-bold tracking-tight text-ink">{r.what}</h3>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <h3 className="font-display text-lg font-semibold tracking-tight text-ink">{r.what}</h3>
+                    <span className="inline-block rounded-full bg-accent-50 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-accent-700 ring-1 ring-inset ring-accent-100">
+                      {r.label}
+                    </span>
+                  </div>
                   <p className="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{r.detail}</p>
-                  <code className="mt-3 inline-block rounded-md bg-accent-50 px-2 py-1 font-mono text-xs text-accent-800 ring-1 ring-inset ring-accent-100">
-                    {r.field}
-                  </code>
                 </div>
               </div>
             </Reveal>
@@ -238,7 +295,7 @@ function Healthcare() {
         <Reveal delay={120}>
           <p className="mt-8 max-w-3xl text-[15px] leading-relaxed text-ink-soft">
             Not nurse-only: radiologic and CT/MRI technologists, respiratory therapists, OT/PT/SLP, surgical and lab
-            techs, and social workers parse with the same depth. And it remains a fully general resume parser — send
+            techs, and social workers parse with the same depth. And it remains a fully general resume parser, send
             it an accountant and you get clean JSON back.
           </p>
         </Reveal>
@@ -253,7 +310,7 @@ function Pipeline() {
   const steps: { title: string; body: string; mono: string }[] = [
     {
       title: "Read anything",
-      body: "Digital text comes straight out. Scans and photos run tiered OCR — Tesseract first, AWS Textract when quality demands it.",
+      body: "Digital text comes straight out. Scans and photos run tiered OCR: Tesseract first, AWS Textract when quality demands it.",
       mono: "pdf · docx · png · jpg · tiff · scan",
     },
     {
@@ -263,7 +320,7 @@ function Pipeline() {
     },
     {
       title: "Validate, never invent",
-      body: "Output is forced through a strict schema. A missing date stays null — it is never padded into a fake one.",
+      body: "Output is forced through a strict schema. A missing date stays null and is never padded into a fake one.",
       mono: "08/2018, not 08/01/2018",
     },
     {
@@ -317,13 +374,13 @@ function Review() {
               n="03"
               eyebrow="Human-in-the-loop"
               title="Your team reviews four resumes, not four hundred."
-              lede="Every section carries a 0–1 confidence score. Set a threshold: clean records flow straight into your system, and only the uncertain ones queue for a person. Degraded parses come back flagged partial with plain-language warnings — never a silent failure."
+              lede="Every section carries a 0–1 confidence score. Set a threshold: clean records flow straight into your system, and only the uncertain ones queue for a person. Degraded parses come back flagged partial with plain-language warnings, never a silent failure."
             />
             <Reveal delay={80}>
               <ul className="mt-8 space-y-3 text-[15px] text-ink">
                 {[
                   "Per-section and overall scores on every response",
-                  "partial: true on degraded documents — nothing fails silently",
+                  "partial: true on degraded documents, so nothing fails silently",
                   "Warnings a recruiter can read, not error codes",
                   "Feedback endpoint: corrected JSON flows back to improve the model",
                 ].map((p) => (
@@ -384,7 +441,7 @@ function Developers() {
           n="04"
           eyebrow="Developer-first"
           title="A request and a response. That’s the integration."
-          lede="No SDK required, no callback gymnastics for the simple case. Async OCR jobs return a job_id to poll — or register a signed webhook and skip polling entirely."
+          lede="No SDK required, no callback gymnastics for the simple case. Async OCR jobs return a job_id to poll, or register a signed webhook and skip polling entirely."
         />
 
         <Reveal delay={100}>
@@ -462,7 +519,7 @@ function Security() {
     ["Zero document retention", "Resumes are parsed in memory and deleted on completion. There is no stored copy to breach."],
     ["Encrypted in transit", "Every request runs over TLS, authenticated by a per-account key you can rotate at any time."],
     ["Signed webhooks", "Async deliveries carry an HMAC-SHA256 signature and timestamp; replay-window guidance is in the docs."],
-    ["Content-free audit trail", "We log that a parse happened — duration, file type, token spend — never what the document said."],
+    ["Content-free audit trail", "We log that a parse happened (duration, file type, token spend), never what the document said."],
   ];
   return (
     <section id="security" className="bg-surface" aria-label="Security and privacy">
@@ -472,7 +529,7 @@ function Security() {
             n="05"
             eyebrow="Security & privacy"
             title="Candidate documents are radioactive. Handle accordingly."
-            lede="A resume is PII end-to-end. The safest place to keep it is nowhere — so that’s the design."
+            lede="A resume is PII end-to-end. The safest place to keep it is nowhere, so that’s the design."
           />
           <div>
             <dl className="divide-y divide-line border-y border-line">
@@ -496,12 +553,14 @@ function Security() {
 
 function Cta({ authed }: { authed?: boolean }) {
   return (
-    <section id="pricing" className="relative border-t border-line bg-paper" aria-label="Get started">
+    <section id="pricing" className="relative overflow-hidden border-t border-line bg-paper" aria-label="Get started">
       <div className="bg-grid absolute inset-0 text-line" aria-hidden />
+      <Geo src="Geometric-Line-06.svg" className="hidden md:block left-[7%] top-16 h-14 w-14 opacity-[0.3]" />
+      <Geo src="Geometric-Line-14.svg" className="hidden md:block right-[8%] bottom-16 h-16 w-16 opacity-[0.3]" />
       <div className="relative mx-auto max-w-7xl px-5 py-24 text-center sm:px-6 lg:py-32">
         <Reveal>
           <p className="label-caps text-accent-700">Start free · no credit card</p>
-          <h2 className="mx-auto mt-4 max-w-3xl font-display text-4xl font-bold tracking-tight text-balance text-ink sm:text-5xl">
+          <h2 className="mx-auto mt-4 max-w-3xl font-display text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
             Your first parsed resume is five minutes away.
           </h2>
           <p className="mx-auto mt-4 max-w-md text-lg text-ink-soft">
@@ -510,14 +569,14 @@ function Cta({ authed }: { authed?: boolean }) {
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Link
               href={authed ? "/dashboard" : "/signup"}
-              className="group inline-flex items-center gap-2 rounded-lg bg-accent-700 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
+              className="group inline-flex items-center gap-2 rounded-full bg-accent-700 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
             >
               {authed ? "Go to dashboard" : "Create your account"}
               <Arrow />
             </Link>
             <Link
               href="/docs"
-              className="inline-flex items-center gap-2 rounded-lg border border-line-strong bg-surface px-7 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
+              className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface px-7 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
             >
               Read the docs
             </Link>
@@ -529,6 +588,20 @@ function Cta({ authed }: { authed?: boolean }) {
 }
 
 /* ── Bits ────────────────────────────────────────────────────────────────── */
+
+// Restrained Blue-IQ geometric line accent (from /public/Geometrics).
+function Geo({ src, className }: { src: string; className?: string }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={`/Geometrics/${src}`}
+      alt=""
+      aria-hidden
+      loading="lazy"
+      className={"pointer-events-none absolute select-none " + (className || "")}
+    />
+  );
+}
 
 function K({ children }: { children: ReactNode }) {
   return <span className="text-[#7fb4ff]">{children}</span>;

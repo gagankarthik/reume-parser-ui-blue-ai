@@ -39,11 +39,11 @@ const COLUMNS: Col[] = [
   {
     heading: "Company",
     links: [
-      { label: "Why Blue-IQ", href: "#api" },
+      { label: "About Blue-IQ", href: "https://blue-iq.ai/about" },
+      { label: "Our products", href: "https://blue-iq.ai/products" },
+      { label: "Solutions", href: "https://blue-iq.ai/solutions" },
+      { label: "Contact sales", href: "https://blue-iq.ai/contact" },
       { label: "Security & privacy", href: "#security" },
-      { label: "Sign in", href: "/login" },
-      { label: "Get started", href: "/signup" },
-      { label: "Contact sales", href: "#pricing" },
     ],
   },
 ];
@@ -58,12 +58,8 @@ export function SiteFooter() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.svg" alt="Blue-IQ" className="h-9 w-auto" />
             <p className="mt-4 text-sm leading-relaxed text-ink-soft">
-              Turn any resume — PDF, DOCX, or scanned image — into schema-validated JSON
+              Turn any resume, PDF, DOCX, or scanned image, into schema-validated JSON
               with one API call. Confidence-scored, privacy-first, built for scale.
-            </p>
-
-            <p className="mt-6 font-mono text-xs text-ink-soft/70">
-              POST /api/v1/resume/parse · one call, structured JSON back
             </p>
           </div>
 
@@ -100,7 +96,8 @@ export function SiteFooter() {
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-line pt-7 sm:flex-row">
           <p className="text-sm text-ink-soft">© {new Date().getFullYear()} Blue-IQ. All rights reserved.</p>
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-ink-soft">
-            <a href="#security" className="hover:text-ink">Privacy</a>
+            <a href="https://blue-iq.ai/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-ink">Privacy</a>
+            <a href="https://blue-iq.ai/terms" target="_blank" rel="noopener noreferrer" className="hover:text-ink">Terms</a>
             <a href="#security" className="hover:text-ink">Security</a>
             <Link href="/docs" className="hover:text-ink">API docs</Link>
           </nav>

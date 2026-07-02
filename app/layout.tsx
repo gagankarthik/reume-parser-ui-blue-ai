@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-// Distinctive editorial grotesque for display — authoritative, enterprise, not generic.
-const display = Bricolage_Grotesque({
+// Space Grotesk display, set light: matches the Blue-IQ platform brand.
+const display = Space_Grotesk({
   variable: "--font-display",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
-// Clean geometric humanist sans for body/UI.
-const sans = Plus_Jakarta_Sans({
+// Inter for body/UI, consistent with the Blue-IQ platform.
+const sans = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
@@ -28,11 +29,11 @@ export const metadata: Metadata = {
   // Resolves canonical/OG URLs; set NEXT_PUBLIC_SITE_URL to the public domain in prod.
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    default: "Blue-IQ Parser — healthcare resume parsing API",
-    template: "%s · Blue-IQ Parser",
+    default: "ParsingLab | Healthcare Resume Parsing API by Blue-IQ",
+    template: "%s · ParsingLab by Blue-IQ",
   },
   description:
-    "Parse PDF, DOCX, and scanned resumes into schema-validated JSON — licences, credentials, specialties, confidence scores, and signed webhooks.",
+    "Parse PDF, DOCX, and scanned resumes into schema-validated JSON: licences, credentials, specialties, confidence scores, and signed webhooks. Built on the Blue-IQ Sonar engine.",
 };
 
 export default function RootLayout({
