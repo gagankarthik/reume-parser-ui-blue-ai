@@ -126,6 +126,10 @@ const JSON_LINES: JsonLine[] = [
         <Key>profession</Key>
         <Pun>: </Pun>
         <Str>RN</Str>
+        <Pun>, </Pun>
+        <Key>profession_id</Key>
+        <Pun>: </Pun>
+        <Str>1</Str>
         <Pun>,</Pun>
       </>
     ),
