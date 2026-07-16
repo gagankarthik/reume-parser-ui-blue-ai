@@ -73,21 +73,6 @@ body {
   border-radius: 4px;
 }
 
-/* ── Faint canvas texture for depth, not flat color ─────────────────────────── */
-.paper-grain::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.35;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-}
-.paper-grain > * {
-  position: relative;
-  z-index: 1;
-}
-
 /* ── Small-caps editorial label ─────────────────────────────────────────────── */
 .label-caps {
   font-size: 0.6875rem;
@@ -134,118 +119,45 @@ body {
   animation: menu-in 0.16s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-/* ── Faint grid / dot / ledger textures ─────────────────────────────────────── */
-.bg-dot-grid {
-  background-image: radial-gradient(currentColor 1px, transparent 1px);
-  background-size: 22px 22px;
-}
+/* ── Subtle structural background: hairline grid, masked to fade out. Lines,
+   not a colour wash. ────────────────────────────────────────────────────────── */
 .bg-grid {
   background-image:
     linear-gradient(to right, var(--line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--line) 1px, transparent 1px);
-  background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 75%);
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 75%);
-}
-.bg-ledger {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 31px,
-    var(--line) 31px,
-    var(--line) 32px
-  );
+  background-size: 58px 58px;
+  -webkit-mask-image: radial-gradient(ellipse 78% 56% at 50% 0%, #000 34%, transparent 72%);
+  mask-image: radial-gradient(ellipse 78% 56% at 50% 0%, #000 34%, transparent 72%);
 }
 
-/* ── "Wow" motion system: floats, aurora, marquee, shimmer, reveals ─────────── */
-@keyframes float-y {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-13px); }
+/* ── Rotating headline word: each word rises into place. ─────────────────────── */
+@keyframes word-in {
+  from { opacity: 0; transform: translateY(0.55em); }
+  to { opacity: 1; transform: none; }
 }
-@keyframes float-y2 {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(11px); }
-}
-@keyframes aurora-drift {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(3%, -4%) scale(1.08); }
-  100% { transform: translate(0, 0) scale(1); }
-}
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-@keyframes shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
-}
-@keyframes spin-slow {
-  to { transform: rotate(360deg); }
-}
+.animate-word { animation: word-in 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* ── Confidence-bar fill: a functional first-paint animation tied to the
+   score it represents, not decoration. ──────────────────────────────────────── */
 @keyframes grow-x {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.15; }
-}
-@keyframes scanline {
-  0% { transform: translateY(0); opacity: 0; }
-  12% { opacity: 1; }
-  88% { opacity: 1; }
-  100% { transform: translateY(150px); opacity: 0; }
-}
-@keyframes pop-in {
-  from { opacity: 0; transform: translateY(10px) scale(0.96); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes bar-grow {
-  from { width: 0; }
-}
-.animate-scanline { animation: scanline 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-
-.animate-float { animation: float-y 6.5s ease-in-out infinite; }
-.animate-float-slow { animation: float-y2 7.5s ease-in-out infinite; }
-.animate-aurora { animation: aurora-drift 20s ease-in-out infinite; }
-.animate-spin-slow { animation: spin-slow 16s linear infinite; }
-.animate-blink { animation: blink 1.4s ease-in-out infinite; }
-
-/* Frosted glass card. */
-.glass {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 24px 60px -28px rgba(10, 23, 51, 0.45);
-}
-
-/* Loading/processing shimmer sweep. */
-.shimmer {
-  background-image: linear-gradient(100deg, transparent 20%, rgba(91, 145, 249, 0.55) 50%, transparent 80%);
-  background-size: 200% 100%;
-  animation: shimmer 1.7s linear infinite;
-}
-
-/* Confidence-bar grow on first paint. */
 .grow-x {
   transform-origin: left;
   animation: grow-x 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-/* Infinite logo marquee. */
-.marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 32s linear infinite;
+/* ── Foundation-stack flow: a dot tracing the rail from engine to output. ────── */
+@keyframes flow-up {
+  0% { top: 100%; opacity: 0; }
+  14% { opacity: 1; }
+  86% { opacity: 1; }
+  100% { top: 0%; opacity: 0; }
 }
-.marquee-mask {
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-}
-.group\/m:hover .marquee { animation-play-state: paused; }
+.flow-dot { animation: flow-up 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
 
-/* Scroll-reveal (toggled by the Reveal client component). */
+/* ── Scroll-reveal (toggled by the Reveal client component). ─────────────────── */
 .reveal {
   opacity: 0;
   transform: translateY(22px);
@@ -260,15 +172,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
   .animate-menu,
-  .animate-float,
-  .animate-float-slow,
-  .animate-aurora,
-  .animate-spin-slow,
-  .animate-blink,
-  .animate-scanline,
-  .shimmer,
+  .animate-word,
   .grow-x,
-  .marquee {
+  .flow-dot {
     animation: none !important;
   }
   .reveal {

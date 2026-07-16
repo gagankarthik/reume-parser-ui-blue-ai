@@ -136,7 +136,7 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
       {error && <ErrorBanner message={error} />}
 
       {loading && !detail ? (
-        <div className="flex items-center gap-2 py-16 text-sm text-ink-soft"><Spinner /> Loading customer…</div>
+        <div className="flex items-center gap-2 py-16 text-sm text-ink-soft"><Spinner /> Loading customer...</div>
       ) : detail && c ? (
         <>
           {/* Header */}
@@ -148,7 +148,7 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
                 <Badge tone="neutral">{c.plan || "free"}</Badge>
               </div>
               <div className="mt-2 space-y-0.5 text-sm text-ink-soft">
-                <div>{c.email || "—"}</div>
+                <div>{c.email || "-"}</div>
                 <div className="font-mono text-xs text-ink-soft/70">
                   {c.company_id}{c.created_at ? ` · joined ${c.created_at.slice(0, 10)}` : ""}
                 </div>
@@ -206,7 +206,7 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
             <StatCard label="Success rate" value={`${successRate}%`} sub={`${t!.completed} ok · ${t!.failed} failed`} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} icon={<SuccessIcon />} />
           </div>
 
-          {/* API keys — with per-key usage rolled up from recent activity */}
+          {/* API keys - with per-key usage rolled up from recent activity */}
           <Panel
             title={`API keys (${detail.keys.length})`}
             subtitle={
@@ -234,7 +234,7 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
                       const share = t && t.tokens_used ? Math.round((k.tokens / t.tokens_used) * 100) : 0;
                       return (
                         <tr key={k.key_hash} className="border-t border-line">
-                          <td className="px-5 py-3 font-mono text-sm text-ink">{k.key_prefix || k.key_hash.slice(0, 8)}…</td>
+                          <td className="px-5 py-3 font-mono text-sm text-ink">{k.key_prefix || k.key_hash.slice(0, 8)}...</td>
                           <td className="px-4 py-3">
                             <Badge tone={k.status === "active" ? "success" : k.status === "unknown" ? "neutral" : "neutral"}>
                               {k.status === "unknown" ? "deleted" : k.status}
@@ -242,7 +242,7 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
                           </td>
                           <td className="px-4 py-3 text-right font-mono tabular-nums text-ink">{k.jobs.toLocaleString()}</td>
                           <td className="px-4 py-3 text-right font-mono tabular-nums text-ink">{k.tokens.toLocaleString()}</td>
-                          <td className="px-5 py-3 text-right font-mono tabular-nums text-ink-soft">{keyUsage!.attributed ? `${share}%` : "—"}</td>
+                          <td className="px-5 py-3 text-right font-mono tabular-nums text-ink-soft">{keyUsage!.attributed ? `${share}%` : "-"}</td>
                         </tr>
                       );
                     })}
@@ -250,7 +250,7 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
                 </table>
                 {!keyUsage!.attributed && (
                   <p className="border-t border-line px-5 py-3 text-xs text-ink-soft">
-                    Per-key usage is unavailable — recent activity isn’t attributed to a specific key.
+                    Per-key usage is unavailable - recent activity isn't attributed to a specific key.
                   </p>
                 )}
               </div>
@@ -294,13 +294,13 @@ export default function CompanyDetailClient({ companyId }: { companyId: string }
                   <tbody>
                     {detail.logs.map((l) => (
                       <tr key={l.job_id} className="border-t border-line">
-                        <td className="px-5 py-2.5 font-mono text-xs text-ink-soft">{l.timestamp ? l.timestamp.slice(0, 19).replace("T", " ") : "—"}</td>
+                        <td className="px-5 py-2.5 font-mono text-xs text-ink-soft">{l.timestamp ? l.timestamp.slice(0, 19).replace("T", " ") : "-"}</td>
                         <td className="px-4 py-2.5 text-ink-soft">{l.file_type}{l.ocr_used ? " · OCR" : ""}</td>
                         <td className="px-4 py-2.5">
                           <Badge tone={l.status === "completed" ? "success" : l.status === "failed" ? "danger" : "neutral"}>{l.status}</Badge>
                         </td>
                         <td className="px-4 py-2.5 text-right font-mono tabular-nums text-ink">{l.ai_tokens_used.toLocaleString()}</td>
-                        <td className="px-4 py-2.5 text-right font-mono tabular-nums text-ink-soft">{l.duration_ms ? `${l.duration_ms} ms` : "—"}</td>
+                        <td className="px-4 py-2.5 text-right font-mono tabular-nums text-ink-soft">{l.duration_ms ? `${l.duration_ms} ms` : "-"}</td>
                         <td className="px-5 py-2.5 font-mono text-xs text-rose-600">{l.error_code || ""}</td>
                       </tr>
                     ))}

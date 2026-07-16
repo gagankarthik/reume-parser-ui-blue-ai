@@ -4,7 +4,7 @@ import { isCurrentUserAdmin } from "@/lib/admin";
 
 import CompanyDetailClient from "./CompanyDetailClient";
 
-export const metadata = { title: "Customer — Admin" };
+export const metadata = { title: "Customer - Admin" };
 
 export default async function Page({ params }: { params: Promise<{ companyId: string }> }) {
   if (!(await isCurrentUserAdmin())) redirect("/dashboard");

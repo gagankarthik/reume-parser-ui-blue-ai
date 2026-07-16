@@ -7,44 +7,52 @@ import { getSessionClaims } from "@/lib/session";
 import { SiteNav } from "@/components/landing/SiteNav";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { Reveal } from "@/components/landing/Reveal";
+import { RotatingWord } from "@/components/landing/RotatingWord";
+import { FoundationStack } from "@/components/landing/FoundationStack";
+
+const DEMO_URL = "https://blue-iq.ai/contact";
+const PLATFORM_URL = "https://blue-iq.ai/products";
 
 export const metadata: Metadata = {
-  title: "ParsingLab | Healthcare Resume Parsing API",
+  title: "Blue-IQ Capture | Universal Document AI (Any Document to Structured Data)",
   description:
-    "Parse PDF, DOCX, and scanned resumes into schema-validated JSON. Built for healthcare staffing: licence numbers, credentials, specialties, and travel work histories, with confidence scores and signed webhooks.",
+    "Blue-IQ Capture turns any document (resumes, contracts, invoices, licenses) into structured, confidence-scored data. Domain-tuned, never fabricates, SOC 2 / HIPAA / GDPR aligned. Powered by the Sonar engine.",
   keywords: [
-    "resume parsing API",
-    "healthcare resume parser",
-    "CV parsing",
-    "nurse licence extraction",
-    "OCR resume",
-    "structured resume JSON",
+    "document AI",
+    "intelligent document processing",
+    "IDP",
+    "document data extraction",
+    "confidence scoring",
+    "schema-validated JSON",
+    "resume parsing",
+    "contract data extraction",
+    "invoice extraction",
+    "Sonar engine",
   ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    title: "ParsingLab | Healthcare Resume Parsing API",
+    title: "Blue-IQ Capture | Universal Document AI",
     description:
-      "One API call turns any resume, including scans, into schema-validated, confidence-scored JSON that knows what an RN licence is.",
-    siteName: "Blue-IQ Parser",
+      "Point Capture at your paperwork and get back clean, schema-validated, confidence-scored data - for any document, in any industry. Powered by the Sonar engine.",
+    siteName: "Blue-IQ Capture",
   },
   twitter: {
     card: "summary",
-    title: "ParsingLab | Healthcare Resume Parsing API",
-    description:
-      "Schema-validated JSON from any resume, built for healthcare staffing.",
+    title: "Blue-IQ Capture | Universal Document AI",
+    description: "Any document in. Structured, scored data out. Powered by the Sonar engine.",
   },
 };
 
 const JSON_LD = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "Blue-IQ Parser API",
-  applicationCategory: "DeveloperApplication",
+  name: "Blue-IQ Capture",
+  applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "Healthcare-grade resume parsing API: PDF, DOCX, and scanned resumes to schema-validated JSON with licence numbers, credentials, specialties, confidence scores, and signed webhooks.",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free to start, no credit card required" },
+    "Universal document AI: turns resumes, contracts, invoices, and licenses into schema-validated, confidence-scored data. Domain-tuned, never fabricates, powered by the Sonar engine. SOC 2 Type II, HIPAA, and GDPR aligned.",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Book a demo on your own documents" },
 };
 
 export default async function Landing() {
@@ -58,14 +66,14 @@ export default async function Landing() {
       />
       <SiteNav authed={authed} />
       <main>
-        <Hero authed={authed} />
-        <SpecStrip />
-        <Healthcare />
-        <Pipeline />
-        <Review />
-        <Developers />
-        <Security />
-        <Cta authed={authed} />
+        <Hero />
+        <WhatItDoes />
+        <HowItWorks />
+        <MoreThanParser />
+        <WhatItReads />
+        <Foundation />
+        <Trust />
+        <Cta />
       </main>
       <SiteFooter />
     </div>
@@ -74,354 +82,95 @@ export default async function Landing() {
 
 /* ── Hero ────────────────────────────────────────────────────────────────── */
 
-function Hero({ authed }: { authed?: boolean }) {
+function Hero() {
   return (
-    <section className="relative overflow-hidden bg-surface" aria-label="Introduction">
+    <section className="relative overflow-hidden border-b border-line bg-surface" aria-label="Blue-IQ Capture">
+      {/* structural grid background, masked to fade downward */}
       <div className="bg-grid absolute inset-x-0 top-0 h-[34rem] text-line" aria-hidden />
-      <Geo src="Geometric-Line-04.svg" className="hidden lg:block right-[4%] top-[7.5rem] h-16 w-16 opacity-[0.35]" />
-      <div className="relative mx-auto grid max-w-7xl items-start gap-12 px-5 pb-16 pt-12 sm:px-6 lg:grid-cols-[1.04fr_0.96fr] lg:gap-16 lg:pb-24 lg:pt-20">
-        <div className="lg:pt-6">
-          <p className="animate-fade-up label-caps inline-flex items-center gap-2 text-accent-700" style={{ animationDelay: "40ms" }}>
-            <span className="h-px w-8 bg-accent-400" aria-hidden />
-            Resume Parsing API · Healthcare-grade
-          </p>
 
-          <h1
-            className="animate-fade-up mt-5 font-display text-[2.6rem] font-semibold leading-[1.02] tracking-tight text-balance text-ink sm:text-[3.4rem] lg:text-[3.8rem]"
-            style={{ animationDelay: "90ms" }}
-          >
-            The resume parser that knows what an RN licence is.
-          </h1>
-
-          <p className="animate-fade-up mt-6 max-w-xl text-lg leading-relaxed text-ink-soft" style={{ animationDelay: "140ms" }}>
-            One call turns any PDF, DOCX, or scan into schema-validated JSON: licence numbers, post-nominal
-            credentials, canonical specialties, and travel work histories where the agency never swallows the
-            facility. Confidence-scored, so your team only reviews what needs eyes.
-          </p>
-
-          <div className="animate-fade-up mt-9 flex flex-wrap items-center gap-3" style={{ animationDelay: "190ms" }}>
-            <Link
-              href={authed ? "/dashboard" : "/signup"}
-              className="group inline-flex items-center gap-2 rounded-full bg-accent-700 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
-            >
-              {authed ? "Go to dashboard" : "Get an API key"}
-              <Arrow />
-            </Link>
-            <Link
-              href="/docs"
-              className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface px-6 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
-            >
-              Read the docs
-            </Link>
-          </div>
-        </div>
-
-        <Reveal delay={140}>
-          <HeroVisual />
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ── Hero visual: healthcare staff imagery + extracted-fields overlay ──────── */
-// NOTE: swap the two Unsplash URLs for your own licensed clinician photography.
-function HeroVisual() {
-  return (
-    <div className="relative mx-auto w-full max-w-[520px] pt-2 lg:mr-0 lg:pt-0">
-      {/* primary clinician photo */}
-      <div className="relative overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_44px_90px_-50px_rgba(14,22,38,0.55)]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=900&q=70"
-          alt="A clinical team reviewing patient records"
-          className="h-[380px] w-full object-cover sm:h-[440px]"
-          loading="eager"
-        />
-        <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 58%, rgba(14,22,38,0.16))" }} />
-      </div>
-
-      {/* secondary photo, overlapping top-right */}
-      <div className="absolute -right-4 -top-5 hidden w-32 overflow-hidden rounded-xl border-4 border-surface shadow-lg sm:block">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=420&q=70"
-          alt="A nurse in scrubs"
-          className="h-40 w-full object-cover"
-          loading="lazy"
-        />
-      </div>
-
-      {/* floating extracted-fields card */}
-      <div className="absolute -bottom-6 -left-3 w-[248px] rounded-xl border border-line bg-surface/95 p-4 shadow-[0_24px_50px_-24px_rgba(14,22,38,0.5)] backdrop-blur sm:-left-8">
-        <div className="flex items-center justify-between">
-          <span className="label-caps text-accent-700">Extracted</span>
-          <span className="font-mono text-[10px] text-ink-soft/70">1.8s</span>
-        </div>
-        <dl className="mt-3 space-y-2 text-[13px]">
-          <FieldLine k="Name" v="Jane Okafor, RN" />
-          <FieldLine k="Licence" v="RN0198432 · TX" />
-          <FieldLine k="Specialty" v="CVICU" />
-        </dl>
-        <div className="mt-3 flex items-center gap-1.5 border-t border-line pt-2.5 text-[11px] font-medium text-accent-700">
-          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          confidence 0.96
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FieldLine({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <dt className="text-ink-soft/70">{k}</dt>
-      <dd className="font-medium text-ink">{v}</dd>
-    </div>
-  );
-}
-
-/* ── Spec strip, facts, not logos ───────────────────────────────────────── */
-
-function SpecStrip() {
-  const specs: [string, string][] = [
-    ["6", "input formats, scans included"],
-    ["40+", "structured output fields"],
-    ["2-stage", "OCR with Textract fallback"],
-    ["≤ 2 min", "per resume, scans included"],
-    ["0", "documents retained after parsing"],
-  ];
-  return (
-    <section className="border-y border-line bg-paper" aria-label="At a glance">
-      <dl className="mx-auto grid max-w-7xl grid-cols-2 divide-line px-5 sm:px-6 md:grid-cols-5 md:divide-x">
-        {specs.map(([n, label]) => (
-          <div key={label} className="px-2 py-7 md:px-6">
-            <dt className="sr-only">{label}</dt>
-            <dd>
-              <span className="block font-display text-3xl font-semibold tracking-tight text-ink">{n}</span>
-              <span className="mt-1 block text-[13px] leading-snug text-ink-soft">{label}</span>
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </section>
-  );
-}
-
-/* ── Section header (numbered, left-aligned, same family as /docs) ──────── */
-
-function SectionHead({ n, eyebrow, title, lede }: { n: string; eyebrow: string; title: string; lede?: string }) {
-  return (
-    <Reveal>
-      <div className="max-w-3xl">
-        <p className="label-caps flex items-center gap-3 text-accent-700">
-          <span className="font-display text-base font-semibold italic text-accent-600/70">{n}</span>
-          {eyebrow}
+      <div className="relative mx-auto max-w-4xl px-5 pb-24 pt-20 text-center sm:px-6 lg:pb-32 lg:pt-28">
+        <p className="animate-fade-up inline-flex items-center gap-3" style={{ animationDelay: "40ms" }}>
+          <span className="h-px w-8 bg-accent-500" aria-hidden />
+          <span className="label-caps text-accent-700">Blue-IQ Capture</span>
+          <span className="hidden text-[11px] uppercase tracking-[0.16em] text-ink-soft/55 sm:inline">Universal Document AI</span>
         </p>
-        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-[2.5rem] sm:leading-[1.08]">
-          {title}
-        </h2>
-        {lede && <p className="mt-4 text-lg leading-relaxed text-ink-soft">{lede}</p>}
-        <hr className="rule mt-7" />
-      </div>
-    </Reveal>
-  );
-}
 
-/* ── 01 · Healthcare field ledger ────────────────────────────────────────── */
-
-function Healthcare() {
-  const rows: { label: string; what: string; detail: string }[] = [
-    {
-      label: "Licences",
-      what: "Real practice licences",
-      detail: "Number verbatim with letter prefix, state as written, compact and multistate flag, and status, never mislabelled as a certification.",
-    },
-    {
-      label: "Credentials",
-      what: "Post-nominals, preserved",
-      detail: "“Jane Smith, RN, BSN, CCRN” becomes a clean name split from every credential, in order, exactly as written.",
-    },
-    {
-      label: "Work history",
-      what: "Travel histories, untangled",
-      detail: "One entry per facility under an agency umbrella. The staffing agency is kept in its own field and never overwrites the hospital where the assignment happened.",
-    },
-    {
-      label: "Specialties",
-      what: "Specialties mapped to your platform",
-      detail: "“Med Surg/Tele”, “CVICU”, “L&D” matched to your platform’s specialties: profession-scoped, with a confidence score, exact names kept, and anything unmatched flagged for review instead of dropped.",
-    },
-    {
-      label: "Associations",
-      what: "Memberships & committees",
-      detail: "Sigma Theta Tau, AACN, unit committees, and process-owner roles: captured, not silently dropped.",
-    },
-    {
-      label: "Certifications",
-      what: "Certs with honest dates",
-      detail: "BLS, ACLS, CCRN with issued and expiry dates kept apart, so an unlabelled date is never guessed into an expiry.",
-    },
-  ];
-  return (
-    <section id="solutions" className="bg-surface" aria-label="Built for healthcare staffing">
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
-        <SectionHead
-          n="01"
-          eyebrow="Built for healthcare staffing"
-          title="Generic parsers see text. This one sees a clinician."
-          lede="Nurses and allied health professionals carry structure most parsers destroy, licences with numbers, credential strings after names, travel assignments nested under agencies. Blue-IQ extracts each into its own field."
-        />
-        <div className="mt-12 grid gap-x-12 gap-y-0 lg:grid-cols-2">
-          {rows.map((r, i) => (
-            <Reveal key={r.label} delay={(i % 2) * 80}>
-              <div className="group flex gap-5 border-b border-line py-7 transition-colors hover:bg-accent-50/40 sm:px-3">
-                <span className="font-display text-sm font-semibold italic text-accent-600/60">{String(i + 1).padStart(2, "0")}</span>
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <h3 className="font-display text-lg font-semibold tracking-tight text-ink">{r.what}</h3>
-                    <span className="inline-block rounded-full bg-accent-50 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-accent-700 ring-1 ring-inset ring-accent-100">
-                      {r.label}
-                    </span>
-                  </div>
-                  <p className="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{r.detail}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-        <Reveal delay={120}>
-          <p className="mt-8 max-w-3xl text-[15px] leading-relaxed text-ink-soft">
-            Not nurse-only: radiologic and CT/MRI technologists, respiratory therapists, OT/PT/SLP, surgical and lab
-            techs, and social workers parse with the same depth. And it remains a fully general resume parser, send
-            it an accountant and you get clean JSON back.
-          </p>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ── 02 · Pipeline ───────────────────────────────────────────────────────── */
-
-function Pipeline() {
-  const steps: { title: string; body: string; mono: string }[] = [
-    {
-      title: "Read anything",
-      body: "Digital text comes straight out. Scans and photos run tiered OCR: Tesseract first, AWS Textract when quality demands it.",
-      mono: "pdf · docx · png · jpg · tiff · scan",
-    },
-    {
-      title: "Map the document",
-      body: "A multi-pass engine locates every role before extracting it, so a 15-job travel history keeps all 15 employers.",
-      mono: "structure → per-role extraction",
-    },
-    {
-      title: "Validate, never invent",
-      body: "Output is forced through a strict schema. A missing date stays null and is never padded into a fake one.",
-      mono: "08/2018, not 08/01/2018",
-    },
-    {
-      title: "Score and flag",
-      body: "Per-section confidence plus plain-language warnings: a summary that looks copied, a name the email contradicts.",
-      mono: '"confidence": { "overall": 0.93 }',
-    },
-  ];
-  return (
-    <section className="border-y border-line bg-paper" aria-label="How a parse runs">
-      <div className="bg-ledger">
-        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
-          <SectionHead
-            n="02"
-            eyebrow="How a parse runs"
-            title="Four stages between upload and JSON."
+        <h1
+          className="animate-fade-up mt-6 font-display text-[2.9rem] font-semibold leading-[1.03] tracking-tight text-balance text-ink sm:text-6xl lg:text-[4.4rem]"
+          style={{ animationDelay: "90ms" }}
+        >
+          Turn any{" "}
+          <RotatingWord
+            words={["resume", "contract", "invoice", "licence"]}
+            className="text-accent-700"
           />
-          <ol className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-2 xl:grid-cols-4">
-            {steps.map((s, i) => (
-              <Reveal as="li" key={s.title} delay={i * 80} className="bg-surface">
-                <div className="flex h-full flex-col p-7">
-                  <span className="font-display text-2xl font-bold italic text-accent-600/50">{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="mt-4 font-display text-lg font-bold tracking-tight text-ink">{s.title}</h3>
-                  <p className="mt-2 grow text-sm leading-relaxed text-ink-soft">{s.body}</p>
-                  <code className="mt-5 block truncate border-t border-line pt-3 font-mono text-[11px] text-ink-soft/80">{s.mono}</code>
-                </div>
-              </Reveal>
-            ))}
-          </ol>
+          <br />
+          into structured data.
+        </h1>
+
+        <p className="animate-fade-up mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-ink-soft" style={{ animationDelay: "150ms" }}>
+          Capture reads the resumes, contracts, invoices, and licenses your teams drown in and hands back clean,
+          schema-validated, confidence-scored data - for any document, in any industry.
+        </p>
+
+        <div className="animate-fade-up mt-9 flex flex-wrap items-center justify-center gap-3" style={{ animationDelay: "210ms" }}>
+          <a
+            href={DEMO_URL}
+            className="group inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
+          >
+            Book a demo
+            <Arrow />
+          </a>
+          <Link
+            href="/docs"
+            className="inline-flex items-center gap-2 rounded-lg border border-line-strong bg-surface px-6 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
+          >
+            Read the docs
+          </Link>
         </div>
+
+        <p className="animate-fade-up mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[13px] text-ink-soft" style={{ animationDelay: "270ms" }}>
+          {["Never fabricates", "Confidence on every field", "SOC 2 · HIPAA · GDPR aligned"].map((t) => (
+            <span key={t} className="inline-flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent-500" aria-hidden />
+              {t}
+            </span>
+          ))}
+        </p>
       </div>
     </section>
   );
 }
 
-/* ── 03 · Confidence & review ────────────────────────────────────────────── */
+/* ── What Capture does ───────────────────────────────────────────────────── */
 
-function Review() {
-  const fields: [string, number][] = [
-    ["personal_info", 0.96],
-    ["experience", 0.91],
-    ["education", 0.88],
-    ["skills", 0.74],
-  ];
+function WhatItDoes() {
   return (
-    <section className="bg-surface" aria-label="Confidence scores and review routing">
+    <section className="border-y border-line bg-paper" aria-label="What Capture does">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
-          <div>
-            <SectionHead
-              n="03"
-              eyebrow="Human-in-the-loop"
-              title="Your team reviews four resumes, not four hundred."
-              lede="Every section carries a 0–1 confidence score. Set a threshold: clean records flow straight into your system, and only the uncertain ones queue for a person. Degraded parses come back flagged partial with plain-language warnings, never a silent failure."
-            />
-            <Reveal delay={80}>
-              <ul className="mt-8 space-y-3 text-[15px] text-ink">
-                {[
-                  "Per-section and overall scores on every response",
-                  "partial: true on degraded documents, so nothing fails silently",
-                  "Warnings a recruiter can read, not error codes",
-                  "Feedback endpoint: corrected JSON flows back to improve the model",
-                ].map((p) => (
-                  <li key={p} className="flex gap-3">
-                    <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden />
-                    <span className="text-ink-soft">{p}</span>
-                  </li>
+        <div className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-20">
+          <SectionHead
+            eyebrow="What Capture does"
+            title="Any document in. Structured, scored data out."
+          />
+          <Reveal delay={80}>
+            <div className="space-y-6 text-lg leading-relaxed text-ink-soft lg:pt-1">
+              <p>
+                Drop in a PDF, a scan, an export, or an email attachment. Capture returns every field that matters as
+                schema-validated JSON, and scores its own confidence on each one - so your team reviews only what is
+                uncertain instead of re-keying everything by hand.
+              </p>
+              <p>
+                It is the foundation the rest of Blue-IQ is built on. The same engine that credentials a clinician also
+                reads a master services agreement and reconciles an invoice.{" "}
+                <span className="font-medium text-ink">One product, every document type.</span>
+              </p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {["PDF", "Scan", "Export", "Email attachment", "Phone photo"].map((t) => (
+                  <span key={t} className="rounded-md border border-line bg-surface px-3 py-1 font-mono text-[12px] text-ink-soft">
+                    {t}
+                  </span>
                 ))}
-              </ul>
-            </Reveal>
-          </div>
-
-          <Reveal delay={120}>
-            <div className="rounded-2xl border border-line bg-paper p-6 sm:p-8">
-              <div className="flex items-baseline justify-between">
-                <span className="label-caps text-ink-soft/70">confidence</span>
-                <span className="font-mono text-xs text-ink-soft/60">threshold 0.80</span>
-              </div>
-              <div className="mt-6 space-y-5">
-                {fields.map(([label, s], i) => {
-                  const low = s < 0.8;
-                  return (
-                    <div key={label}>
-                      <div className="flex items-baseline justify-between text-sm">
-                        <span className="font-mono text-[13px] text-ink">{label}</span>
-                        <span className={"font-mono text-[13px] font-semibold " + (low ? "text-brass-500" : "text-accent-700")}>
-                          {s.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-                        <span
-                          className={"grow-x block h-full rounded-full " + (low ? "bg-brass-400" : "bg-accent-600")}
-                          style={{ width: `${s * 100}%`, animationDelay: `${i * 120}ms` }}
-                        />
-                      </div>
-                      <p className="mt-1.5 text-xs text-ink-soft/70">
-                        {low ? "→ queued for human review" : "→ auto-accepted"}
-                      </p>
-                    </div>
-                  );
-                })}
               </div>
             </div>
           </Reveal>
@@ -431,37 +180,63 @@ function Review() {
   );
 }
 
-/* ── 04 · Developers ─────────────────────────────────────────────────────── */
+/* ── How it works - three genuine, ordered stages ────────────────────────── */
 
-function Developers() {
+function HowItWorks() {
+  const steps: { n: string; title: string; body: string; mono: string }[] = [
+    {
+      n: "01",
+      title: "Ingest anything",
+      body: "PDFs, scans, exports, email attachments. Send them through the API or a watched folder. OCR handles the ones that were photographed on a phone.",
+      mono: "api · watched folder · ocr",
+    },
+    {
+      n: "02",
+      title: "Read and score with Sonar",
+      body: "Sonar, the Blue-IQ engine, pulls out the fields that matter and scores its own confidence on each one - so uncertainty is surfaced for review, never buried in the output. It never invents a value.",
+      mono: 'confidence: { field: 0.91 }',
+    },
+    {
+      n: "03",
+      title: "Deliver where you work",
+      body: "Schema-validated JSON lands in your ATS, CRM, or warehouse over a documented REST API and signed webhooks. No re-keying, no export step.",
+      mono: "-> ATS · CRM · warehouse",
+    },
+  ];
   return (
-    <section id="api" className="border-y border-line bg-paper" aria-label="Developer experience">
+    <section id="how" className="bg-surface" aria-label="How it works">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
-        <SectionHead
-          n="04"
-          eyebrow="Developer-first"
-          title="A request and a response. That’s the integration."
-          lede="No SDK required, no callback gymnastics for the simple case. Async OCR jobs return a job_id to poll, or register a signed webhook and skip polling entirely."
-        />
+        <SectionHead eyebrow="How it works" title="From paperwork to payload in three stages." />
+        <ol className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
+          {steps.map((s, i) => (
+            <Reveal as="li" key={s.n} delay={i * 90} className="bg-surface">
+              <div className="flex h-full flex-col p-7 lg:p-8">
+                <div className="flex items-center gap-3">
+                  <span className="font-display text-3xl font-bold italic text-accent-600/40">{s.n}</span>
+                  <span className="h-px grow bg-line" aria-hidden />
+                </div>
+                <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-ink">{s.title}</h3>
+                <p className="mt-2.5 grow text-[15px] leading-relaxed text-ink-soft">{s.body}</p>
+                <code className="mt-6 block truncate border-t border-line pt-4 font-mono text-[11px] text-ink-soft/80">{s.mono}</code>
+              </div>
+            </Reveal>
+          ))}
+        </ol>
 
-        <Reveal delay={100}>
-          <div className="mt-12 overflow-hidden rounded-2xl border border-[#1e2942] bg-[#0b1220] shadow-[0_44px_90px_-50px_rgba(11,18,32,0.8)]">
+        <Reveal delay={120}>
+          <div className="mt-6 overflow-hidden rounded-2xl border border-[#1e2942] bg-[#0b1220] shadow-[0_44px_90px_-52px_rgba(11,18,32,0.8)]">
             <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
-              <span className="font-mono text-xs text-[#7d889e]">POST /api/v1/resume/parse</span>
-              <Link href="/docs" className="font-mono text-xs text-[#8fb4ff] hover:text-white">
-                full reference →
-              </Link>
+              <span className="font-mono text-xs text-[#7d889e]">POST /api/v1/parse</span>
+              <Link href="/docs" className="font-mono text-xs text-[#8fb4ff] hover:text-white">full reference {"->"}</Link>
             </div>
             <div className="grid gap-px bg-white/10 lg:grid-cols-2">
               <pre className="overflow-x-auto bg-[#0b1220] p-6 font-mono text-[13px] leading-relaxed text-[#dbe4f5]">
                 <code>
-                  <span className="text-[#64748b]"># one call</span>
+                  <span className="text-[#64748b]"># one call, any document</span>
                   {"\n"}<span className="text-[#8fb4ff]">curl</span> -X POST \
-                  {"\n  "}{API_BASE}<span className="text-[#64748b]">/api/v1/resume/parse</span> \
-                  {"\n  "}-H <S>&quot;X-API-Key: rp_live_…&quot;</S> \
-                  {"\n  "}-F <S>&quot;file=@resume.pdf&quot;</S>
-                  {"\n\n"}<span className="text-[#64748b]"># difficult scan? force high-accuracy OCR</span>
-                  {"\n  "}-F <S>&quot;force_textract=true&quot;</S>
+                  {"\n  "}{API_BASE}<span className="text-[#64748b]">/api/v1/parse</span> \
+                  {"\n  "}-H <S>&quot;X-API-Key: cap_live_...&quot;</S> \
+                  {"\n  "}-F <S>&quot;file=@contract.pdf&quot;</S>
                 </code>
               </pre>
               <pre className="overflow-x-auto bg-[#0b1220] p-6 font-mono text-[13px] leading-relaxed text-[#dbe4f5]">
@@ -469,40 +244,111 @@ function Developers() {
                   <span className="text-[#64748b]">{"// 200 OK"}</span>
                   {"\n"}<span className="text-[#64748b]">{"{"}</span>
                   {"\n  "}<K>&quot;status&quot;</K>: <S>&quot;completed&quot;</S>,
-                  {"\n  "}<K>&quot;data&quot;</K>: <span className="text-[#64748b]">{"{"}</span> <K>&quot;licenses&quot;</K>, <K>&quot;experience&quot;</K>, <K>&quot;credentials&quot;</K>… <span className="text-[#64748b]">{"}"}</span>,
-                  {"\n  "}<K>&quot;confidence&quot;</K>: <span className="text-[#64748b]">{"{"}</span> <K>&quot;overall&quot;</K>: <span className="text-[#f0b454]">0.91</span> <span className="text-[#64748b]">{"}"}</span>,
-                  {"\n  "}<K>&quot;partial&quot;</K>: <span className="text-[#f0b454]">false</span>,
-                  {"\n  "}<K>&quot;warnings&quot;</K>: <span className="text-[#64748b]">[]</span>
+                  {"\n  "}<K>&quot;data&quot;</K>: <span className="text-[#64748b]">{"{"}</span> <K>&quot;parties&quot;</K>, <K>&quot;term&quot;</K>, <K>&quot;total&quot;</K>... <span className="text-[#64748b]">{"}"}</span>,
+                  {"\n  "}<K>&quot;confidence&quot;</K>: <span className="text-[#64748b]">{"{"}</span> <K>&quot;overall&quot;</K>: <span className="text-[#f0b454]">0.94</span> <span className="text-[#64748b]">{"}"}</span>,
+                  {"\n  "}<K>&quot;fabricated&quot;</K>: <span className="text-[#f0b454]">false</span>
                   {"\n"}<span className="text-[#64748b]">{"}"}</span>
                 </code>
               </pre>
             </div>
           </div>
         </Reveal>
+      </div>
+    </section>
+  );
+}
 
-        <div className="mt-6 grid gap-5 md:grid-cols-3">
-          {[
-            {
-              h: "Uniform errors",
-              p: "Every failure shares one envelope with a machine error_code and a hint written for end users.",
-              c: '"error_code": "FILE_TOO_LARGE"',
-            },
-            {
-              h: "Signed webhooks",
-              p: "Async results carry an HMAC-SHA256 signature and timestamp. Verify, then trust the payload.",
-              c: "X-Signature: sha256=…",
-            },
-            {
-              h: "Batch up to 200",
-              p: "Submit a folder of resumes in one request; per-file jobs report back individually.",
-              c: "POST /api/v1/resume/batch",
-            },
-          ].map((b, i) => (
-            <Reveal key={b.h} delay={i * 70}>
-              <div className="h-full rounded-2xl border border-line bg-surface p-6">
-                <h3 className="font-display text-base font-bold tracking-tight text-ink">{b.h}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{b.p}</p>
-                <code className="mt-4 block truncate border-t border-line pt-3 font-mono text-[11px] text-ink-soft/80">{b.c}</code>
+/* ── Why it is more than a parser - bento of differentiators ─────────────── */
+
+function MoreThanParser() {
+  const rows: { tag: string; h: string; p: string }[] = [
+    {
+      tag: "domain_tuned",
+      h: "Domain-tuned extraction",
+      p: "Capture understands the credentials, clauses, and line items a generic model flattens. It reads the documents that run your business, not text in the abstract.",
+    },
+    {
+      tag: "confidence",
+      h: "Confidence on every field",
+      p: "Each value is scored, so review is targeted, not wholesale.",
+    },
+    {
+      tag: "no_fabrication",
+      h: "Never fabricates",
+      p: "Uncertain fields are flagged, not invented.",
+    },
+    {
+      tag: "human_review",
+      h: "Human-in-the-loop by design",
+      p: "Set a confidence threshold and route only what needs a second look.",
+    },
+    {
+      tag: "schema_valid",
+      h: "Schema-validated output",
+      p: "Clean JSON that fits your systems - not a blob of text to clean up later.",
+    },
+  ];
+  return (
+    <section id="why" className="border-y border-line bg-paper" aria-label="More than a parser">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
+        <div className="grid gap-y-10 lg:grid-cols-[0.82fr_1.18fr] lg:gap-x-20">
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <SectionHead
+              eyebrow="More than a parser"
+              title="Not a parser. An intelligence layer."
+              lede="Generic parsers flatten the detail and guess when they are unsure. Capture is built for the documents that run your business - and it tells you how sure it is."
+            />
+          </div>
+
+          {/* Editorial ledger: the schema key each claim maps to, then the claim. */}
+          <div className="border-t border-line">
+            {rows.map((r, i) => (
+              <Reveal key={r.tag} delay={i * 55}>
+                <div className="group grid gap-x-8 gap-y-1.5 border-b border-line py-6 transition-colors hover:bg-accent-50/30 sm:grid-cols-[minmax(9.5rem,auto)_1fr] sm:py-7">
+                  <code className="font-mono text-[12.5px] leading-6 text-accent-600/90 transition-colors group-hover:text-accent-700">
+                    {r.tag}
+                  </code>
+                  <div>
+                    <h3 className="font-display text-lg font-semibold tracking-tight text-ink sm:text-xl">{r.h}</h3>
+                    <p className="mt-1.5 max-w-xl text-[15px] leading-relaxed text-ink-soft">{r.p}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── What Capture reads - universality ───────────────────────────────────── */
+
+function WhatItReads() {
+  const rows: { t: string; d: string; files: string }[] = [
+    { t: "Resumes & CVs", d: "Names, credentials, licences, and work history - untangled.", files: "resume.pdf · cv.docx" },
+    { t: "Licences & certifications", d: "Numbers, states, and honest issue/expiry dates.", files: "rn_license.jpg · cert.png" },
+    { t: "Contracts, MSAs & SOWs", d: "Parties, terms, clauses, and governing law.", files: "msa_v3.docx · sow.pdf" },
+    { t: "Invoices, POs & receipts", d: "Vendors, line items, totals, and due dates.", files: "invoice_4471.pdf · po.pdf" },
+    { t: "Forms & applications", d: "Fielded data from scanned and structured records.", files: "application.tiff · form.pdf" },
+  ];
+  return (
+    <section className="bg-surface" aria-label="What Capture reads">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
+        <SectionHead
+          eyebrow="Universality"
+          title="Built for every document your business runs on."
+          lede="If it carries data your team needs, Capture turns it into structured fields - in dozens of languages, at scale."
+        />
+        <div className="mt-12 border-t border-line">
+          {rows.map((r, i) => (
+            <Reveal key={r.t} delay={i * 55}>
+              <div className="grid items-baseline gap-x-8 gap-y-1 border-b border-line py-6 sm:grid-cols-[1fr_auto]">
+                <div>
+                  <h3 className="font-display text-lg font-semibold tracking-tight text-ink sm:text-xl">{r.t}</h3>
+                  <p className="mt-1 text-[15px] leading-relaxed text-ink-soft">{r.d}</p>
+                </div>
+                <code className="font-mono text-[12.5px] text-ink-soft/60 sm:text-right">{r.files}</code>
               </div>
             </Reveal>
           ))}
@@ -512,30 +358,83 @@ function Developers() {
   );
 }
 
-/* ── 05 · Security ───────────────────────────────────────────────────────── */
+/* ── The foundation for every Blue-IQ product ────────────────────────────── */
 
-function Security() {
-  const items: [string, string][] = [
-    ["Zero document retention", "Resumes are parsed in memory and deleted on completion. There is no stored copy to breach."],
-    ["Encrypted in transit", "Every request runs over TLS, authenticated by a per-account key you can rotate at any time."],
-    ["Signed webhooks", "Async deliveries carry an HMAC-SHA256 signature and timestamp; replay-window guidance is in the docs."],
-    ["Content-free audit trail", "We log that a parse happened (duration, file type, token spend), never what the document said."],
+function Foundation() {
+  return (
+    <section id="platform" className="border-y border-line bg-paper" aria-label="The platform foundation">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
+        <SectionHead
+          eyebrow="The platform"
+          title="One engine. One foundation."
+          lede="Capture runs on the Sonar engine and forms the base of the Blue-IQ platform. The same core reads a resume, a contract, and an invoice - and everything you build sits on top. Start with Capture, expand as you grow."
+        />
+
+        <Reveal delay={100}>
+          <div className="mt-12">
+            <FoundationStack />
+          </div>
+        </Reveal>
+
+        <Reveal delay={140}>
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <a
+              href={PLATFORM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 rounded-lg bg-accent-700 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
+            >
+              Explore the platform
+              <Arrow />
+            </a>
+            <a
+              href={DEMO_URL}
+              className="inline-flex items-center gap-2 rounded-lg border border-line-strong bg-surface px-6 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
+            >
+              Book a demo
+            </a>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ── Trust & security ────────────────────────────────────────────────────── */
+
+function Trust() {
+  const measures: [string, string][] = [
+    ["Encryption in transit", "Every request runs over TLS, authenticated by a per-workspace key you can rotate at any time."],
+    ["Workspace isolation", "Documents and keys are scoped to a workspace, with role-based access and single sign-on."],
+    ["Zero-retention option", "Turn on zero retention and documents are parsed in memory and never stored - nothing to breach."],
+    ["Content-free audit trail", "We log that a parse happened - duration, file type, token spend - never what the document said."],
   ];
   return (
-    <section id="security" className="bg-surface" aria-label="Security and privacy">
+    <section id="security" className="bg-surface" aria-label="Trust and security">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:py-28">
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-          <SectionHead
-            n="05"
-            eyebrow="Security & privacy"
-            title="Candidate documents are radioactive. Handle accordingly."
-            lede="A resume is PII end-to-end. The safest place to keep it is nowhere, so that’s the design."
-          />
+          <div>
+            <SectionHead
+              eyebrow="Trust & security"
+              title="Sensitive documents, handled that way."
+              lede="Your documents carry clinical records, signed contracts, and financial detail. Capture treats them accordingly."
+            />
+            <Reveal delay={80}>
+              <div className="mt-8 flex flex-wrap gap-2.5">
+                {["SOC 2 Type II", "HIPAA", "GDPR"].map((b) => (
+                  <span key={b} className="inline-flex items-center gap-2 rounded-md border border-line bg-paper px-3.5 py-2 text-[13px] font-semibold text-ink">
+                    <ShieldTick />
+                    {b} aligned
+                  </span>
+                ))}
+              </div>
+            </Reveal>
+          </div>
           <div>
             <dl className="divide-y divide-line border-y border-line">
-              {items.map(([t, d], i) => (
+              {measures.map(([t, d], i) => (
                 <Reveal key={t} delay={i * 60}>
-                  <div className="grid gap-2 py-6 sm:grid-cols-[200px_1fr] sm:gap-8">
+                  <div className="grid gap-2 py-6 sm:grid-cols-[210px_1fr] sm:gap-8">
                     <dt className="font-display text-base font-bold tracking-tight text-ink">{t}</dt>
                     <dd className="text-[15px] leading-relaxed text-ink-soft">{d}</dd>
                   </div>
@@ -549,37 +448,34 @@ function Security() {
   );
 }
 
-/* ── CTA ─────────────────────────────────────────────────────────────────── */
+/* ── Closing CTA ─────────────────────────────────────────────────────────── */
 
-function Cta({ authed }: { authed?: boolean }) {
+function Cta() {
   return (
-    <section id="pricing" className="relative overflow-hidden border-t border-line bg-paper" aria-label="Get started">
-      <div className="bg-grid absolute inset-0 text-line" aria-hidden />
-      <Geo src="Geometric-Line-06.svg" className="hidden md:block left-[7%] top-16 h-14 w-14 opacity-[0.3]" />
-      <Geo src="Geometric-Line-14.svg" className="hidden md:block right-[8%] bottom-16 h-16 w-16 opacity-[0.3]" />
-      <div className="relative mx-auto max-w-7xl px-5 py-24 text-center sm:px-6 lg:py-32">
+    <section id="demo" className="border-t border-line bg-paper" aria-label="Get started">
+      <div className="mx-auto max-w-7xl px-5 py-24 text-center sm:px-6 lg:py-32">
         <Reveal>
-          <p className="label-caps text-accent-700">Start free · no credit card</p>
+          <p className="label-caps text-accent-700">On your own documents · live</p>
           <h2 className="mx-auto mt-4 max-w-3xl font-display text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
-            Your first parsed resume is five minutes away.
+            Put your documents to work.
           </h2>
-          <p className="mx-auto mt-4 max-w-md text-lg text-ink-soft">
-            Create an account, generate a key, send a file. The dashboard tracks every job from day one.
+          <p className="mx-auto mt-4 max-w-lg text-lg text-ink-soft">
+            Tell us what your team is working with. We will show you what Capture does with it, live, on your own documents.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href={authed ? "/dashboard" : "/signup"}
-              className="group inline-flex items-center gap-2 rounded-full bg-accent-700 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
+            <a
+              href={DEMO_URL}
+              className="group inline-flex items-center gap-2 rounded-lg bg-accent-700 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-accent-800"
             >
-              {authed ? "Go to dashboard" : "Create your account"}
+              Talk to us
               <Arrow />
-            </Link>
-            <Link
-              href="/docs"
-              className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface px-7 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
+            </a>
+            <a
+              href={DEMO_URL}
+              className="inline-flex items-center gap-2 rounded-lg border border-line-strong bg-surface px-7 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent-300 hover:bg-accent-50"
             >
-              Read the docs
-            </Link>
+              Book a demo
+            </a>
           </div>
         </Reveal>
       </div>
@@ -587,19 +483,33 @@ function Cta({ authed }: { authed?: boolean }) {
   );
 }
 
+/* ── Section header (eyebrow + title + optional lede) ────────────────────── */
+
+function SectionHead({ eyebrow, title, lede }: { eyebrow: string; title: string; lede?: string }) {
+  return (
+    <Reveal>
+      <div className="max-w-3xl">
+        <p className="label-caps flex items-center gap-3 text-accent-700">
+          <span className="h-px w-8 bg-accent-400" aria-hidden />
+          {eyebrow}
+        </p>
+        <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-balance text-ink sm:text-[2.5rem] sm:leading-[1.08]">
+          {title}
+        </h2>
+        {lede && <p className="mt-4 text-lg leading-relaxed text-ink-soft">{lede}</p>}
+      </div>
+    </Reveal>
+  );
+}
+
 /* ── Bits ────────────────────────────────────────────────────────────────── */
 
-// Restrained Blue-IQ geometric line accent (from /public/Geometrics).
-function Geo({ src, className }: { src: string; className?: string }) {
+function ShieldTick() {
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={`/Geometrics/${src}`}
-      alt=""
-      aria-hidden
-      loading="lazy"
-      className={"pointer-events-none absolute select-none " + (className || "")}
-    />
+    <svg className="h-4 w-4 text-accent-700" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+      <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 

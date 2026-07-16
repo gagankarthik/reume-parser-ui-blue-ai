@@ -12,7 +12,7 @@ function Svg({ children, ...props }: IconProps & { children: React.ReactNode }) 
   );
 }
 
-/** API key — used wherever keys are surfaced (stat cards, headers). */
+/** API key - used wherever keys are surfaced (stat cards, headers). */
 export function KeyIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -22,7 +22,7 @@ export function KeyIcon(props: IconProps) {
   );
 }
 
-/** Jobs processed — stacked layers. */
+/** Jobs processed - stacked layers. */
 export function JobsIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -32,7 +32,7 @@ export function JobsIcon(props: IconProps) {
   );
 }
 
-/** Tokens — sparkle. */
+/** Tokens - sparkle. */
 export function TokenIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -41,7 +41,7 @@ export function TokenIcon(props: IconProps) {
   );
 }
 
-/** Success / completed — check in a circle. */
+/** Success / completed - check in a circle. */
 export function SuccessIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -51,7 +51,7 @@ export function SuccessIcon(props: IconProps) {
   );
 }
 
-/** Processing time — clock. */
+/** Processing time - clock. */
 export function ClockIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -61,7 +61,7 @@ export function ClockIcon(props: IconProps) {
   );
 }
 
-/** Users / companies — people. */
+/** Users / companies - people. */
 export function UsersIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -71,7 +71,7 @@ export function UsersIcon(props: IconProps) {
   );
 }
 
-/** OCR / scanned documents — scan frame. */
+/** OCR / scanned documents - scan frame. */
 export function ScanIcon(props: IconProps) {
   return (
     <Svg {...props}>

@@ -75,7 +75,7 @@ export default function AdminClient() {
 
       {loading && !stats ? (
         <div className="flex items-center gap-2 py-16 text-sm text-ink-soft">
-          <Spinner /> Loading platform stats…
+          <Spinner /> Loading platform stats...
         </div>
       ) : stats ? (
         <>

@@ -24,7 +24,7 @@ interface TableSummary extends TableRef {
 }
 
 function cellText(v: unknown): string {
-  if (v == null) return "—";
+  if (v == null) return "-";
   if (typeof v === "object") return Array.isArray(v) ? `[${v.length}]` : JSON.stringify(v);
   return String(v);
 }
@@ -147,7 +147,7 @@ export default function DataClient({ tables }: { tables: TableRef[] }) {
           >
             <p className="truncate text-[11px] font-medium uppercase tracking-wide text-ink-soft">{t.label}</p>
             <p className="mt-1 font-display text-2xl font-semibold tabular-nums text-ink">
-              {(t as TableSummary).count >= 0 ? (t as TableSummary).count.toLocaleString() : "…"}
+              {(t as TableSummary).count >= 0 ? (t as TableSummary).count.toLocaleString() : "..."}
             </p>
             {"ok" in t && !(t as TableSummary).ok && <p className="text-[10px] text-red-600">unreachable</p>}
           </button>
@@ -160,7 +160,7 @@ export default function DataClient({ tables }: { tables: TableRef[] }) {
             key={t.id}
             onClick={() => setActive(t.id)}
             className={cn(
-              "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
+              "rounded-lg border px-3.5 py-1.5 text-sm font-medium transition-colors",
               active === t.id ? "border-accent-500 bg-accent-50 text-accent-700" : "border-line text-ink-soft hover:border-accent-300 hover:text-ink",
             )}
           >
@@ -179,7 +179,7 @@ export default function DataClient({ tables }: { tables: TableRef[] }) {
           </span>
         )}
         <div className="ml-auto flex items-center gap-2">
-          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter…" className="h-9 w-44" />
+          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter..." className="h-9 w-44" />
           <Button variant="secondary" className="h-9 px-3 text-xs" onClick={() => setRaw((v) => !v)}>{raw ? "Table" : "Raw JSON"}</Button>
           <Button variant="secondary" className="h-9 px-3 text-xs" loading={loading} onClick={() => load(active)}>Refresh</Button>
         </div>

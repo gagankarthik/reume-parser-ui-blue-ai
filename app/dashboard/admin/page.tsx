@@ -4,7 +4,7 @@ import { isCurrentUserAdmin } from "@/lib/admin";
 
 import AdminClient from "./AdminClient";
 
-export const metadata = { title: "Admin — Blue-IQ Parser" };
+export const metadata = { title: "Admin - Blue-IQ Parser" };
 
 // Server gate: only allow-listed operators reach the admin overview. The session
 // is already verified by the dashboard layout; here we additionally check the

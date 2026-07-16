@@ -46,7 +46,7 @@ export default function LoginPage() {
           /* ignore resend errors */
         }
         setNeedsConfirm(true);
-        setInfo(`Your email isn't verified yet — we sent a code to ${email}.`);
+        setInfo(`Your email isn't verified yet - we sent a code to ${email}.`);
       } else {
         setError(err instanceof Error ? err.message : "Sign in failed");
       }

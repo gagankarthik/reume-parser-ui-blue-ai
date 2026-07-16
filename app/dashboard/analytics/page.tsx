@@ -78,12 +78,12 @@ export default function AnalyticsPage() {
 
       {loading && !usage ? (
         <div className="flex items-center gap-2 py-16 text-sm text-ink-soft">
-          <Spinner /> Loading analytics…
+          <Spinner /> Loading analytics...
         </div>
       ) : usage ? (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard label="Active keys" value={activeKeys ?? "—"} accent="accent" icon={<KeyIcon />} />
+            <StatCard label="Active keys" value={activeKeys ?? "-"} accent="accent" icon={<KeyIcon />} />
             <StatCard label={`Jobs · ${days}d`} value={t!.jobs.toLocaleString()} accent="ink" icon={<JobsIcon />} />
             <StatCard label="Tokens used" value={t!.tokens_used.toLocaleString()} accent="brass" icon={<TokenIcon />} />
             <StatCard label="Success rate" value={`${successRate}%`} sub={`${t!.completed} ok · ${t!.failed} failed`} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} icon={<SuccessIcon />} />
@@ -119,7 +119,8 @@ export default function AnalyticsPage() {
               OCR jobs <b className="font-mono text-ink">{t!.ocr_jobs.toLocaleString()}</b>
             </span>
             <Link href="/dashboard/keys" className="ml-auto inline-flex items-center gap-1.5 font-medium text-accent-700 hover:underline">
-              <KeyIcon width={16} height={16} /> Manage API keys →
+              <KeyIcon width={16} height={16} /> Manage API keys
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
           </div>
         </>

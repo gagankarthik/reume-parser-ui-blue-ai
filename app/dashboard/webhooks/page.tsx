@@ -94,7 +94,7 @@ export default function WebhooksPage() {
       {created && (
         <div className="overflow-hidden rounded-2xl border border-brass-400/50 bg-surface shadow-[0_1px_2px_rgba(10,23,51,0.04),0_16px_40px_-24px_rgba(10,23,51,0.28)]">
           <div className="flex items-center justify-between border-b border-brass-400/30 bg-brass-400/10 px-5 py-3">
-            <h3 className="font-display text-sm font-semibold text-ink">Signing secret — copy it now</h3>
+            <h3 className="font-display text-sm font-semibold text-ink">Signing secret - copy it now</h3>
             <button onClick={() => setCreated(null)} className="text-sm text-ink-soft hover:text-ink">Dismiss</button>
           </div>
           <div className="p-5">
@@ -156,7 +156,7 @@ export default function WebhooksPage() {
           <Button variant="ghost" onClick={load} type="button">Refresh</Button>
         </div>
         {loading ? (
-          <div className="flex items-center gap-2 text-sm text-ink-soft"><Spinner /> Loading…</div>
+          <div className="flex items-center gap-2 text-sm text-ink-soft"><Spinner /> Loading...</div>
         ) : hooks.length === 0 ? (
           <p className="text-sm text-ink-soft">No webhooks registered yet.</p>
         ) : (

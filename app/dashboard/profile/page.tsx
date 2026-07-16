@@ -54,7 +54,7 @@ export default function ProfilePage() {
       {error && <ErrorBanner message={error} />}
 
       {loading ? (
-        <div className="flex items-center gap-2 text-sm text-ink-soft"><Spinner /> Loading…</div>
+        <div className="flex items-center gap-2 text-sm text-ink-soft"><Spinner /> Loading...</div>
       ) : me ? (
         <>
           <Card>
@@ -63,7 +63,7 @@ export default function ProfilePage() {
                 {(me.name || me.email).charAt(0).toUpperCase()}
               </div>
               <div>
-                <div className="font-display text-lg font-semibold tracking-tight text-ink">{me.name || me.company.name || "—"}</div>
+                <div className="font-display text-lg font-semibold tracking-tight text-ink">{me.name || me.company.name || "-"}</div>
                 <div className="text-sm text-ink-soft">{me.email}</div>
               </div>
             </div>
@@ -73,11 +73,11 @@ export default function ProfilePage() {
             <SectionTitle>Account</SectionTitle>
             <div className="divide-y divide-line">
               <Row label="Email" value={me.email} />
-              <Row label="Organization" value={me.company.name || "—"} />
+              <Row label="Organization" value={me.company.name || "-"} />
               <Row label="Account ID" value={me.company.company_id} mono />
               <Row label="Plan" value={me.company.plan || "free"} />
               <Row label="Status" value={me.company.status || "active"} />
-              <Row label="Member since" value={me.company.created_at ? new Date(me.company.created_at).toLocaleDateString() : "—"} />
+              <Row label="Member since" value={me.company.created_at ? new Date(me.company.created_at).toLocaleDateString() : "-"} />
               <Row label="API keys" value={`${me.active_key_count} active · ${me.key_count} total`} />
             </div>
           </Card>

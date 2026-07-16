@@ -8,7 +8,7 @@ export function cn(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
 
-/** Brand monogram — a document being parsed into structured lines. */
+/** Brand monogram - a document being parsed into structured lines. */
 export function BrandMark({ className = "h-9 w-9" }: { className?: string }) {
   return (
     <span
@@ -38,7 +38,7 @@ export function Wordmark({ className }: { className?: string }) {
   );
 }
 
-/** Real brand lockup (public/logo.svg) — use wherever the logo should appear. */
+/** Real brand lockup (public/logo.svg) - use wherever the logo should appear. */
 export function Logo({ className = "h-7 w-auto" }: { className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
   return <img src="/logo.svg" alt="Blue-IQ" className={className} />;

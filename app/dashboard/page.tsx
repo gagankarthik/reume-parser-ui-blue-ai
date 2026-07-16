@@ -60,14 +60,14 @@ export default function OverviewPage() {
       {error && <ErrorBanner message={error} />}
 
       {loading ? (
-        <div className="flex items-center gap-2 py-10 text-sm text-ink-soft"><Spinner /> Loading…</div>
+        <div className="flex items-center gap-2 py-10 text-sm text-ink-soft"><Spinner /> Loading...</div>
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard label="Active keys" value={activeKeys ?? "—"} accent="accent" icon={<KeyStatIcon />} />
-            <StatCard label="Jobs · 30d" value={t ? t.jobs.toLocaleString() : "—"} accent="ink" icon={<JobsIcon />} />
-            <StatCard label="Tokens used" value={t ? t.tokens_used.toLocaleString() : "—"} accent="brass" icon={<TokenIcon />} />
-            <StatCard label="Success rate" value={t ? `${successRate}%` : "—"} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} icon={<SuccessIcon />} />
+            <StatCard label="Active keys" value={activeKeys ?? "-"} accent="accent" icon={<KeyStatIcon />} />
+            <StatCard label="Jobs · 30d" value={t ? t.jobs.toLocaleString() : "-"} accent="ink" icon={<JobsIcon />} />
+            <StatCard label="Tokens used" value={t ? t.tokens_used.toLocaleString() : "-"} accent="brass" icon={<TokenIcon />} />
+            <StatCard label="Success rate" value={t ? `${successRate}%` : "-"} accent={successRate >= 90 ? "accent" : successRate >= 70 ? "amber" : "rose"} icon={<SuccessIcon />} />
           </div>
 
           <div>

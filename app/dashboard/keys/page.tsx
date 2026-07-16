@@ -114,7 +114,7 @@ export default function KeysPage() {
               <span className="grid h-5 w-5 place-items-center rounded-full bg-brass-500 text-[var(--surface)]">
                 <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </span>
-              New API key — copy it now
+              New API key - copy it now
             </h3>
             <button onClick={() => setIssued(null)} className="text-sm text-ink-soft hover:text-ink">Dismiss</button>
           </div>
@@ -141,7 +141,7 @@ export default function KeysPage() {
               </div>
             </div>
             <p className="mt-2.5 text-xs text-ink-soft">
-              The .csv bundles your key with the base URL, auth header, and parse endpoint — drop it straight into your config.
+              The .csv bundles your key with the base URL, auth header, and parse endpoint - drop it straight into your config.
             </p>
           </div>
         </div>
@@ -153,7 +153,7 @@ export default function KeysPage() {
           <Button onClick={onCreate} loading={creating} type="button">Generate key</Button>
         </div>
         {loading ? (
-          <div className="flex items-center gap-2 text-sm text-ink-soft"><Spinner /> Loading…</div>
+          <div className="flex items-center gap-2 text-sm text-ink-soft"><Spinner /> Loading...</div>
         ) : keys.length === 0 ? (
           <p className="text-sm text-ink-soft">No keys yet. Generate one to get started.</p>
         ) : (
@@ -172,7 +172,7 @@ export default function KeysPage() {
                   <tr key={k.key_hash} className="border-b border-line/60 last:border-0">
                     <td className="py-3 pr-4 font-mono text-ink">{k.key_prefix}</td>
                     <td className="py-3 pr-4"><Badge tone={k.status === "active" ? "success" : "danger"}>{k.status}</Badge></td>
-                    <td className="py-3 pr-4 text-ink-soft">{k.created_at ? new Date(k.created_at).toLocaleDateString() : "—"}</td>
+                    <td className="py-3 pr-4 text-ink-soft">{k.created_at ? new Date(k.created_at).toLocaleDateString() : "-"}</td>
                     <td className="py-3 text-right">
                       {k.status === "active" && (
                         <Button variant="secondary" loading={busyHash === k.key_hash} onClick={() => onRevoke(k.key_hash)} type="button">Revoke</Button>

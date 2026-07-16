@@ -194,7 +194,7 @@ function Account({ email, collapsed }: { email: string; collapsed?: boolean }) {
   );
 }
 
-/** Desktop rail (md+) — collapsible, persisted to localStorage. */
+/** Desktop rail (md+) - collapsible, persisted to localStorage. */
 export function Sidebar({ email, isAdmin }: { email: string; isAdmin?: boolean }) {
   const pathname = usePathname();
   const mode = modeForPath(pathname);

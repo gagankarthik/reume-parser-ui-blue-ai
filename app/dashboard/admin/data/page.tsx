@@ -5,7 +5,7 @@ import { PARSER_TABLES } from "@/lib/dynamo";
 
 import DataClient from "./DataClient";
 
-export const metadata = { title: "Data — Blue-IQ Parser" };
+export const metadata = { title: "Data - Blue-IQ Parser" };
 export const dynamic = "force-dynamic";
 
 // Server gate: only allow-listed operators reach the raw DynamoDB viewer.

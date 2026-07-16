@@ -29,11 +29,11 @@ export const metadata: Metadata = {
   // Resolves canonical/OG URLs; set NEXT_PUBLIC_SITE_URL to the public domain in prod.
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    default: "ParsingLab | Healthcare Resume Parsing API by Blue-IQ",
-    template: "%s · ParsingLab by Blue-IQ",
+    default: "Blue-IQ Capture | Universal Document AI",
+    template: "%s · Blue-IQ Capture",
   },
   description:
-    "Parse PDF, DOCX, and scanned resumes into schema-validated JSON: licences, credentials, specialties, confidence scores, and signed webhooks. Built on the Blue-IQ Sonar engine.",
+    "Blue-IQ Capture turns any document - resumes, contracts, invoices, licenses - into structured, confidence-scored data. Domain-tuned, never fabricates, SOC 2 / HIPAA / GDPR aligned. Powered by the Sonar engine.",
 };
 
 export default function RootLayout({
@@ -46,7 +46,7 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${sans.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="paper-grain min-h-full">{children}</body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

@@ -1,10 +1,10 @@
 "use client";
 
-// Dependency-free, interactive infographics (custom SVG + CSS) — editorial theme.
+// Dependency-free, interactive infographics (custom SVG + CSS) - editorial theme.
 import { useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
-// Accent → solid hex (icon/segment color). Soft tints are derived with an alpha
+// Accent -> solid hex (icon/segment color). Soft tints are derived with an alpha
 // suffix so we never depend on Tailwind shade classes that may not be generated.
 const COLORS: Record<string, string> = {
   accent: "#1d4ed8",
@@ -119,7 +119,7 @@ export function AreaChart({ data, label, color = "#1d4ed8" }: { data: Point[]; l
   );
 }
 
-/** Interactive donut — hover a segment or legend row to highlight it; the center
+/** Interactive donut - hover a segment or legend row to highlight it; the center
  *  shows the focused slice's share, or the total when nothing is hovered. */
 export function Donut({
   title,
@@ -135,7 +135,7 @@ export function Donut({
   const C = 2 * Math.PI * r;
   const arcs = segments.map((s, i) => {
     const frac = total ? s.value / total : 0;
-    // Cumulative length of all preceding segments — computed functionally (no
+    // Cumulative length of all preceding segments - computed functionally (no
     // outer-variable mutation, which the React compiler lint forbids). n is tiny.
     const start = segments.slice(0, i).reduce((sum, p) => sum + (total ? p.value / total : 0) * C, 0);
     return { ...s, dash: frac * C, start, frac };
@@ -204,7 +204,7 @@ export function Donut({
   );
 }
 
-/** Interactive horizontal bar list — hover a row to highlight its bar and reveal
+/** Interactive horizontal bar list - hover a row to highlight its bar and reveal
  *  its share of the total. */
 export function BarList({ title, items }: { title: string; items: { label: string; value: number }[] }) {
   const [active, setActive] = useState<number | null>(null);

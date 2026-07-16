@@ -6,7 +6,7 @@ import { Logo } from "@/components/ui";
 import { API_BASE } from "@/lib/config";
 
 export const metadata = {
-  title: "Docs — Blue-IQ Parser API",
+  title: "Docs - Blue-IQ Parser API",
   description: "How to authenticate and use your Blue-IQ Parser API keys.",
 };
 
@@ -80,7 +80,7 @@ export default function DocsPage() {
             <P>
               Sign in and open the{" "}
               <Link href="/dashboard" className="font-medium text-accent-700 hover:underline">dashboard</Link>, then
-              click <b>Generate key</b>. Your key looks like <Mono>rp_live_…</Mono> and is shown <b>once</b> — copy it
+              click <b>Generate key</b>. Your key looks like <Mono>rp_live_...</Mono> and is shown <b>once</b> - copy it
               somewhere safe (or download the .csv). Treat it as a secret: use it only from your server, never in
               browser or mobile code.
             </P>
@@ -107,18 +107,18 @@ export default function DocsPage() {
               <Mono>-F &quot;force_textract=true&quot;</Mono> to force high-accuracy OCR on a difficult scan.
             </P>
             <Code>{`{
-  "job_id": "01J3K…",
+  "job_id": "01J3K...",
   "status": "completed",
   "data": {
-    "personal_info":  { "full_name": "…", "credentials": ["RN", "BSN"], … },
-    "experience":     [ … ],
-    "education":      [ … ],
-    "skills":         [ … ],
-    "certifications": [ … ],
+    "personal_info":  { "full_name": "...", "credentials": ["RN", "BSN"], ... },
+    "experience":     [ ... ],
+    "education":      [ ... ],
+    "skills":         [ ... ],
+    "certifications": [ ... ],
     "licenses":       [ { "license_type": "RN", "state": "FL", "license_number": "RN9411204" } ],
     "professional_associations": [ "Sigma Theta Tau International Member", "Sepsis Clinical Services Committee" ],
     "awards":         [ "Summa Cum Laude (2015)" ],
-    "references":     [ … ]
+    "references":     [ ... ]
   },
   "confidence":        { "overall": 0.91, "personal_info": 0.96, "experience": 0.88 },
   "skills_validation": { "recognized_ratio": 0.8 },
@@ -138,13 +138,13 @@ export default function DocsPage() {
             <Table
               head={["Field", "What it holds"]}
               rows={[
-                ["data.personal_info", "Name, post-nominal credentials[] (RN, BSN, MPH…), full address, contact, summary"],
+                ["data.personal_info", "Name, post-nominal credentials[] (RN, BSN, MPH...), full address, contact, summary"],
                 ["data.experience[]", "Per-role facility, title, dates, location, profession, specialties[] (each mapped to a platform specialty_id + confidence), shift, responsibilities[]"],
-                ["data.licenses[]", "State licences with license_number, state, status, and compact flag — kept separate from certifications"],
-                ["data.certifications[]", "Time-limited certifications (BLS, ACLS, CCRN…) with issuer and dates"],
-                ["data.professional_associations[]", "Society / honor-society memberships, committees, and collaboratives (Sigma Theta Tau, unit committees…)"],
-                ["data.awards[] · publications[]", "Awards and academic honors (Summa Cum Laude…); publications as citation strings"],
-                ["confidence", "Per-section + overall scores, 0–1"],
+                ["data.licenses[]", "State licences with license_number, state, status, and compact flag - kept separate from certifications"],
+                ["data.certifications[]", "Time-limited certifications (BLS, ACLS, CCRN...) with issuer and dates"],
+                ["data.professional_associations[]", "Society / honor-society memberships, committees, and collaboratives (Sigma Theta Tau, unit committees...)"],
+                ["data.awards[] · publications[]", "Awards and academic honors (Summa Cum Laude...); publications as citation strings"],
+                ["confidence", "Per-section + overall scores, 0-1"],
                 ["skills_validation", "Taxonomy match ratio and recognized / unrecognized split"],
                 ["partial · warnings", "partial=true flags a degraded record; warnings[] explains what to review (e.g. no email detected on a low-quality scan, or a name that looks truncated vs the email)"],
               ]}
@@ -152,33 +152,33 @@ export default function DocsPage() {
             <P>
               <b>Always check <Mono>partial</Mono>.</b> When extraction degrades on a difficult document the API
               still returns whatever could be recovered (rather than failing), with <Mono>partial: true</Mono>{" "}
-              and a human-readable <Mono>warnings</Mono> list — surface these records for review instead of
+              and a human-readable <Mono>warnings</Mono> list - surface these records for review instead of
               auto-importing them.
             </P>
             <P>
               <b>Specialty mapping.</b> Each role&apos;s <Mono>specialties[]</Mono> is an array of objects, not
               strings. Every specialty is matched to a platform specialty <Mono>id</Mono> through a tiered
-              match — exact name → full name → keyword → an AI shortlist for the rest — <b>scoped to the
+              match - exact name, then full name, then keyword, then an AI shortlist for the rest - <b>scoped to the
               role&apos;s profession</b>, so the same name resolves to the right id (an RN&apos;s{" "}
               <Mono>ICU</Mono> and a CNA&apos;s <Mono>ICU</Mono> carry different ids). The platform&apos;s exact
               names are preserved (never re-worded), and each match carries a <Mono>confidence</Mono> plus the{" "}
               <Mono>match_tier</Mono> that resolved it. A specialty that doesn&apos;t map is <b>still returned</b>{" "}
-              with <Mono>specialty_id: null</Mono> and <Mono>matched: false</Mono> — review it, don&apos;t drop it.
+              with <Mono>specialty_id: null</Mono> and <Mono>matched: false</Mono> - review it, don&apos;t drop it.
             </P>
             <Code>{`"specialties": [
   {
     "name":         "ICU",        // platform's exact name, preserved
     "raw":          "ICU",        // original text as written on the résumé
-    "specialty_id": "56",         // platform id — null when unmatched
+    "specialty_id": "56",         // platform id - null when unmatched
     "group":        "ICU",
-    "confidence":   1.0,          // 0–1 certainty of the id
+    "confidence":   1.0,          // 0-1 certainty of the id
     "matched":      true,
     "match_tier":   "name"        // name | full_name | keywords | ai | null
   },
   {
     "name":         "Cardiac Drip Unit",
     "raw":          "Cardiac Drip Unit",
-    "specialty_id": null,         // no confident match → kept for admin review
+    "specialty_id": null,         // no confident match -> kept for admin review
     "confidence":   0.0,
     "matched":      false,
     "match_tier":   null
@@ -190,11 +190,11 @@ export default function DocsPage() {
             <P>
               For async jobs, poll <Mono>GET /api/v1/resume/job/&#123;job_id&#125;</Mono> until{" "}
               <Mono>status</Mono> is <Mono>completed</Mono> or <Mono>failed</Mono>. Results are kept for 1 hour.
-              A failed job carries an <Mono>error</Mono> message — and a parse you&apos;re unhappy with can be re-run
+              A failed job carries an <Mono>error</Mono> message - and a parse you&apos;re unhappy with can be re-run
               with <Mono>POST /api/v1/resume/&#123;job_id&#125;/retry</Mono> (the file is re-uploaded; up to 3 retries).
             </P>
-            <Code>{`GET /api/v1/resume/job/01J3K…
-→ { "status": "completed", "data": { … }, "confidence": { … },
+            <Code>{`GET /api/v1/resume/job/01J3K...
+-> { "status": "completed", "data": { ... }, "confidence": { ... },
     "partial": false, "warnings": [] }`}</Code>
           </Section>
 
@@ -210,7 +210,7 @@ export default function DocsPage() {
   -F "files=@a.pdf" -F "files=@b.docx" -F "files=@c.png"`}</Code>
             <P>
               <b>Large files (&gt; ~6 MB):</b> the direct endpoint is capped by the platform request limit, so use the
-              two-step flow — <Mono>POST /api/v1/resume/upload-url</Mono> returns a presigned S3 form; upload the file
+              two-step flow - <Mono>POST /api/v1/resume/upload-url</Mono> returns a presigned S3 form; upload the file
               straight to storage, then call <Mono>POST /api/v1/resume/parse-uploaded</Mono> with the returned{" "}
               <Mono>job_id</Mono> (and optional <Mono>force_textract</Mono>) and poll as usual. Files up to 10&nbsp;MB.
             </P>
@@ -220,26 +220,26 @@ export default function DocsPage() {
             <P>
               After a user reviews and corrects a parsed resume, send the original and the
               corrected JSON back so we can improve accuracy.{" "}
-              <Mono>POST /api/v1/resume/&#123;job_id&#125;/feedback</Mono> — server-to-server
+              <Mono>POST /api/v1/resume/&#123;job_id&#125;/feedback</Mono> - server-to-server
               (uses your <Mono>X-API-Key</Mono>). Returns <Mono>202 Accepted</Mono>; feedback is
               processed asynchronously.
             </P>
-            <Code>{`curl -X POST "${API_BASE}/api/v1/resume/01J3K…/feedback" \\
+            <Code>{`curl -X POST "${API_BASE}/api/v1/resume/01J3K.../feedback" \\
   -H "X-API-Key: rp_live_your_key" \\
   -H "Content-Type: application/json" \\
   -d '{
-        "original": { …parser JSON… },
-        "updated":  { …user-corrected JSON… },
+        "original": { ...parser JSON... },
+        "updated":  { ...user-corrected JSON... },
         "changed":  true
       }'`}</Code>
             <P>
-              Send it after the review step — only when the user changed something, or always as
+              Send it after the review step - only when the user changed something, or always as
               a quality signal (both are accepted). If you omit <Mono>changed</Mono> we derive it
               from the diff. The response lists the exact fields that changed.
             </P>
             <Code>{`{
-  "feedback_id": "01J3K…",
-  "job_id": "01J3K…",
+  "feedback_id": "01J3K...",
+  "job_id": "01J3K...",
   "status": "accepted",
   "changed": true,
   "changed_fields": ["personal_info.full_name", "skills[1]"]
@@ -260,7 +260,7 @@ X-Event:     parse.completed`}</Code>
           <Section n="09" id="errors" title="Errors">
             <P>All errors share one envelope. Branch on <Mono>error_code</Mono>; show <Mono>hint</Mono> to users.</P>
             <Code>{`{ "error": { "status_code": 413, "error_code": "FILE_TOO_LARGE",
-            "detail": "…", "hint": "…", "request_id": "…" } }`}</Code>
+            "detail": "...", "hint": "...", "request_id": "..." } }`}</Code>
             <Table
               head={["HTTP", "error_code"]}
               rows={[
@@ -268,7 +268,7 @@ X-Event:     parse.completed`}</Code>
                 ["413 / 415", "FILE_TOO_LARGE · UNSUPPORTED_FILE_TYPE"],
                 ["404", "JOB_NOT_FOUND"],
                 ["500", "PARSE_FAILED · EXTRACTION_FAILED · OCR_FAILED"],
-                ["failed job (poll)", "WORKER_DISPATCH_FAILED — async processing could not start; retry the upload"],
+                ["failed job (poll)", "WORKER_DISPATCH_FAILED - async processing could not start; retry the upload"],
               ]}
             />
           </Section>

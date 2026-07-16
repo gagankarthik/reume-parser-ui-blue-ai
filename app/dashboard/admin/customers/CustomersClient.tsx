@@ -83,7 +83,7 @@ export default function CustomersClient() {
 
       {loading && !stats ? (
         <div className="flex items-center gap-2 py-16 text-sm text-ink-soft">
-          <Spinner /> Loading customers…
+          <Spinner /> Loading customers...
         </div>
       ) : stats ? (
         <div className="overflow-hidden rounded-2xl border border-line bg-surface">
@@ -91,7 +91,7 @@ export default function CustomersClient() {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search name, email, or id…"
+              placeholder="Search name, email, or id..."
               className="h-9 w-64 max-w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-ink outline-none placeholder:text-ink-soft/60 focus:border-accent-500"
             />
             <div className="flex items-center gap-2 text-xs text-ink-soft">
@@ -140,7 +140,7 @@ export default function CustomersClient() {
                       </td>
                       <td className="px-4 py-3 text-ink-soft">{c.plan || "free"}</td>
                       <td className="px-4 py-3">
-                        <span className={"inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium " + (c.status !== "disabled" ? "bg-accent-50 text-accent-700" : "bg-rose-50 text-rose-600")}>
+                        <span className={"inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium " + (c.status !== "disabled" ? "bg-accent-50 text-accent-700" : "bg-rose-50 text-rose-600")}>
                           <span className={"h-1.5 w-1.5 rounded-full " + (c.status !== "disabled" ? "bg-accent-600" : "bg-rose-500")} />
                           {c.status === "disabled" ? "Disabled" : "Active"}
                         </span>
@@ -148,7 +148,7 @@ export default function CustomersClient() {
                       <td className="px-4 py-3 text-right font-mono tabular-nums text-ink">{c.jobs.toLocaleString()}</td>
                       <td className="px-4 py-3 text-right font-mono tabular-nums text-ink">{c.tokens.toLocaleString()}</td>
                       <td className="px-4 py-3 text-right font-mono tabular-nums text-ink-soft">{c.active_keys}</td>
-                      <td className="px-5 py-3 font-mono text-xs text-ink-soft">{c.last_active ? c.last_active.slice(0, 10) : "—"}</td>
+                      <td className="px-5 py-3 font-mono text-xs text-ink-soft">{c.last_active ? c.last_active.slice(0, 10) : "-"}</td>
                     </tr>
                   ))}
                 </tbody>
