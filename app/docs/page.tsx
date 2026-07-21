@@ -68,8 +68,9 @@ export default function DocsPage() {
             <p className="label-caps text-accent-700">API Reference</p>
             <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight text-ink">Using your API keys</h1>
             <p className="mt-3 max-w-2xl text-ink-soft">
-              Authenticate with your API key, send a resume, and get structured JSON back. All requests go to the
-              base URL below.
+              Authenticate with your API key, submit a resume, then poll for structured JSON. Every parse is
+              asynchronous: the request returns a job id immediately and you poll (or use a webhook) for the
+              result. All requests go to the base URL below.
             </p>
             <div className="mt-5 max-w-2xl">
               <BaseUrl />
@@ -101,31 +102,27 @@ export default function DocsPage() {
   -H "X-API-Key: rp_live_your_key" \\
   -F "file=@resume.pdf"`}</Code>
             <P>
-              Digital PDFs and DOCX return the result immediately (<Mono>status: &quot;completed&quot;</Mono>).
-              Scanned PDFs and images need OCR and return <Mono>status: &quot;processing&quot;</Mono> with a{" "}
-              <Mono>job_id</Mono> to poll (or use a webhook). Add{" "}
-              <Mono>-F &quot;force_textract=true&quot;</Mono> to force high-accuracy OCR on a difficult scan.
+              <b>Every parse is asynchronous.</b> The request returns immediately with a <Mono>job_id</Mono> and{" "}
+              <Mono>status: &quot;processing&quot;</Mono> - it never returns parsed data inline. Poll the{" "}
+              <Mono>poll_url</Mono> (see <a href="#poll" className="font-medium text-accent-700 hover:underline">Poll async jobs</a>)
+              until the job is <Mono>completed</Mono>, or register a <a href="#webhooks" className="font-medium text-accent-700 hover:underline">webhook</a>.
+              Add <Mono>-F &quot;force_textract=true&quot;</Mono> to force high-accuracy OCR on a difficult scan.
             </P>
             <Code>{`{
-  "job_id": "01J3K...",
-  "status": "completed",
-  "data": {
-    "personal_info":  { "full_name": "...", "credentials": ["RN", "BSN"], ... },
-    "experience":     [ ... ],
-    "education":      [ ... ],
-    "skills":         [ ... ],
-    "certifications": [ ... ],
-    "licenses":       [ { "license_type": "RN", "state": "FL", "license_number": "RN9411204" } ],
-    "professional_associations": [ "Sigma Theta Tau International Member", "Sepsis Clinical Services Committee" ],
-    "awards":         [ "Summa Cum Laude (2015)" ],
-    "references":     [ ... ]
-  },
-  "confidence":        { "overall": 0.91, "personal_info": 0.96, "experience": 0.88 },
-  "skills_validation": { "recognized_ratio": 0.8 },
-  "partial":           false,
-  "warnings":          [],
-  "poll_url":          null
+  "job_id":   "01J3K...",
+  "status":   "processing",
+  "poll_url": "/api/v1/resume/job/01J3K..."
 }`}</Code>
+            <Callout>
+              <b>Breaking change.</b> The parse endpoints used to return the parsed record inline for digital
+              PDFs and DOCX. They no longer do - <b>every</b> call to <Mono>/resume/parse</Mono>,{" "}
+              <Mono>/resume/parse-uploaded</Mono> and <Mono>/resume/&#123;id&#125;/retry</Mono> now returns{" "}
+              <Mono>&#123; job_id, status: &quot;processing&quot;, poll_url &#125;</Mono>, and you must poll (or use a
+              webhook) for the result. Any client that read <Mono>data</Mono> from the POST response must switch
+              to polling. This also removes the <Mono>&quot;The API did not respond within 27s&quot;</Mono> timeout on
+              slow scans: the API returns instantly and runs OCR on the worker. The old <Mono>async_only</Mono>{" "}
+              flag is deprecated and ignored - everything is async now.
+            </Callout>
           </Section>
 
           <Section n="04" id="output" title="Output fields">
@@ -188,14 +185,24 @@ export default function DocsPage() {
 
           <Section n="05" id="poll" title="Poll async jobs">
             <P>
-              For async jobs, poll <Mono>GET /api/v1/resume/job/&#123;job_id&#125;</Mono> until{" "}
-              <Mono>status</Mono> is <Mono>completed</Mono> or <Mono>failed</Mono>. Results are kept for 1 hour.
-              A failed job carries an <Mono>error</Mono> message - and a parse you&apos;re unhappy with can be re-run
-              with <Mono>POST /api/v1/resume/&#123;job_id&#125;/retry</Mono> (the file is re-uploaded; up to 3 retries).
+              Every parse returns a <Mono>job_id</Mono>. Poll <Mono>GET /api/v1/resume/job/&#123;job_id&#125;</Mono>{" "}
+              until <Mono>status</Mono> is <Mono>completed</Mono> - then read <Mono>data</Mono>,{" "}
+              <Mono>confidence</Mono>, <Mono>partial</Mono> and <Mono>warnings</Mono> - or <Mono>failed</Mono>, which
+              carries an <Mono>error</Mono> message. Results are kept for 1 hour. A parse you&apos;re unhappy with can
+              be re-run with <Mono>POST /api/v1/resume/&#123;job_id&#125;/retry</Mono>, which re-uploads the file and
+              returns a new <Mono>job_id</Mono> to poll (up to 3 retries).
             </P>
             <Code>{`GET /api/v1/resume/job/01J3K...
+
+// still running
+-> { "status": "processing" }
+
+// done
 -> { "status": "completed", "data": { ... }, "confidence": { ... },
-    "partial": false, "warnings": [] }`}</Code>
+    "skills_validation": { ... }, "partial": false, "warnings": [] }
+
+// failed
+-> { "status": "failed", "error": "OCR_FAILED: ..." }`}</Code>
           </Section>
 
           <Section n="06" id="batch" title="Batch & large files">
@@ -275,28 +282,55 @@ X-Event:     parse.completed`}</Code>
 
           <Section n="10" id="quickstart" title="Quickstart">
             <H3>Node.js</H3>
-            <Code>{`const form = new FormData();
+            <Code>{`const key = process.env.RP_API_KEY;
+const form = new FormData();
 form.append("file", fileBlob, "resume.pdf");
 
-const res = await fetch("${API_BASE}/api/v1/resume/parse", {
+// 1. Submit - returns a job_id immediately
+const submit = await fetch("${API_BASE}/api/v1/resume/parse", {
   method: "POST",
-  headers: { "X-API-Key": process.env.RP_API_KEY },
+  headers: { "X-API-Key": key },
   body: form,
 });
-const json = await res.json();
-console.log(json.status === "completed" ? json.data : json.job_id);`}</Code>
+const { job_id } = await submit.json();
+
+// 2. Poll until it leaves "processing" (or use a webhook)
+let job;
+do {
+  await new Promise((r) => setTimeout(r, 1500));
+  job = await (await fetch(
+    "${API_BASE}/api/v1/resume/job/" + job_id,
+    { headers: { "X-API-Key": key } },
+  )).json();
+} while (job.status === "processing");
+
+console.log(job.status === "completed" ? job.data : job.error);`}</Code>
 
             <H3>Python</H3>
-            <Code>{`import requests
+            <Code>{`import time, requests
 
+BASE = "${API_BASE}"
+KEY  = "rp_live_your_key"
+
+# 1. Submit - returns a job_id immediately
 with open("resume.pdf", "rb") as f:
-    r = requests.post(
-        "${API_BASE}/api/v1/resume/parse",
-        headers={"X-API-Key": "rp_live_your_key"},
+    job_id = requests.post(
+        f"{BASE}/api/v1/resume/parse",
+        headers={"X-API-Key": KEY},
         files={"file": f},
-    )
-data = r.json()
-print(data["data"] if data["status"] == "completed" else data["job_id"])`}</Code>
+    ).json()["job_id"]
+
+# 2. Poll until it leaves "processing" (or use a webhook)
+while True:
+    job = requests.get(
+        f"{BASE}/api/v1/resume/job/{job_id}",
+        headers={"X-API-Key": KEY},
+    ).json()
+    if job["status"] != "processing":
+        break
+    time.sleep(1.5)
+
+print(job["data"] if job["status"] == "completed" else job["error"])`}</Code>
           </Section>
 
           <div className="rule pt-8">
@@ -341,6 +375,14 @@ function H3({ children }: { children: ReactNode }) {
 
 function P({ children }: { children: ReactNode }) {
   return <p className="text-[15px] leading-relaxed text-ink-soft">{children}</p>;
+}
+
+function Callout({ children }: { children: ReactNode }) {
+  return (
+    <div className="rounded-xl border border-accent-200 bg-accent-50/60 px-4 py-3 text-[15px] leading-relaxed text-ink-soft">
+      {children}
+    </div>
+  );
 }
 
 function Mono({ children }: { children: ReactNode }) {
